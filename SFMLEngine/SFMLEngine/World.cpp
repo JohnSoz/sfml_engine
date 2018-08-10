@@ -16,6 +16,9 @@ Entity& Engine::ObjectHandler::GetObjects(std::string NAME)
 void Engine::ObjectHandler::PushObject(Entity* obj)
 {
 	ObjectsArray.shrink_to_fit();
+#if Debug
+	debug.pushEntites(*obj);
+#endif 
 	ObjectsArray.push_back(obj);
 }
 
@@ -31,6 +34,7 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
+		debug.draw();
 		WINDOW.draw(o->sprite);
 	}
 }
@@ -42,7 +46,6 @@ void Engine::World::update()
 		mainClock.restart();
 		time = time / 800;
 		sf::Event event;
-		//std::cout << time << std::endl;
 		handleEvent(event);
 		objHandler.UpdateObjects(time);
 		draw();
@@ -75,7 +78,7 @@ void Engine::World::handleEvent(sf::Event & event)
 
 void Engine::World::draw()
 {
-	window->clear();
+	window->clear(sf::Color::White);
 	objHandler.RenderObjects(*window);
 	window->display();
 }
@@ -84,14 +87,15 @@ void Engine::World::init()
 {
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-	objHandler.PushObject(new Engine::Actor(i, Vector2D(12, 12), Rectangle(0, 0, 200,200), "Test"));
+	objHandler.PushObject(new Engine::Actor(i, Vector2D(0, 0), Engine::Rectangle(40, 40, 210, 150), "Test"));
 }
 
 void Engine::World::startGame()
 {
 	init();
-	 objHandler.GetObjects("Test").addComponent<PositionComponent>();
-	 auto z = objHandler.GetObjects("Test").getComponent<PositionComponent>();
-	 z->SetPos();
+
+	auto z = objHandler.GetObjects("Test").addComponent<PositionComponent>();
+	z->SetPos();
+
 	update();
 }

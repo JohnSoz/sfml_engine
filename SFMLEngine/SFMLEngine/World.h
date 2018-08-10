@@ -2,6 +2,7 @@
 #include "Object.h"
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include "DebuggingSystem.h"
 
 namespace Engine
 {
@@ -18,7 +19,9 @@ namespace Engine
 	private:
 		std::vector<Entity*> ObjectsArray;
 		std::vector<Entity*>::iterator iter;
-
+#if Debug
+		Debugging::DebuggingSystem debug;
+#endif
 	public:
 		ObjectHandler() = default;
 		~ObjectHandler() = default;

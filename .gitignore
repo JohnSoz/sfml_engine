@@ -15,3 +15,5 @@
 *.tlog
 *.lastbuildstate
 *.log
+*.ipdb
+*.iobj

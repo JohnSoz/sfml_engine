@@ -1,11 +1,22 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "World.h"
+#include "DebuggingSystem.h"
 using namespace std;
 
+int main() 
+{
+	sf::ContextSettings settings;
+	settings.depthBits = 24;
+	settings.stencilBits = 8;
+	settings.antialiasingLevel = 16;
+	settings.majorVersion = 3;
+	settings.minorVersion = 0;
 
-int main() {
-	sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML Game V0.00001");
+	sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML Game V0.00001",sf::Style::Default,settings);
+#if Debug 
+	Engine::Debugging::DebuggingSystem::setWindow(window);
+#endif
 	Engine::World world(window);
 	world.startGame();
 

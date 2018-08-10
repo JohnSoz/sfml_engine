@@ -59,12 +59,11 @@ namespace Engine
 		std::string name;
 		int id = 0;
 		bool active = true;
-		std::vector<Component*> components;
 
+		std::vector<Component*> components;
 		ComponentArray componentArray;
 		ComponentBitSet componentBitSet;
-	private:
-		
+
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
@@ -78,9 +77,11 @@ namespace Engine
 		virtual void update(float time) 
 		{
 			for (auto &c : components) c->update();
+			sprite.setPosition(position.GetSfmlVector());
 			//for (auto &c : components) c->draw();
 		};
 
+		void SetPos(int x, int y) { position.x = x; position.y = y; }
 		bool isActive() const { return active; }
 		Rectangle getRect() const { return rectangle; }
 		Vector2D getPos()const { return position; }
@@ -94,7 +95,7 @@ namespace Engine
 		}
 
 		template<typename T,typename... Argc>
-		T& addComponent(Argc&&... argc) 
+		T* addComponent(Argc&&... argc) 
 		{
 			T* c(new T(std::forward<Argc>(argc)...));
 			c->entity = this;
@@ -102,7 +103,7 @@ namespace Engine
 			componentArray[getComponentTypeID<T>()] = c;
 			componentBitSet[getComponentTypeID<T>()] = true;
 			c->Init();
-			return *c;
+			return c;
 		}
 		template<typename T>
 		T* getComponent() const
@@ -113,7 +114,7 @@ namespace Engine
 		friend class ObjectHandler;
 	};
 
-	class PositionComponent :public Component
+	class PositionComponent : public Component
 	{
 	private:
 		int x, y = 0;
@@ -125,9 +126,11 @@ namespace Engine
 		void update() override
 		{
 			std::cout << "X = " << x <<std::endl;
+			entity->SetPos(x,y);
 		}
-		void SetPos() {
-			x = y = 12;
+		void SetPos() 
+		{
+			x = y = 24;
 		}
 	};
 
@@ -141,7 +144,7 @@ namespace Engine
 			rectangle = rect;
 			sprite.setTextureRect(rectangle.getSfmlRect());
 		}
-		//void update(float time) override { sprite.setPosition(position.GetSfmlVector()); }
+		//void update(float time) { sprite.setPosition(position.GetSfmlVector()); }
 	};
 
 }
