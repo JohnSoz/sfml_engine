@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Object.h"
-#define Debug 1;
+#define Debug 0;
 
 namespace Engine
 {
@@ -11,37 +11,16 @@ namespace Engine
 		{
 		private:
 			static sf::RenderWindow* window;
-			std::vector<Entity*> entites;
+			std::vector<std::pair<Rectangle, Vector2D>> entites;
 		public:
 			static void setWindow(sf::RenderWindow& w)
 			{
 				window = &w;
 			}
-			void draw()
-			{
-				std::vector<sf::Vertex*> rects;
-				for (auto &i : entites)
-				{
-					auto x = i->getPos().x;
-					auto y = i->getPos().y;
-					auto w = i->getRect().w;
-					auto h = i->getRect().h;
-					sf::Vertex vertices[5] =
-					{
-						sf::Vertex(sf::Vector2f(x, y),sf::Color::Red),
-						sf::Vertex(sf::Vector2f(x + w, y),sf::Color::Red),
-						sf::Vertex(sf::Vector2f(x + w, y + h),sf::Color::Red),
-						sf::Vertex(sf::Vector2f(x, y + h),sf::Color::Red),
-						sf::Vertex(sf::Vector2f(x, y),sf::Color::Red)
-					};
-					rects.push_back(vertices);
-				}
-				for (auto &i : rects)
-					window->draw(i, 5, sf::LinesStrip);
-			}
+			void draw();
 			void pushEntites(Entity& e)
 			{
-				entites.push_back(&e);
+				entites.push_back(std::make_pair(e.getRect(), e.getPos()));
 			}
 			DebuggingSystem() = default;
 			~DebuggingSystem() = default;

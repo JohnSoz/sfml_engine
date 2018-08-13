@@ -29,7 +29,7 @@ float Vector2D::Magnitude() const
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Нормализует вектор
+// Задача:	Нормализует вектор 
 //-----------------------------------------------------------------------------
 float Vector2D::Normalize()
 {
@@ -333,4 +333,10 @@ bool Rectangle::operator== (const Rectangle& r2) const
 bool Rectangle::operator!= (const Rectangle& r2) const
 {
 	return !((w == r2.w) && (h == r2.h));
+}
+
+std::ostream & Engine::operator<<(std::ostream & os, const Vector2D & dt)
+{
+	os << "  X = " << dt.x << " Y = " << dt.y;
+	return os;
 }

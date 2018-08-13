@@ -14,40 +14,16 @@ namespace Engine
 		OPawn,
 		OActor
 	};
+	class World;
 
-	class Component;
-	class Entity;
-
-	using ComponentID = size_t;
-
-	inline ComponentID getComponentTypeID()
+	class Object
 	{
-		static ComponentID lastId = 0;
-		return lastId++;
-	}
+	protected:
 
-	template<typename T> 
-	inline ComponentID getComponentTypeID() noexcept
-	{
-		static ComponentID typeId = getComponentTypeID();
-		return typeId;
-	}
-
-	constexpr size_t maxComponent = 32;
-	using ComponentBitSet = std::bitset<maxComponent>;
-	using ComponentArray = std::array<Component*, maxComponent>;
-
-	class Component 
-	{
 	public:
-		Entity* entity;
-		virtual ~Component() {}
+		Object() = delete;
 
-		virtual void Init() {}
-		virtual void update() {}
-		virtual void draw() {}
 	};
-
 	class Entity
 	{
 	protected:
@@ -60,83 +36,57 @@ namespace Engine
 		int id = 0;
 		bool active = true;
 
-		std::vector<Component*> components;
-		ComponentArray componentArray;
-		ComponentBitSet componentBitSet;
-
 	public:
 		Entity() = default;
+
 		Entity(const Entity&) = default;
+
 		Entity(Entity&&) = default;
 
+
 		Entity(Vector2D POSITION, std::string NAME);
+
 		Entity(sf::Image& IMAGE, Vector2D POSITION, std::string NAME);
+
 		Entity(sf::Image& IMAGE, sf::IntRect r, Vector2D pos, std::string name);
+
 		virtual ~Entity();
 
-		virtual void update(float time) 
-		{
-			for (auto &c : components) c->update();
-			sprite.setPosition(position.GetSfmlVector());
-			//for (auto &c : components) c->draw();
-		};
+
+		virtual void update(float time) = 0;
 
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
+
+		void RotateToMouse(float speed, sf::RenderWindow& window);
+
 		bool isActive() const { return active; }
-		Rectangle getRect() const { return rectangle; }
-		Vector2D getPos()const { return position; }
-		ObjectType getType() const { return type; }
+
+		const Rectangle &getRect() { return rectangle; }
+
+		const Vector2D &getPos() { return position; }
+
+		const ObjectType &getType() { return type; }
+
 		void destroy() { active = false; }
-
-		template<typename T>
-		bool hasComponent() const 
-		{
-			return componentBitSet[getComponentTypeID<T>()];
-		}
-
-		template<typename T,typename... Argc>
-		T* addComponent(Argc&&... argc) 
-		{
-			T* c(new T(std::forward<Argc>(argc)...));
-			c->entity = this;
-			components.push_back(c);
-			componentArray[getComponentTypeID<T>()] = c;
-			componentBitSet[getComponentTypeID<T>()] = true;
-			c->Init();
-			return c;
-		}
-		template<typename T>
-		T* getComponent() const
-		{
-			return static_cast<T*>(components[getComponentTypeID<T>()]);
-		}
 
 		friend class ObjectHandler;
 	};
 
-	class PositionComponent : public Component
+	enum Direction
 	{
-	private:
-		int x, y = 0;
-	public:
-		void Init() override 
-		{
-			//SetPos();
-		}
-		void update() override
-		{
-			std::cout << "X = " << x <<std::endl;
-			entity->SetPos(x,y);
-		}
-		void SetPos() 
-		{
-			x = y = 24;
-		}
+		Up = 1, Down, Left, Right, State
 	};
 
 	class Actor : public Entity
 	{
 	protected:
+		Vector2D velocity;
+		bool isWalk =    false;
+		float speed =    0;
+		float energy =   0.003;
+		float maxSpeed = 0.4;
+		float friction = 0.0009;
+		Direction direction = Direction::State;
 	public:
 		Actor() = delete;
 		Actor(sf::Image& IMAGE, Vector2D POSITION, Rectangle rect, std::string NAME) : Entity(IMAGE, POSITION, NAME)
@@ -144,6 +94,8 @@ namespace Engine
 			rectangle = rect;
 			sprite.setTextureRect(rectangle.getSfmlRect());
 		}
+		void handleEvent(sf::Event& e);
+		void update(float time) override;
 		//void update(float time) { sprite.setPosition(position.GetSfmlVector()); }
 	};
 

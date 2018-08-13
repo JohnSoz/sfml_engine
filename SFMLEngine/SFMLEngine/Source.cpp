@@ -15,6 +15,7 @@ int main()
 
 	sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML Game V0.00001",sf::Style::Default,settings);
 #if Debug 
+	ImGui::SFML::Init(window);
 	Engine::Debugging::DebuggingSystem::setWindow(window);
 #endif
 	Engine::World world(window);

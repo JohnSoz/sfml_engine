@@ -17,7 +17,6 @@ namespace Engine {
 		float Normalize();
 		float DotProduct(const Vector2D& v2) const;
 		float CrossProduct(const Vector2D& v2) const;
-
 		static Vector2D Zero();
 		static float Distance(const Vector2D& v1, const Vector2D& v2);
 
@@ -41,6 +40,8 @@ namespace Engine {
 		bool operator>= (const Vector2D& v2) const;
 		bool operator<= (const Vector2D& v2) const;
 		bool operator!= (const Vector2D& v2) const;
+
+		friend std::ostream& operator<<(std::ostream& os, const Vector2D& dt);
 
 	public:
 		float x, y;
