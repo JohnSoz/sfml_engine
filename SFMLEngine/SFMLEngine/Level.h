@@ -11,7 +11,7 @@
 #include "TinyXML/tinyxml.h"
 #include <Windows.h>
 #include <stdlib.h>
-namespace Game {
+namespace Engine {
 
 	struct ObjectLevel
 	{

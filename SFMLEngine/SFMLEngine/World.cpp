@@ -47,15 +47,15 @@ void Engine::World::update()
 	{
 		time = mainClock.getElapsedTime().asMicroseconds();
 		mainClock.restart();
-		time = time / 800;
+		time = time / 300;
 		sf::Event event;
 		handleEvent(event);
 		objHandler.GetObjects<Actor>("Test").handleEvent(event);
 		objHandler.UpdateObjects(time);
 		draw();
 #if Debug 
-		ImGui::SFML::Update(*window, deltaClock.restart());
-		ImGUI::SimpleOverlay(sf::Vector2f(12, 12), &ShowOverlay);
+		//ImGui::SFML::Update(*window, deltaClock.restart());
+		//ImGUI::SimpleOverlay(sf::Vector2f(12, 12), &ShowOverlay);
 #endif
 	}
 }
@@ -82,7 +82,7 @@ void Engine::World::handleEvent(sf::Event & event)
 			break;
 		}
 #if Debug 
-		ImGui::SFML::ProcessEvent(event);
+		//ImGui::SFML::ProcessEvent(event);
 #endif
 	}
 }
@@ -90,19 +90,24 @@ void Engine::World::handleEvent(sf::Event & event)
 void Engine::World::draw()
 {
 	window->clear(sf::Color::White);
+	level.DrawLevel(*window);
 	objHandler.RenderObjects(*window);
 #if Debug 
-	if (ShowOverlay)
-		ImGui::SFML::Render(*window);
+	//if (ShowOverlay)
+	//	ImGui::SFML::Render(*window);
 #endif
 	window->display();
 }
 
 void Engine::World::init()
 {
+	view.reset(sf::FloatRect(0, 0, 1920, 1080));
+	window->setView(view);
+	level.LoadFromFile("Data/Level/map5.tmx", 2);
+	objHandler.debug.levelObjects(level.GetAllObjects());
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-	objHandler.PushObject(new Engine::Actor(i, Vector2D(0, 0), Engine::Rectangle(40, 40, 210, 150), "Test"));
+	objHandler.PushObject(new Engine::Actor(i, Vector2D(100, 120), Engine::Rectangle(40, 40, 210, 150), "Test", *window, level));
 }
 
 void Engine::World::startGame()

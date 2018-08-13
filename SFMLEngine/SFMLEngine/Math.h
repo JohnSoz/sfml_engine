@@ -61,7 +61,8 @@ namespace Engine {
 		bool Contains(Vector2D& vVec) const;
 		bool Contains(int x, int y) const;
 
-		sf::IntRect getSfmlRect();
+		sf::IntRect getSfmlRect_i();
+		sf::FloatRect getSfmlRect_f();
 		static Rectangle fromSfmlRect(sf::IntRect);
 
 		static Rectangle Empty();

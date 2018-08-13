@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Object.h"
-#define Debug 0;
+#define Debug 1;
 
 namespace Engine
 {
@@ -11,7 +11,8 @@ namespace Engine
 		{
 		private:
 			static sf::RenderWindow* window;
-			std::vector<std::pair<Rectangle, Vector2D>> entites;
+			std::vector<std::pair<Rectangle*, Vector2D*>> entites;
+			std::vector<sf::FloatRect*> obj;
 		public:
 			static void setWindow(sf::RenderWindow& w)
 			{
@@ -20,7 +21,12 @@ namespace Engine
 			void draw();
 			void pushEntites(Entity& e)
 			{
-				entites.push_back(std::make_pair(e.getRect(), e.getPos()));
+				entites.push_back(std::make_pair(&e.getRect(), &e.getPos()));
+			}
+			void levelObjects(std::vector<ObjectLevel> objs)
+			{
+				for (auto& i : objs)
+					obj.push_back(&i.rect);
 			}
 			DebuggingSystem() = default;
 			~DebuggingSystem() = default;

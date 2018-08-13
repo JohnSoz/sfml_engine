@@ -224,9 +224,14 @@ bool Rectangle::Contains(int x, int y) const
 		return false;
 }
 
-sf::IntRect Rectangle::getSfmlRect()
+sf::IntRect Rectangle::getSfmlRect_i()
 {
 	return sf::IntRect(x, y, w, h);
+}
+
+sf::FloatRect Engine::Rectangle::getSfmlRect_f()
+{
+	return sf::FloatRect(x, y, w, h);
 }
 
 Rectangle Rectangle::fromSfmlRect(sf::IntRect rect)

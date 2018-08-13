@@ -1,5 +1,5 @@
 #include "Level.h"
-using namespace Game;
+using namespace Engine;
 int ObjectLevel::GetPropertyInt(std::string name)
 {
 	return atoi(properties[name].c_str());
@@ -293,12 +293,12 @@ sf::Vector2i Level::GetTileSize()
 	return sf::Vector2i(tileWidth, tileHeight);
 }
 
-sf::IntRect Game::Level::GetRect() const
+sf::IntRect Engine::Level::GetRect() const
 {
 	return rect;
 }
 
-void Game::Level::ParseLayer(TiXmlElement * layerElement)
+void Engine::Level::ParseLayer(TiXmlElement * layerElement)
 {
 	for (auto i = 0; i < tilesets.size(); i++)
 	{
