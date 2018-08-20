@@ -16,9 +16,6 @@ Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 void Engine::ObjectHandler::PushObject(Entity* obj)
 {
 	ObjectsArray.shrink_to_fit();
-#if Debug
-	debug.pushEntites(*obj);
-#endif 
 	ObjectsArray.push_back(obj);
 }
 
@@ -34,12 +31,11 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
-#if Debug 
-		debug.draw();
-#endif
 		WINDOW.draw(o->sprite);
 	}
 }
+
+
 void Engine::World::update()
 {
 	sf::Clock deltaClock;
@@ -47,16 +43,20 @@ void Engine::World::update()
 	{
 		time = mainClock.getElapsedTime().asMicroseconds();
 		mainClock.restart();
-		time = time / 300;
+		time = time / 500;
 		sf::Event event;
 		handleEvent(event);
 		objHandler.GetObjects<Actor>("Test").handleEvent(event);
 		objHandler.UpdateObjects(time);
-		draw();
 #if Debug 
-		//ImGui::SFML::Update(*window, deltaClock.restart());
-		//ImGUI::SimpleOverlay(sf::Vector2f(12, 12), &ShowOverlay);
+		if (ShowOverlay)
+		{
+			ImGui::SFML::Update(*window, deltaClock.restart());
+			ImGUI::SimpleOverlay(&ShowOverlay);
+			debug.updateDebugInfo(objHandler.GetObjects<Actor>("Test").debugInfo());
+		}
 #endif
+		draw();
 	}
 }
 
@@ -64,25 +64,14 @@ void Engine::World::handleEvent(sf::Event & event)
 {
 	while (window->pollEvent(event))
 	{
-		switch (event.type)
+		if (event.type == sf::Event::Closed) 
 		{
-		case sf::Event::Closed:
 			window->close();
 			break;
-
-		case sf::Event::KeyPressed:
-
-			break;
-
-		case sf::Event::KeyReleased:
-
-			break;
-
-		default:
-			break;
 		}
-#if Debug 
-		//ImGui::SFML::ProcessEvent(event);
+#if Debug
+		ImGui::SFML::ProcessEvent(event);
+		debug.handleEvent(event);
 #endif
 	}
 }
@@ -93,8 +82,9 @@ void Engine::World::draw()
 	level.DrawLevel(*window);
 	objHandler.RenderObjects(*window);
 #if Debug 
-	//if (ShowOverlay)
-	//	ImGui::SFML::Render(*window);
+	debug.draw();
+	if (ShowOverlay)
+		ImGui::SFML::Render(*window);
 #endif
 	window->display();
 }
@@ -104,10 +94,12 @@ void Engine::World::init()
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
 	window->setView(view);
 	level.LoadFromFile("Data/Level/map5.tmx", 2);
-	objHandler.debug.levelObjects(level.GetAllObjects());
+#if Debug
+	debug.levelObjects(level.GetAllObjects());
+#endif
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-	objHandler.PushObject(new Engine::Actor(i, Vector2D(100, 120), Engine::Rectangle(40, 40, 210, 150), "Test", *window, level));
+	pushEntity(new Engine::Actor(i, Vector2D(100, 120), Engine::Rectangle(45, 45, 200, 140), "Test", *window, level));
 }
 
 void Engine::World::startGame()

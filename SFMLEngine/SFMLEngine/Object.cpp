@@ -23,7 +23,7 @@ Engine::Entity::~Entity()
 
 void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 {
-	float rotateSpeed = 0.7;
+	float rotateSpeed = speed;
 	bool rot = false;
 	LastAngle = sprite.getRotation();
 
@@ -36,12 +36,44 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float rotation = (atan2f(v, a)) * 180 / 3.14159265;
 	CurrAngle = rotation; //?
 
+	auto x = globalRectangle.x;
+	auto y = globalRectangle.y;
+	auto w = globalRectangle.w;
+	auto h = globalRectangle.h;
+
+	float centerX = sprite.getPosition().x;
+	float centerY = sprite.getPosition().y;
+
+	auto newX = centerX + (x - centerX) * cos(Radian) - (y - centerY) * sin(Radian);//x,y
+	auto newW = centerX + (w - centerX) * cos(Radian) - (h - centerY) * sin(Radian);//w,h
+	auto newY = centerY + (y - centerY) * cos(Radian) + (x - centerX) * sin(Radian);//y,x
+	auto newH = centerY + (h - centerY) * cos(Radian) + (w - centerX) * sin(Radian);//h,w
+
+	auto newX2 = centerX + (x - centerX) * cos(Radian) - (h - centerY) * sin(Radian); //x,h
+	auto newY2 = centerY + (h - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //h,x
+	auto newW2 = centerX + (w - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //w,y
+	auto newY3 = centerY + (y - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //y,w
+
+	//auto newW2 = centerX + ((w - 30) - centerX) * cos(Radian) - ((y + 15) - centerY) * sin(Radian); //w,y
+	//auto newY3 = centerY + ((y + 15) - centerY) * cos(Radian) + ((w - 30) - centerX) * sin(Radian); //y,w
+
+	debugRectangle.x = newX2;//x2
+	debugRectangle.y = newY2;//y2
+	debugRectangle.w = newW2;//w2
+	debugRectangle.h = newY3;//h2
+
+	globalRectangle.x = newX;
+	globalRectangle.y = newY;
+	globalRectangle.w = newW;
+	globalRectangle.h = newH;
+
 	if (CurrAngle > 180) CurrAngle -= 360;
 	if (CurrAngle < -180) CurrAngle += 360;
 	posMouse.x = CurrAngle - LastAngle;
 	posMouse.y = 360 + posMouse.x;
 	if (posMouse.y > 360) posMouse.y -= 720;
 	if (abs(posMouse.x) > abs(posMouse.y)) posMouse.x = posMouse.y;
+
 	if (CurrAngle == LastAngle)
 		return;
 
@@ -56,11 +88,23 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 		else
 			LastAngle -= rotateSpeed;
 	}
-
 	if (window.hasFocus())
 	{
 		sprite.setRotation(LastAngle);
 	}
+}
+
+std::string Engine::Actor::debugInfo()
+{
+	std::string s;
+	s += "\n";
+	s += " isWalk = " + std::to_string(isWalk) + "\n";
+	s += " isCollision = " + std::to_string(isCollision) + "\n";
+	s += " Direction = " + std::to_string(direction) + "\n";
+	s += " velX = " + std::to_string(velocity.x) + " velY = " + std::to_string(velocity.y) + "\n";
+	s += " speed = " + std::to_string(speed) + "\n";
+	s += " Angle = " + std::to_string(CurrAngle) + "\n";
+	return s;
 }
 
 void Engine::Actor::handleEvent(sf::Event & e)
@@ -100,14 +144,20 @@ void Engine::Actor::checkClashes(Vector2D pos)
 {
 	for (int i = 0; i < obj.size(); i++)
 	{
-		if (globalRectangle.getSfmlRect_f().intersects(obj[i].rect)) // Столкновение персоннажа с объектами карты
+		sf::FloatRect Intersection;
+		sf::FloatRect objGlobalRect = { obj[i].rect.left, obj[i].rect.top, obj[i].rect.width, obj[i].rect.height };
+		auto zzxc = sprite.getGlobalBounds();
+		if (sprite.getGlobalBounds().intersects(objGlobalRect, Intersection))
 		{
 			if (obj[i].name == "barrier")
 			{
-				auto z = Rectangle::GetIntersectionDepth(globalRectangle, Rectangle(obj[i].rect.left, obj[i].rect.top, obj[i].rect.width + obj[i].rect.left, obj[i].rect.height + obj[i].rect.top));
-				std::cout << z << std::endl;
+				float offset = (abs(Intersection.width) > abs(Intersection.height)) ? Intersection.height : Intersection.width;
+				isCollision = true;
+				std::cout << "W = " << Intersection.width << " H = " << Intersection.height << " Top = " << Intersection.top << " Left = " << Intersection.left << std::endl;
 			}
 		}
+		else
+			isCollision = false;
 	}
 }
 
@@ -118,10 +168,10 @@ void Engine::Actor::update(float time)
 	case Up:   velocity.y = -speed; velocity.x = 0;  break;
 	case Down: velocity.y = speed; velocity.x = 0;  break;
 	case Left: velocity.x = -speed; velocity.y = 0;  break;
-	case Right:velocity.x = speed; velocity.y = 0;  break;
+	case Right: velocity.x = speed; velocity.y = 0;  break;
 	}
-	globalRectangle = Rectangle(position.x - 90, position.y - 120, localRectangle.w, localRectangle.h);
-	RotateToMouse(0.7, *window);
+	globalRectangle = Rectangle(position.x - originOffset.x, position.y - originOffset.y, position.x - originOffset.x + localRectangle.w, position.y - originOffset.y + localRectangle.h);
+	RotateToMouse(0.2 * time, *window);
 	position += velocity * time;
 	checkClashes(position);
 	sprite.setPosition(position.GetSfmlVector());

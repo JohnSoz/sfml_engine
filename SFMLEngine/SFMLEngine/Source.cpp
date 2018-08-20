@@ -3,8 +3,8 @@
 #include "World.h"
 #include "DebuggingSystem.h"
 using namespace std;
-
-int main() 
+#include <cmath>
+int main()
 {
 	sf::ContextSettings settings;
 	settings.depthBits = 24;
@@ -12,17 +12,66 @@ int main()
 	settings.antialiasingLevel = 16;
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
-
-	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.00001");
-	window.setFramerateLimit(2000);
-#if Debug 
-//	ImGui::SFML::Init(window);
-	Engine::Debugging::DebuggingSystem::setWindow(window);
-#endif
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.00001", sf::Style::Default, settings);
+	#if Debug
+	ImGui::SFML::Init(window, true);
+	Engine::DebuggingSystem::setWindow(window);
+	#endif
 	Engine::World world(window);
 	world.startGame();
 
-	auto h = world.getObjHendler();
+	//float angle = 0;
+	//sf::CircleShape shape2;
+	//shape2.setFillColor(sf::Color::Red);
+	//shape2.setRadius(2);
+
+	//sf::FloatRect zasd(50, 50, 130, 130);
+	//sf::Transformable t;
+	//t.setOrigin(sf::Vector2f(80, 80));
+	//t.setPosition(50, 50);
+	//t.rotate(10);
+	//auto result = t.getTransform().transformRect(zasd);
+
+	//while (window.isOpen())
+	//{
+	//	sf::Event event;
+	//	while (window.pollEvent(event))
+	//	{
+	//		if (event.type == sf::Event::Closed)
+	//			window.close();
+	//		if (event.type == sf::Event::KeyPressed)
+	//		{
+	//			if (event.key.code == sf::Keyboard::B)
+	//			{
+	//				angle++;
+	//			}
+	//		}
+	//	}
+	//	auto x = 800;
+	//	auto y = 400;
+	//	auto w = 300;
+	//	auto h = 300;
+	//	float centerX = x + abs(x - (w + x)) / 2;
+	//	float centerY = y + abs(y - (h + y)) / 2;
+	//	shape2.setPosition(centerX, centerY);
+	//	float z = angle * 3.141592653589793 / 180.0;
+	//	//X = x0 + (x - x0) * cos(a) - (y - y0) * sin(a);
+	//	//Y = y0 + (y - y0) * cos(a) + (x - x0) * sin(a);
+	//	//sf::Vertex line[] =
+	//	//{
+	//	//	sf::Vertex(sf::Vector2f(centerX + (x - centerX) * cos(z) - (y - centerY)*sin(z) , centerY + (y - centerY) * cos(z) + (x - centerX) * sin(z))),//x,y
+	//	//	sf::Vertex(sf::Vector2f(centerX + ((x + w) - centerX) * cos(z) - (y - centerY) * sin(z) , centerY + (y - centerY) * cos(z) + ((x + w) - centerX) * sin(z))),//w,y
+	//	//	sf::Vertex(sf::Vector2f(centerX + ((x + w) - centerX) * cos(z) - ((y + h) - centerY) * sin(z) , centerY + ((y + h) - centerY) * cos(z) + ((x + w) - centerX) * sin(z))),//w,h
+	//	//	sf::Vertex(sf::Vector2f(centerX + (x - centerX) * cos(z) - ((y + h) - centerY)*sin(z) ,  centerY + ((y + h) - centerY) * cos(z) + (x - centerX) * sin(z))),//x,h
+	//	//	sf::Vertex(sf::Vector2f(centerX + (x - centerX) * cos(z) - (y - centerY) * sin(z) , centerY + (y - centerY) * cos(z) + (x - centerX) * sin(z)))//x,y
+	//	//};
+	//	//shape.setPosition(sf::Vector2f(centerX + (x - centerX) * cos(z) - (y - centerY)*sin(z), centerY + (y - centerY)*cos(z) + (x - centerX)*sin(z)));
+	//	window.clear();
+	//	//window.draw(line, 5, sf::LinesStrip);
+	//	window.draw(rect);
+	//	window.display();
+	//}
+
 	return 0;
 }
 
@@ -113,15 +162,7 @@ int main()
 		{
 			if (event.type == sf::Event::Closed)
 				window.close();
-			if (event.type == sf::Event::KeyPressed)
-			{
-				if (event.key.code == sf::Keyboard::B)
-				{
-					auto z = Rectangle::GetIntersectionDepth(rect1, rect2);
-					rect1.x += z.x;
-					rect1.y += z.y;
-					rectangle1.move(z.x, z.y);
-				}
+
 				if (event.key.code == sf::Keyboard::W)
 				{
 					rect1.x += 0;

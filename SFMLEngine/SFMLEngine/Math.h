@@ -1,3 +1,6 @@
+#pragma once
+#ifndef MATH
+#define MATH
 #include <iostream>
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
@@ -62,11 +65,12 @@ namespace Engine {
 		bool Contains(int x, int y) const;
 
 		sf::IntRect getSfmlRect_i();
-		sf::FloatRect getSfmlRect_f();
+		sf::FloatRect *getSfmlRect_f();
 		static Rectangle fromSfmlRect(sf::IntRect);
 
 		static Rectangle Empty();
 
+		Rectangle getIntersectionRect(const Rectangle& rect);
 		static Vector2D GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB);
 		static Vector2D GetBottomCenter(const Rectangle& rect);
 		static Vector2D GetCenter(const Rectangle& rect);
@@ -79,6 +83,7 @@ namespace Engine {
 		bool operator!= (const Rectangle& r2) const;
 
 	public:
-		int x, y, w, h;
+		float x, y, w, h;
 	};
 }
+#endif

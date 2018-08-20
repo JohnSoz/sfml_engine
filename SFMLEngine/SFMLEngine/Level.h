@@ -1,7 +1,6 @@
 #pragma once
 #ifndef LEVEL_H
 #define LEVEL_H
-
 #include <string>
 #include <vector>
 #include <map>
@@ -11,6 +10,7 @@
 #include "TinyXML/tinyxml.h"
 #include <Windows.h>
 #include <stdlib.h>
+
 namespace Engine {
 
 	struct ObjectLevel

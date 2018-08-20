@@ -229,9 +229,9 @@ sf::IntRect Rectangle::getSfmlRect_i()
 	return sf::IntRect(x, y, w, h);
 }
 
-sf::FloatRect Engine::Rectangle::getSfmlRect_f()
+sf::FloatRect *Engine::Rectangle::getSfmlRect_f()
 {
-	return sf::FloatRect(x, y, w, h);
+	return new sf::FloatRect(x, y, w, h);
 }
 
 Rectangle Rectangle::fromSfmlRect(sf::IntRect rect)
@@ -247,8 +247,42 @@ Rectangle Rectangle::Empty()
 	return Rectangle();
 }
 
+Rectangle Engine::Rectangle::getIntersectionRect(const Rectangle & rect)
+{
+	Rectangle intersection = {};
+	auto r1MinX = std::min(x, x + w);
+	auto r1MaxX = std::max(x, x + w);
+	auto r1MinY = std::min(y, y + h);
+	auto r1MaxY = std::max(y, y + h);
+
+	// Compute the min and max of the second rectangle on both axes
+	auto r2MinX = std::min(rect.x, rect.x + rect.w);
+	auto r2MaxX = std::max(rect.x, rect.x + rect.w);
+	auto r2MinY = std::min(rect.y, rect.y + rect.h);
+	auto r2MaxY = std::max(rect.y, rect.y + rect.h);
+
+	// Compute the intersection boundaries
+	auto interLeft = std::max(r1MinX, r2MinX);
+	auto interTop = std::max(r1MinY, r2MinY);
+	auto interRight = std::min(r1MaxX, r2MaxX);
+	auto interBottom = std::min(r1MaxY, r2MaxY);
+
+	// If the intersection is valid (positive non zero area), then there is an intersection
+	if ((interLeft < interRight) && (interTop < interBottom))
+	{
+		intersection = Rectangle(interLeft, interTop, interRight - interLeft, interBottom - interTop);
+		return intersection;
+	}
+	else
+	{
+		intersection = Rectangle(0, 0, 0, 0);
+		return intersection;
+	}
+}
+
 //-----------------------------------------------------------------------------
 // Задача: Глубина пересечения двух прямоугольников
+///ВАЖНО: (abs(depthX)>abs(depthY))?depthX=0:depthY=0;
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB)
 {
@@ -279,6 +313,7 @@ Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle
 		depthX = 0;
 	else
 		depthY = 0;
+
 	return Vector2D(depthX, depthY);
 }
 
