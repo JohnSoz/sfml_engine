@@ -3,7 +3,16 @@
 #include "Object.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
+#include <array>
+#include <cmath>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <tuple>
+
 #define Debug 1;
+
+using namespace std;
 
 namespace Engine
 {
@@ -97,26 +106,27 @@ namespace Engine
 				return;
 		}
 
-		static void objectStatusInfo(bool *open, std::string name, std::string info)
+		/*static void objectStatusInfo(bool *open, std::string name, Actor& obj)
 		{
 			if (ImGui::Begin("Demo window", open))
 			{
 				ImGui::SetWindowSize(ImVec2(300, 300));
+				
+				auto[isWalk, life, isCollision, energy, velocityx, velocityy] = obj.getDebugData();
+
 				if (ImGui::CollapsingHeader("Game info"))
 				{
 					if (ImGui::TreeNode("Object info"))
 					{
 						ImGui::Text("Entity:");
 						ImGui::Separator();
-						ImGui::Text(info.c_str());
-						static float value = 0.5f;
-						ImGui::Text(" Value = %.3f (<-- right-click here)", value);
+						ImGui::Text("Value %.3f", *energy);
 						if (ImGui::BeginPopupContextItem("item context menu"))
 						{
-							if (ImGui::Selectable("Set to zero")) value = 0.0f;
-							if (ImGui::Selectable("Set to PI")) value = 3.1415f;
-							ImGui::PushItemWidth(-1);
-							ImGui::DragFloat("##Value", &value, 0.1f, 0.0f, 0.0f);
+							if (ImGui::Selectable("Set to zero")) *energy = 0.0f;
+							if (ImGui::Selectable("Set to default")) *energy = 0.005;
+							ImGui::PushItemWidth(200);
+							ImGui::DragFloat("#Value", energy, 0.001f, 0.001f, 0.09f);
 							ImGui::PopItemWidth();
 							ImGui::EndPopup();
 						}
@@ -134,7 +144,7 @@ namespace Engine
 				}
 				ImGui::End();
 			}
-		}
+		}*/
 
 	};
 
@@ -144,7 +154,6 @@ namespace Engine
 		static sf::RenderWindow* window;
 		std::vector<std::pair<Rectangle*, Rectangle*>> entites;
 		std::vector<sf::FloatRect> obj;
-		std::vector<Entity*> entite;
 		bool overlay = true;
 		sf::Clock Pressclock;
 	public:
@@ -153,10 +162,6 @@ namespace Engine
 			window = &w;
 		}
 		void draw();
-		void pushEntites(Entity& e)
-		{
-			entite.push_back(&e);
-		}
 		void pushRectangle(std::pair<Rectangle*, Rectangle*> e)
 		{
 			entites.push_back(e);
@@ -165,11 +170,6 @@ namespace Engine
 		{
 			for (auto i : objs)
 				obj.push_back(i.rect);
-		}
-		void updateDebugInfo(std::string i)
-		{
-			//ImGui::ShowDemoWindow();
-			ImGUI::objectStatusInfo(&overlay, "asd", i);
 		}
 		void handleEvent(sf::Event& event);
 		DebuggingSystem() = default;

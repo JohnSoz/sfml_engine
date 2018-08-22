@@ -4,9 +4,9 @@ using namespace Engine;
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
 void DebuggingSystem::draw()
 {
-	//std::vector<sf::Vertex*> rects1;
-	//std::vector<sf::VertexArray> rects2;
-	for (auto &i : entites)
+
+	int count = 0;
+	for (auto &i : entites) //Оптимизировать
 	{
 		//auto x = i.second->x - 90;
 		//auto y = i.second->y - 120;
@@ -20,29 +20,29 @@ void DebuggingSystem::draw()
 		auto w2 = i.second->w;
 		auto h2 = i.second->h;
 
-		auto mousePos = sf::Mouse::getPosition(*window);
-		sf::Vertex vertices[5] =
-		{
-				sf::Vertex(sf::Vector2f(x, y), sf::Color::Red),
-				sf::Vertex(sf::Vector2f(w2, h2), sf::Color::Blue),
-				sf::Vertex(sf::Vector2f(w, h), sf::Color::Red),
-				sf::Vertex(sf::Vector2f(x2, y2), sf::Color::Blue),
-				sf::Vertex(sf::Vector2f(x, y), sf::Color::Red)
-		};
-		sf::RectangleShape shape;
-		shape.setPosition(w2, h2);
-		shape.setFillColor(sf::Color::White);
-		shape.setSize(sf::Vector2f(10, 10));
-		shape.setOrigin(sf::Vector2f(5, 5));
-		//	if ((mousePos.x >= x && mousePos.x <= w) && (mousePos.y >= y && mousePos.y <= h))
-		//	{
-		ImGUI::SimpleText(sf::Vector2f(x - 102, y - 70), &overlay, "Window" + std::to_string(x + y2));
-		ImGUI::SimpleText(sf::Vector2f(w, h), &overlay, "Window" + std::to_string(y + x2));
-		//	}
-		window->draw(vertices, 5, sf::LinesStrip);
-		window->draw(shape);
-	}
+		sf::VertexArray triangle(sf::LinesStrip, 5);
+		triangle[0] = sf::Vector2f(x, y);
+		triangle[0].color = sf::Color::Red;
 
+		triangle[1].position = sf::Vector2f(w2, h2);
+		triangle[1].color = sf::Color::Blue;
+
+		triangle[2].position = sf::Vector2f(w, h);
+		triangle[2].color = sf::Color::Red;
+
+		triangle[3].position = sf::Vector2f(x2, y2);
+		triangle[3].color = sf::Color::Blue;
+
+		triangle[4].position = sf::Vector2f(x, y);
+		triangle[4].color = sf::Color::Red;
+
+		ImGUI::SimpleText(sf::Vector2f(x - 102, y - 70), &overlay, "D_Window_" + std::to_string(count));
+		count++;
+		ImGUI::SimpleText(sf::Vector2f(w, h), &overlay, "D_Window_" + std::to_string(count));
+		count++;
+
+		window->draw(triangle);
+	}
 	for (auto i : obj)
 	{
 		auto x = i.left;
@@ -66,8 +66,11 @@ void DebuggingSystem::draw()
 		triangle[4].position = sf::Vector2f(x, y);
 		triangle[4].color = sf::Color::Blue;
 
-		ImGUI::SimpleText(sf::Vector2f(x, y), &overlay, "Window" + std::to_string(x + h));
-		ImGUI::SimpleText(sf::Vector2f(x + w, y + h), &overlay, "Window" + std::to_string(y + w));
+		ImGUI::SimpleText(sf::Vector2f(x, y), &overlay, "D_Window_" + std::to_string(count));
+		count++;
+		ImGUI::SimpleText(sf::Vector2f(x + w, y + h), &overlay, "D_Window_" + std::to_string(count));
+		count++;
+
 		window->draw(triangle);
 	}
 }

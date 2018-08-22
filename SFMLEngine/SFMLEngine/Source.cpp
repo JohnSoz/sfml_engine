@@ -13,10 +13,9 @@ int main()
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.00001", sf::Style::Default, settings);
-	#if Debug
+	window.setFramerateLimit(400);
 	ImGui::SFML::Init(window, true);
 	Engine::DebuggingSystem::setWindow(window);
-	#endif
 	Engine::World world(window);
 	world.startGame();
 

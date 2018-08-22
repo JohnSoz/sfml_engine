@@ -66,7 +66,7 @@ namespace Engine {
 			img.loadFromFile(imagepath);
 			img.createMaskFromColor(sf::Color(255, 255, 255));
 			tilesetImage.loadFromImage(img);
-			tilesetImage.setSmooth(true);//сглаживание
+			tilesetImage.setSmooth(true); //сглаживание
 			tileWidth = atoi(element->Attribute("tilewidth"));
 			tileHeight = atoi(element->Attribute("tileheight"));
 			columns = tilesetImage.getSize().x / tileWidth;
@@ -93,6 +93,7 @@ namespace Engine {
 		std::vector<ObjectLevel> GetObjects(std::string name);//выдаем объект в наш уровень
 		std::vector<ObjectLevel> GetAllObjects();//выдаем все объекты в наш уровень
 		void DrawLevel(sf::RenderWindow &window);//рисуем в окно
+		sf::Image* DrawLevel2();
 		sf::Vector2i GetTileSize();//получаем размер тайла
 		sf::IntRect GetRect() const; //Прямоугольник карты
 	private:

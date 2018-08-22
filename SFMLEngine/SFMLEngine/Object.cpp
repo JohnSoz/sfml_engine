@@ -94,19 +94,6 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	}
 }
 
-std::string Engine::Actor::debugInfo()
-{
-	std::string s;
-	s += "\n";
-	s += " isWalk = " + std::to_string(isWalk) + "\n";
-	s += " isCollision = " + std::to_string(isCollision) + "\n";
-	s += " Direction = " + std::to_string(direction) + "\n";
-	s += " velX = " + std::to_string(velocity.x) + " velY = " + std::to_string(velocity.y) + "\n";
-	s += " speed = " + std::to_string(speed) + "\n";
-	s += " Angle = " + std::to_string(CurrAngle) + "\n";
-	return s;
-}
-
 void Engine::Actor::handleEvent(sf::Event & e)
 {
 	if (Keyboard::isKeyPressed(Keyboard::W))
@@ -138,6 +125,18 @@ void Engine::Actor::handleEvent(sf::Event & e)
 		isWalk = false;
 		(speed > 0) ? speed -= friction : speed = 0;
 	}
+
+	if (e.type = sf::Event::KeyPressed)
+	{
+		if (e.key.code == sf::Keyboard::T)
+		{
+			if (Pressclock.getElapsedTime().asMilliseconds() > 500)
+			{
+				showDebugConsole = !showDebugConsole;
+				Pressclock.restart();
+			}
+		}
+	}
 }
 
 void Engine::Actor::checkClashes(Vector2D pos)
@@ -153,7 +152,7 @@ void Engine::Actor::checkClashes(Vector2D pos)
 			{
 				float offset = (abs(Intersection.width) > abs(Intersection.height)) ? Intersection.height : Intersection.width;
 				isCollision = true;
-				std::cout << "W = " << Intersection.width << " H = " << Intersection.height << " Top = " << Intersection.top << " Left = " << Intersection.left << std::endl;
+				//	std::cout << "W = " << Intersection.width << " H = " << Intersection.height << " Top = " << Intersection.top << " Left = " << Intersection.left << std::endl;
 			}
 		}
 		else
@@ -171,9 +170,10 @@ void Engine::Actor::update(float time)
 	case Right: velocity.x = speed; velocity.y = 0;  break;
 	}
 	globalRectangle = Rectangle(position.x - originOffset.x, position.y - originOffset.y, position.x - originOffset.x + localRectangle.w, position.y - originOffset.y + localRectangle.h);
-	RotateToMouse(0.2 * time, *window);
+	RotateToMouse(0.2 * time, * window);
 	position += velocity * time;
 	checkClashes(position);
+	objectStatusInfo<float*, float*, float*>(&life, name, std::make_tuple(&energy, &velocity.x, &velocity.y));
 	sprite.setPosition(position.GetSfmlVector());
 }
 

@@ -1,4 +1,7 @@
 #include "Level.h"
+#include <algorithm>
+#include <windows.h>
+
 using namespace Engine;
 int ObjectLevel::GetPropertyInt(std::string name)
 {
@@ -160,6 +163,11 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 			}
 
 		}
+		std::sort(layer.tiles.begin(), layer.tiles.end(),
+			[](const sf::Sprite& spr1, const sf::Sprite& spr2)
+		{
+			return ((spr1.getPosition().x + spr1.getPosition().y) < (spr2.getPosition().y + spr2.getPosition().x));
+		});
 
 		layers.push_back(layer);
 
@@ -382,5 +390,26 @@ void Level::DrawLevel(sf::RenderWindow &window)
 {
 	for (int layer = 0; layer < layers.size(); layer++)
 		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
+		{
 			window.draw(layers[layer].tiles[tile]);
+			//	Sleep(10);
+			//	window.display();
+		}
+}
+
+sf::Image* Level::DrawLevel2()
+{
+	sf::RenderTexture *t = new sf::RenderTexture;
+	t->create(1920, 1080);
+	t->clear();
+	for (int layer = 0; layer < layers.size(); layer++)
+		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
+		{
+			t->draw(layers[layer].tiles[tile]);
+		}
+	t->display();
+	sf::Texture texture = t->getTexture();
+	auto z = new sf::Image(texture.copyToImage());
+	delete t;
+	return z;
 }

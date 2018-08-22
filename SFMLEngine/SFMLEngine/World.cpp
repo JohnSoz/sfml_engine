@@ -1,6 +1,7 @@
 #include "World.h"
 using namespace Engine;
 float World::time = 0;
+
 template<class Obj>
 Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 {
@@ -47,15 +48,13 @@ void Engine::World::update()
 		sf::Event event;
 		handleEvent(event);
 		objHandler.GetObjects<Actor>("Test").handleEvent(event);
+		ImGui::SFML::Update(*window, deltaClock.restart());
 		objHandler.UpdateObjects(time);
-#if Debug 
 		if (ShowOverlay)
 		{
-			ImGui::SFML::Update(*window, deltaClock.restart());
+			//	ImGui::SFML::Update(*window, deltaClock.restart());
 			ImGUI::SimpleOverlay(&ShowOverlay);
-			debug.updateDebugInfo(objHandler.GetObjects<Actor>("Test").debugInfo());
 		}
-#endif
 		draw();
 	}
 }
@@ -64,28 +63,25 @@ void Engine::World::handleEvent(sf::Event & event)
 {
 	while (window->pollEvent(event))
 	{
-		if (event.type == sf::Event::Closed) 
+		if (event.type == sf::Event::Closed)
 		{
 			window->close();
 			break;
 		}
-#if Debug
 		ImGui::SFML::ProcessEvent(event);
-		debug.handleEvent(event);
-#endif
+	//	debug.handleEvent(event);
 	}
 }
 
 void Engine::World::draw()
 {
 	window->clear(sf::Color::White);
-	level.DrawLevel(*window);
+	//level.DrawLevel(*window);
+	//sf::Sprite sprite(level.DrawLevel2());
+	window->draw(LevelSprite);
 	objHandler.RenderObjects(*window);
-#if Debug 
 	debug.draw();
-	if (ShowOverlay)
-		ImGui::SFML::Render(*window);
-#endif
+	ImGui::SFML::Render(*window);
 	window->display();
 }
 
@@ -94,11 +90,13 @@ void Engine::World::init()
 	view.reset(sf::FloatRect(0, 0, 1920, 1080));
 	window->setView(view);
 	level.LoadFromFile("Data/Level/map5.tmx", 2);
-#if Debug
+	LevelTexture.loadFromImage(*level.DrawLevel2());
+	LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
-#endif
+
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
+
 	pushEntity(new Engine::Actor(i, Vector2D(100, 120), Engine::Rectangle(45, 45, 200, 140), "Test", *window, level));
 }
 

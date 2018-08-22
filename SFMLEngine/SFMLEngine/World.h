@@ -50,6 +50,8 @@ namespace Engine
 		static float time;
 		sf::Clock mainClock;
 		sf::RenderWindow* window;
+		sf::Sprite LevelSprite;
+		sf::Texture LevelTexture;
 		ObjectHandler objHandler;
 		appState state;
 		Level level;
@@ -66,7 +68,6 @@ namespace Engine
 		{
 #if Debug
 			debug.pushRectangle(e->getDebugRect());
-			debug.pushEntites(*e);
 #endif;
 			objHandler.PushObject(e);
 		}
