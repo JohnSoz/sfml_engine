@@ -53,6 +53,7 @@ void Engine::World::update()
 		if (ShowOverlay)
 		{
 			//	ImGui::SFML::Update(*window, deltaClock.restart());
+			//ImGui::ShowDemoWindow();
 			ImGUI::SimpleOverlay(&ShowOverlay);
 		}
 		draw();
@@ -69,7 +70,7 @@ void Engine::World::handleEvent(sf::Event & event)
 			break;
 		}
 		ImGui::SFML::ProcessEvent(event);
-	//	debug.handleEvent(event);
+		debug.handleEvent(event);
 	}
 }
 
@@ -93,7 +94,11 @@ void Engine::World::init()
 	LevelTexture.loadFromImage(*level.DrawLevel2());
 	LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
-
+	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch",ImVec4(0,255,0,255), ImGUI::logType::info));
+	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImVec4(0, 255, 0, 255), ImGUI::logType::error));
+	DebuggingSystem::log->addLog(ImGUI::Log("Init", ImVec4(255, 0, 0, 255), ImGUI::logType::error));
+	DebuggingSystem::log->addLog(ImGUI::Log("Exit", ImVec4(200, 0, 155, 255), ImGUI::logType::fatal));
+	//DebuggingSystem::log->AddLog("Init");
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
 

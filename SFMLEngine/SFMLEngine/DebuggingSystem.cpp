@@ -2,6 +2,8 @@
 
 using namespace Engine;
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
+ImGUI::AppLog* Engine::DebuggingSystem::log = new ImGUI::AppLog;
+
 void DebuggingSystem::draw()
 {
 
@@ -73,6 +75,7 @@ void DebuggingSystem::draw()
 
 		window->draw(triangle);
 	}
+	log->Draw("Hi", &LogConsole);
 }
 
 void Engine::DebuggingSystem::handleEvent(sf::Event& event)
@@ -84,6 +87,14 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 			if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 			{
 				overlay = !overlay;
+				Pressclock.restart();
+			}
+		}
+		if (event.key.code == sf::Keyboard::Tilde)
+		{
+			if (Pressclock.getElapsedTime().asMilliseconds() > 600)
+			{
+				LogConsole = !LogConsole;
 				Pressclock.restart();
 			}
 		}

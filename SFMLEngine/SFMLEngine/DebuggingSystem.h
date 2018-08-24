@@ -9,6 +9,8 @@
 #include <vector>
 #include <algorithm>
 #include <tuple>
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/date_time/posix_time/posix_time_io.hpp>
 
 #define Debug 1;
 
@@ -105,13 +107,175 @@ namespace Engine
 			else
 				return;
 		}
+		enum logType {
+			error = 1,
+			info,
+			fatal,
+			system
+		};
 
+		struct Log
+		{
+			Log(std::string s, ImVec4 c, logType t)
+			{
+				type = t;
+				color = c;
+				boost::posix_time::ptime utcCur = boost::posix_time::second_clock::local_time();
+				std::string l = "[sec:" + std::to_string(utcCur.time_of_day().seconds());
+				switch (t)
+				{
+				case Engine::ImGUI::error:
+					l += "type:error]: ";
+					break;
+				case Engine::ImGUI::info:
+					l += "type:info]: ";
+					break;
+				case Engine::ImGUI::fatal:
+					l += "type:fatal]: ";
+					break;
+				case Engine::ImGUI::system:
+					l += "type:system]: ";
+					break;
+				}
+				l += s;
+				l += " \n";
+				text = l;
+			}
+
+			std::string              text;
+			ImVec4                   color;
+			logType                  type;
+		};
+
+		struct AppLog
+		{
+			ImVector<int>            LineOffsets;        // Index to lines offset
+			bool                     ScrollToBottom;
+			std::vector<Log>         Buffer;
+
+			void Clear() { Buffer.clear(); Buffer.shrink_to_fit(); }
+
+			void addLog(Log log)
+			{
+				Buffer.push_back(log);
+			}
+
+			void Draw(const char* title, bool *p_open)
+			{
+				if (*p_open)
+				{
+					//ImVec2 window_pos = ImVec2(0, 0);
+					ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
+					ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.2));
+					ImGui::SetNextWindowBgAlpha(0.8f);
+					ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+					if (ImGui::Button("Clear")) Clear();
+					ImGui::SameLine();
+					bool copy = ImGui::Button("Copy");
+					ImGui::SameLine();
+					static bool find = false;
+					ImGui::Checkbox("Find By Type", &find);
+
+					const char* items[] = { "all","error", "info", "fatal", "system" };
+					static const char* item_current = items[0];
+					ImGui::PushItemWidth(45);
+					if (ImGui::BeginCombo("", item_current, ImGuiComboFlags_NoArrowButton))
+					{
+
+						for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+						{
+							bool is_selected = (item_current == items[n]);
+							if (ImGui::Selectable(items[n], is_selected))
+								item_current = items[n];
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+						ImGui::EndCombo();
+					}
+					ImGui::PopItemWidth();
+					ImGui::SameLine();
+					std::string input;
+					char buff[256] = { 0 };
+					ImGui::PushItemWidth(280);
+					bool value_changed = ImGui::InputText("Filter", buff, IM_ARRAYSIZE(buff));
+					ImGui::PopItemWidth();
+					input = buff;
+					ImGui::Separator();
+
+					ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+					if (copy) ImGui::LogToClipboard();
+
+					if (value_changed)
+					{
+						for (auto item : Buffer)
+						{
+							std::string found = "";
+							std::size_t start_pos = -1;
+							start_pos = item.text.find_first_of(" ");
+							for (int i = 0; i < input.size(); i++)
+							{
+								std::size_t pos_begin = -1;
+
+								pos_begin = item.text.find_first_of(input[i], start_pos);
+								if (pos_begin != -1)
+								{
+									found += item.text.substr(pos_begin, 1);
+								}
+							}
+							if (found == input)
+							{
+								ImGui::TextColored(ImVec4(140, 50, 60, 255), item.text.c_str()); //Test
+							}
+						}
+
+					}
+					else if (find && item_current != "all")
+					{
+						for (auto item : Buffer)
+						{
+							if (item_current == "error")
+							{
+								if (item.type == logType::error)
+									ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+							}
+							else if (item_current == "info")
+							{
+								if (item.type == logType::info)
+									ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+							}
+							else if (item_current == "fatal")
+							{
+								if (item.type == logType::fatal)
+									ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+							}
+							else if (item_current == "system")
+							{
+								if (item.type == logType::system)
+									ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+							}
+
+						}
+					}
+					else
+					{
+						for (auto i : Buffer)
+							ImGui::TextColored(i.color, i.text.c_str()); //Test
+					}
+
+					if (ScrollToBottom)
+						ImGui::SetScrollHere(1.0f);
+					ScrollToBottom = false;
+					ImGui::EndChild();
+					ImGui::End();
+				}
+			}
+		};
 		/*static void objectStatusInfo(bool *open, std::string name, Actor& obj)
 		{
 			if (ImGui::Begin("Demo window", open))
 			{
 				ImGui::SetWindowSize(ImVec2(300, 300));
-				
+
 				auto[isWalk, life, isCollision, energy, velocityx, velocityy] = obj.getDebugData();
 
 				if (ImGui::CollapsingHeader("Game info"))
@@ -155,7 +319,9 @@ namespace Engine
 		std::vector<std::pair<Rectangle*, Rectangle*>> entites;
 		std::vector<sf::FloatRect> obj;
 		bool overlay = true;
+		bool LogConsole = false;
 		sf::Clock Pressclock;
+		static ImGUI::AppLog *log;
 	public:
 		static void setWindow(sf::RenderWindow& w)
 		{
