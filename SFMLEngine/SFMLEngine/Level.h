@@ -78,7 +78,7 @@ namespace Engine {
 
 	};
 
-	struct Layer  //слои
+	struct MapLayer  //слои
 	{
 		float opacity;  //непрозрачность слоя
 		std::vector<sf::Sprite> tiles;  //закидываем в вектор тайлы
@@ -108,7 +108,7 @@ namespace Engine {
 		sf::Rect<float> drawingBounds;//размер части карты которую рисуем
 		sf::Texture tilesetImage;//текстура карты
 		std::vector<ObjectLevel> objects;//массив типа Объекты, который мы создали
-		std::vector<Layer> layers;
+		std::vector<MapLayer> layers;
 	};
 
 }

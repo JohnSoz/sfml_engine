@@ -100,7 +100,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 
 	while (layerElement)
 	{
-		Layer layer;
+		MapLayer layer;
 		if (layerElement->Attribute("opacity") != NULL)
 		{
 			float opacity = strtod(layerElement->Attribute("opacity"), NULL);
@@ -315,7 +315,7 @@ void Engine::Level::ParseLayer(TiXmlElement * layerElement)
 		int firstID = tilesets[i].firstTileID;
 		while (layerElement)
 		{
-			Layer layer;
+			MapLayer layer;
 			if (layerElement->Attribute("opacity") != NULL)
 			{
 				float opacity = strtod(layerElement->Attribute("opacity"), NULL);

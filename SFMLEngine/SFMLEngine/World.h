@@ -1,9 +1,5 @@
 #pragma once
-#include "Object.h"
-#include <SFML/Graphics.hpp>
-#include <vector>
 #include "DebuggingSystem.h"
-#include "Level.h"
 #if Debug 
 #include "imgui.h"
 #include "imgui-sfml.h"
@@ -11,14 +7,6 @@
 
 namespace Engine
 {
-	enum appState
-	{
-		Pause = 0,
-		Run,
-		Stop,
-		Err
-	};
-
 	class ObjectHandler
 	{
 	private:
@@ -47,39 +35,35 @@ namespace Engine
 	class World
 	{
 	private:
-		static float time;
-		sf::Clock mainClock;
-		sf::RenderWindow* window;
+		sf::Clock mainClock, deltaClock;
 		sf::Sprite LevelSprite;
 		sf::Texture LevelTexture;
 		ObjectHandler objHandler;
-		appState state;
 		Level level;
 		sf::View view;
 #if Debug 
 		DebuggingSystem debug;
 		bool ShowOverlay = true;
 #endif
-		void update();
-		void handleEvent(sf::Event& event);
-		void draw();
-		void init();
-		void pushEntity(Entity* e) 
+		void pushEntity(Entity* e)
 		{
 #if Debug
 			debug.pushRectangle(e->getDebugRect());
-#endif;
+#endif
 			objHandler.PushObject(e);
 		}
-	public:
-		World(sf::RenderWindow& w) : window(&w) {};
-		~World() { delete window; };
 
-		void startGame();
+		void handleEvent(sf::Event& event, sf::RenderWindow& window);
+		void draw(sf::RenderWindow& window);
+		void update(sf::RenderWindow& window, float time);
+		void Init(sf::RenderWindow& window);
+
+	public:
+		World() = default;
+		~World() = default;
+
 		ObjectHandler& getObjHendler() { return objHandler; }
-		static float getTime() { return time; }
+		friend class Game;
 	};
 
-#if Debug
-#endif
 }

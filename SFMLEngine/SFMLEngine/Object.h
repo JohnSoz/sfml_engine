@@ -2,8 +2,6 @@
 #include <SFML/Graphics.hpp>
 #include "Math.h"
 #include "Level.h"
-#include <atomic>
-#include <bitset>
 #include <vector>
 #include <array>
 #include "imgui.h"
