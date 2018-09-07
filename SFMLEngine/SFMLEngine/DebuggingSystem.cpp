@@ -9,19 +9,19 @@ void DebuggingSystem::draw()
 {
 
 	int count = 0;
-	for (auto &i : entites) 
+	for (auto &i : entites)
 	{
 		//auto x = i.second->x - 90;
 		//auto y = i.second->y - 120;
-		auto x = i.first->x;
-		auto y = i.first->y;
-		auto w = i.first->w;
-		auto h = i.first->h;
+		auto x = i.first->left;
+		auto y = i.first->top;
+		auto w = i.first->width;
+		auto h = i.first->height;
 
-		auto x2 = i.second->x;
-		auto y2 = i.second->y;
-		auto w2 = i.second->w;
-		auto h2 = i.second->h;
+		auto x2 = i.second->left;
+		auto y2 = i.second->top;
+		auto w2 = i.second->width;
+		auto h2 = i.second->height;
 
 		sf::VertexArray triangle(sf::LinesStrip, 5);
 		triangle[0] = sf::Vector2f(x, y);
@@ -81,23 +81,20 @@ void DebuggingSystem::draw()
 
 void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 {
-	if (event.type = sf::Event::KeyPressed)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
 	{
-		if (event.key.code == sf::Keyboard::T)
+		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
-			if (Pressclock.getElapsedTime().asMilliseconds() > 500)
-			{
-				overlay = !overlay;
-				Pressclock.restart();
-			}
+			overlay = !overlay;
+			Pressclock.restart();
 		}
-		if (event.key.code == sf::Keyboard::Tilde)
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
+	{
+		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
-			if (Pressclock.getElapsedTime().asMilliseconds() > 600)
-			{
-				LogConsole = !LogConsole;
-				Pressclock.restart();
-			}
+			LogConsole = !LogConsole;
+			Pressclock.restart();
 		}
 	}
 }
@@ -257,7 +254,7 @@ void Engine::ImGUI::AppLog::Draw(const char * title, bool * p_open)
 				}
 				if (found == input)
 				{
-					ImGui::TextColored(ImVec4(140, 50, 60, 255), item.text.c_str()); //Test
+					ImGui::TextColored(item.color, item.text.c_str()); //Test
 				}
 			}
 
@@ -269,22 +266,22 @@ void Engine::ImGUI::AppLog::Draw(const char * title, bool * p_open)
 				if (item_current == "error")
 				{
 					if (item.type == logType::error)
-						ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+						ImGui::TextColored(item.color, item.text.c_str());
 				}
 				else if (item_current == "info")
 				{
 					if (item.type == logType::info)
-						ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+						ImGui::TextColored(item.color, item.text.c_str());
 				}
 				else if (item_current == "fatal")
 				{
 					if (item.type == logType::fatal)
-						ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+						ImGui::TextColored(item.color, item.text.c_str());
 				}
 				else if (item_current == "system")
 				{
 					if (item.type == logType::system)
-						ImGui::TextColored(ImVec4(0, 0, 100, 255), item.text.c_str());
+						ImGui::TextColored(item.color, item.text.c_str());
 				}
 
 			}
@@ -303,10 +300,9 @@ void Engine::ImGUI::AppLog::Draw(const char * title, bool * p_open)
 	}
 }
 
-Engine::ImGUI::Log::Log(std::string s, ImVec4 c, logType t)
+Engine::ImGUI::Log::Log(std::string s, logType t)
 {
 	type = t;
-	color = c;
 	//boost::posix_time::ptime utcCur = boost::posix_time::second_clock::local_time();//+ std::to_string(utcCur.time_of_day().seconds());
 	SYSTEMTIME st;
 	GetLocalTime(&st);
@@ -314,15 +310,19 @@ Engine::ImGUI::Log::Log(std::string s, ImVec4 c, logType t)
 	switch (t)
 	{
 	case Engine::ImGUI::error:
+		color = ImVec4(1, 0.35, 0, 1);
 		l += "type:error]: ";
 		break;
 	case Engine::ImGUI::info:
+		color = ImVec4(0, 1, 0.3, 1);
 		l += "type:info]: ";
 		break;
 	case Engine::ImGUI::fatal:
+		color = ImVec4(1, 0, 0, 1);
 		l += "type:fatal]: ";
 		break;
 	case Engine::ImGUI::system:
+		color = ImVec4(1, 0, 0.8, 1);
 		l += "type:system]: ";
 		break;
 	}

@@ -35,36 +35,32 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 	}
 }
 
-
-void Engine::World::update(sf::RenderWindow & window, float time)
+void Engine::ObjectHandler::refresh()
 {
-	sf::Event event;
-	handleEvent(event, window);
+	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray), [](const Entity *entity)
+	{
+		return !entity->isActive();
+	}));
+}
+
+
+void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& event)
+{
 	objHandler.GetObjects<Actor>("Test").handleEvent(event);
 	ImGui::SFML::Update(window, deltaClock.restart());
 	objHandler.UpdateObjects(time);
 	if (ShowOverlay)
 	{
-		//ImGui::SFML::Update(*window, deltaClock.restart());
-		//ImGui::ShowDemoWindow();
 		ImGUI::SimpleOverlay(&ShowOverlay);
 	}
 	draw(window);
 }
 
 
-void Engine::World::handleEvent(sf::Event & event, sf::RenderWindow & window)
+void Engine::World::handleEvent(sf::Event & event)
 {
-	while (window.pollEvent(event))
-	{
-		if (event.type == sf::Event::Closed)
-		{
-			window.close();
-			break;
-		}
-		ImGui::SFML::ProcessEvent(event);
-		debug.handleEvent(event);
-	}
+	ImGui::SFML::ProcessEvent(event);
+	debug.handleEvent(event);
 }
 
 
@@ -89,14 +85,14 @@ void Engine::World::Init(sf::RenderWindow & window)
 	LevelTexture.loadFromImage(*level.DrawLevel2());
 	LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
+
 	///TEST
-	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImVec4(0, 255, 0, 255), ImGUI::logType::info));
-	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImVec4(0, 255, 0, 255), ImGUI::logType::error));
-	DebuggingSystem::log->addLog(ImGUI::Log("Init", ImVec4(255, 0, 0, 255), ImGUI::logType::error));
-	DebuggingSystem::log->addLog(ImGUI::Log("Exit", ImVec4(200, 0, 155, 255), ImGUI::logType::fatal));
+	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImGUI::logType::info));
+	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImGUI::logType::error));
+	DebuggingSystem::log->addLog(ImGUI::Log("Init",   ImGUI::logType::system));
+	DebuggingSystem::log->addLog(ImGUI::Log("Exit",   ImGUI::logType::fatal));
 
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-
-	pushEntity(new Engine::Actor(i, Vector2D(100, 120), Engine::Rectangle(45, 45, 200, 140), "Test", window, level));
+	pushEntity(new Engine::Actor(i, Vector2D(100, 120), sf::IntRect(38, 39, 209, 154), "Test", window, level));
 }

@@ -10,37 +10,32 @@ namespace Engine
 	class ObjectHandler
 	{
 	private:
-		std::vector<Entity*> ObjectsArray;
+		std::vector<Entity*>           ObjectsArray;
 		std::vector<Entity*>::iterator iter;
 	public:
-		ObjectHandler() = default;
-		~ObjectHandler() = default;
 #if Debug
 		DebuggingSystem debug;
 #endif
+		ObjectHandler()  = default;
+		~ObjectHandler() = default;
+
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
 		void PushObject(Entity* obj);
 		void UpdateObjects(float time);
 		void RenderObjects(sf::RenderWindow &WINDOW);
-		void refresh()
-		{
-			ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray), [](const Entity *entity)
-			{
-				return !entity->isActive();
-			}));
-		}
+		void refresh();
 	};
 
 	class World
 	{
 	private:
-		sf::Clock mainClock, deltaClock;
-		sf::Sprite LevelSprite;
-		sf::Texture LevelTexture;
+		sf::Clock     mainClock, deltaClock;
+		sf::Sprite    LevelSprite;
+		sf::Texture   LevelTexture;
 		ObjectHandler objHandler;
-		Level level;
-		sf::View view;
+		Level         level;
+		sf::View      view;
 #if Debug 
 		DebuggingSystem debug;
 		bool ShowOverlay = true;
@@ -53,9 +48,9 @@ namespace Engine
 			objHandler.PushObject(e);
 		}
 
-		void handleEvent(sf::Event& event, sf::RenderWindow& window);
+		void handleEvent(sf::Event& event);
 		void draw(sf::RenderWindow& window);
-		void update(sf::RenderWindow& window, float time);
+		void update(sf::RenderWindow& window, float time, sf::Event& event);
 		void Init(sf::RenderWindow& window);
 
 	public:

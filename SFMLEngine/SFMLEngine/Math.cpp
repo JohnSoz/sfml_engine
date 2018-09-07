@@ -234,7 +234,7 @@ sf::FloatRect *Engine::Rectangle::getSfmlRect_f()
 	return new sf::FloatRect(x, y, w, h);
 }
 
-Rectangle Rectangle::fromSfmlRect(sf::IntRect rect)
+Rectangle Rectangle::fromSfmlRect(sf::FloatRect rect)
 {
 	return Rectangle(rect.left, rect.top, rect.width, rect.height);
 }

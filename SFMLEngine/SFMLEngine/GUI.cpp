@@ -21,8 +21,9 @@ void Engine::Layer::deleteWidjet(std::string w_name)
 }
 
 renderPriority Engine::Layer::getRenderPriority()
-
-	{ return render; }
+{
+	return render;
+}
 
 void Engine::Layer::setRenderPriority(renderPriority r)
 {
@@ -62,6 +63,23 @@ void Engine::GUI::handleEvent(sf::Event & e)
 	}
 }
 
+void Engine::GUI::update()
+{
+	while (showGui)
+	{
+		sf::Event event;
+		while (window->pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window->close();
+			handleEvent(event);
+		}
+		window->clear(sf::Color::Red);
+		draw();
+		window->display();
+	}
+}
+
 void Engine::GUI::draw()
 {
 	std::sort(layers.begin(), layers.end(), [](Layer* l, Layer* l2) {return (l->getRenderPriority() < l2->getRenderPriority()); });
@@ -81,13 +99,13 @@ void Engine::GUI::addLayer(std::string name, sf::RenderWindow & target, renderPr
 	layers.push_back(new Layer(name, target, pathToTheme, p));
 }
 
-tgui::Button::Ptr Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE, func f)
+tgui::Button::Ptr Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f)
 {
 	auto Button = tgui::Button::create();
 	Button->setPosition(POS);
 	Button->setText(TEXT);
 	if (f)
-		Button->connect("press", f);
+		Button->connect("Pressed", f);
 	Button->setSize(SIZE);
 	return Button;
 }
@@ -96,6 +114,7 @@ tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair
 {
 	auto textbox = tgui::TextBox::create();
 	textbox->setSize(SIZE);
+	textbox->disable();
 	textbox->setPosition(pos.first, pos.second);
 	textbox->addText(TEXT);
 	return textbox;

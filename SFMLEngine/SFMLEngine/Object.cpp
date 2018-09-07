@@ -36,18 +36,18 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float rotation = (atan2f(v, a)) * 180 / 3.14159265;
 	CurrAngle = rotation; //?
 
-	auto x = globalRectangle.x;
-	auto y = globalRectangle.y;
-	auto w = globalRectangle.w;
-	auto h = globalRectangle.h;
+	auto x = globalRectangle.left;
+	auto y = globalRectangle.top;
+	auto w = globalRectangle.width;
+	auto h = globalRectangle.height;
 
 	float centerX = sprite.getPosition().x;
 	float centerY = sprite.getPosition().y;
 
-	auto newX = centerX + (x - centerX) * cos(Radian) - (y - centerY) * sin(Radian);//x,y
-	auto newW = centerX + (w - centerX) * cos(Radian) - (h - centerY) * sin(Radian);//w,h
-	auto newY = centerY + (y - centerY) * cos(Radian) + (x - centerX) * sin(Radian);//y,x
-	auto newH = centerY + (h - centerY) * cos(Radian) + (w - centerX) * sin(Radian);//h,w
+	auto newX = centerX + (x - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //x,y
+	auto newY = centerY + (y - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //y,x
+	auto newW = centerX + (w - centerX) * cos(Radian) - (h - centerY) * sin(Radian); //w,h
+	auto newH = centerY + (h - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //h,w
 
 	auto newX2 = centerX + (x - centerX) * cos(Radian) - (h - centerY) * sin(Radian); //x,h
 	auto newY2 = centerY + (h - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //h,x
@@ -57,15 +57,15 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	//auto newW2 = centerX + ((w - 30) - centerX) * cos(Radian) - ((y + 15) - centerY) * sin(Radian); //w,y
 	//auto newY3 = centerY + ((y + 15) - centerY) * cos(Radian) + ((w - 30) - centerX) * sin(Radian); //y,w
 
-	debugRectangle.x = newX2;//x2
-	debugRectangle.y = newY2;//y2
-	debugRectangle.w = newW2;//w2
-	debugRectangle.h = newY3;//h2
+	debugRectangle.left = newX2;//x2
+	debugRectangle.top = newY2;//y2
+	debugRectangle.width = newW2;//w2
+	debugRectangle.height = newY3;//h2
 
-	globalRectangle.x = newX;
-	globalRectangle.y = newY;
-	globalRectangle.w = newW;
-	globalRectangle.h = newH;
+	globalRectangle.left = newX;
+	globalRectangle.top = newY;
+	globalRectangle.width = newW;
+	globalRectangle.height = newH;
 
 	if (CurrAngle > 180) CurrAngle -= 360;
 	if (CurrAngle < -180) CurrAngle += 360;
@@ -164,20 +164,35 @@ void Engine::Actor::update(float time)
 {
 	switch (direction)
 	{
-	case Up:   velocity.y = -speed; velocity.x = 0;  break;
-	case Down: velocity.y = speed; velocity.x = 0;  break;
-	case Left: velocity.x = -speed; velocity.y = 0;  break;
-	case Right: velocity.x = speed; velocity.y = 0;  break;
+	case Up:    velocity.y = -speed; velocity.x = 0;  break;
+	case Down:  velocity.y =  speed; velocity.x = 0;  break;
+	case Left:  velocity.x = -speed; velocity.y = 0;  break;
+	case Right: velocity.x =  speed; velocity.y = 0;  break;
 	}
-	globalRectangle = Rectangle(position.x - originOffset.x, position.y - originOffset.y, position.x - originOffset.x + localRectangle.w, position.y - originOffset.y + localRectangle.h);
-	RotateToMouse(0.2 * time, * window);
+	localRectangle = sprite.getTextureRect();
+	globalRectangle = sf::FloatRect(position.x - originOffset.x, position.y - originOffset.y, position.x - originOffset.x + localRectangle.width, position.y - originOffset.y + localRectangle.height);
+
+	RotateToMouse(0.2 * time, *window);
 	position += velocity * time;
 	checkClashes(position);
-	objectStatusInfo<float*, float*, float*>(&life, name, std::make_tuple(&energy, &velocity.x, &velocity.y));
+	objectStatusInfo<float*, float*, float*, float*, float*>(&showDebugConsole, name, std::make_tuple(&energy, &velocity.x, &velocity.y, &maxSpeed, &CurrAngle));
+	sprite.setTextureRect(animManager.AnimUpdate(time));
 	sprite.setPosition(position.GetSfmlVector());
 }
 
 void Engine::Actor::getDamage(float dmg)
 {
 	lives -= dmg * ((100 - armor) / 100);
+}
+
+void Engine::IMGUI::ShowHelpMarker(const char * desc)
+{
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
 }

@@ -2,7 +2,7 @@
 #ifndef GUI_H
 #define GUI_H
 #include <TGUI/TGUI.hpp>
-
+#include <iostream>
 using namespace tgui;
 using namespace sf;
 
@@ -19,8 +19,7 @@ namespace Engine
 	};
 
 
-
-	tgui::Button::Ptr makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE = { 50,40 }, func f = nullptr);
+	tgui::Button::Ptr makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE = { 50,40 }, std::function<void()> f = nullptr);
 
 	tgui::TextBox::Ptr makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair_s pos);
 
@@ -37,7 +36,7 @@ namespace Engine
 		renderPriority render;
 
 	public:
-		Layer() { setTheme("themes/Black.txt"); }
+		Layer() { setTheme("Data/GUI/MyUI/MainMenu.txt"); }
 		Layer(std::string n, sf::RenderWindow& target, std::string pathToTheme, renderPriority p = renderPriority::Low)
 		{
 			render = p;
@@ -45,7 +44,7 @@ namespace Engine
 			if (pathToTheme != "")
 				setTheme(pathToTheme);
 			else
-				setTheme("themes/Black.txt");
+				setTheme("Data/GUI/MyUI/MainMenu.txt");
 			name = n;
 		}
 
@@ -71,6 +70,7 @@ namespace Engine
 	protected:
 		std::vector<Layer*> layers;
 		sf::RenderWindow* window;
+		bool showGui = true;
 	public:
 		GUI() = default;
 		GUI(const GUI& g) = default;
@@ -80,6 +80,7 @@ namespace Engine
 		explicit
 			GUI(sf::RenderWindow& w)
 		{
+			window = &w;
 			addLayer("Default", w, renderPriority::Low);
 		}
 
@@ -88,19 +89,23 @@ namespace Engine
 		{
 			window = &w;
 			addLayer("Default", w, renderPriority::Low, pathToTheme);
-			/*	sf::Texture t;
+			/*
+				sf::Texture t;
 				t.loadFromFile("bg.png");
 				sf::Sprite s(t);
-				layers[0]->addWidjet(makeWidjets::makeCanvas(s), "");*/
+				layers[0]->addWidjet(makeWidjets::makeCanvas(s), "");
+			*/
 		}
 
-		void addWidjetToLayer(tgui::Widget::Ptr w, std::string type, std::string nameLayer);
+		void addWidjetToLayer(tgui::Widget::Ptr w, std::string type, std::string nameLayer = "Default");
 
 		void addWidjetToNewLayer(tgui::Widget::Ptr w, std::string type, std::string nameLayer, sf::RenderWindow& window, renderPriority p, std::string pathToTheme = "");
 
 		auto getWidjet(std::string name, int layer) const;
 
 		void handleEvent(sf::Event& e);
+
+		void update();
 
 		void draw();
 
@@ -111,7 +116,7 @@ namespace Engine
 		void addLayer(std::string name, sf::RenderWindow &target, renderPriority p, std::string pathToTheme = "");
 	};
 
-	class Menu : GUI
+	class Menu : public GUI
 	{
 	private:
 
@@ -122,7 +127,17 @@ namespace Engine
 
 		void makeMenu()
 		{
-			addWidjetToLayer(makeButton("Run", sf::Vector2f(500, 500)), "Button", "Default");
+			sf::Texture t;
+			t.loadFromFile("Data/images/bg.png");
+			sf::Sprite spr(t);
+			addWidjetToLayer(makeCanvas(spr), "");
+			addWidjetToLayer(makeButton("Run", sf::Vector2f(200, 48), sf::Vector2f(150, 60),
+				[&]()
+			{
+				showGui = false;
+			}
+			), "Button");
+			addWidjetToLayer(makeTextBox("TestMenu", sf::Vector2f(120, 60), pair_s("50%", "10%")), "TextBox");
 		}
 	};
 }

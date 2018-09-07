@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
-
+#include "timer.h"
 #define Debug 1;
 
 using namespace std;
@@ -27,7 +27,7 @@ namespace Engine
 
 		struct Log
 		{
-			Log(std::string s, ImVec4 c, logType t);
+			Log(std::string s, logType t);
 
 			std::string              text;
 			ImVec4                   color;
@@ -91,19 +91,16 @@ namespace Engine
 	{
 	public:
 		static sf::RenderWindow* window;
-		std::vector<std::pair<Engine::Rectangle*, Engine::Rectangle*>> entites;
+		std::vector<std::pair<sf::FloatRect*, sf::FloatRect*>> entites;
 		std::vector<sf::FloatRect> obj;
 		bool overlay = true;
 		bool LogConsole = false;
 		sf::Clock Pressclock;
 		static ImGUI::AppLog *log;
 	public:
-		static void setWindow(sf::RenderWindow& w)
-		{
-			window = &w;
-		}
+		static void setWindow(sf::RenderWindow& w) { window = &w; }
 		void draw();
-		void pushRectangle(std::pair<Engine::Rectangle*, Engine::Rectangle*> e)
+		void pushRectangle(std::pair<sf::FloatRect*, sf::FloatRect*> e)
 		{
 			entites.push_back(e);
 		}

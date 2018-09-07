@@ -66,7 +66,7 @@ namespace Engine {
 
 		sf::IntRect getSfmlRect_i();
 		sf::FloatRect *getSfmlRect_f();
-		static Rectangle fromSfmlRect(sf::IntRect);
+		static Rectangle fromSfmlRect(sf::FloatRect);
 
 		static Rectangle Empty();
 
