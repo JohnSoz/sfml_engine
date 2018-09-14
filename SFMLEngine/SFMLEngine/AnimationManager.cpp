@@ -7,67 +7,45 @@ using sf::Vector2f;
 using sf::Texture;
 using std::vector;
 
-AnimationManager::AnimationManager()
+void AnimationManager::LoadAnimation_j(string path)
 {
-}
+	AnimationJson* anim = new AnimationJson;
+	json j;
+	j.clear();
+	std::ifstream i(path);
+	i >> j;
+	i.clear();
+	i.close();
+	IntRect rect;
+	Vector2f center;
 
-Animation AnimationManager::LoadAnimation(string path, bool LoadXML)
-{
-	Animation anim;
-	if (!LoadXML)
+	if (j.at("IntRect").is_array())
+		rect = IntRect(j.at("IntRect")[0].get<int>(), j.at("IntRect")[1].get<int>(), j.at("IntRect")[2].get<int>(), j.at("IntRect")[3].get<int>());
+	if (j.at("Center").is_array())
+		center = Vector2f(j.at("Center")[0].get<int>(), j.at("Center")[1].get<int>());
+
+	anim->name = j.at("Name").get<string>();
+	anim->rect = rect;
+	anim->frame = j.at("Frame").get<int>();
+	anim->speed = j.at("Speed").get<float>();
+	anim->scale.x = j.at("Scale").get<float>();
+	anim->scale.y = j.at("Scale").get<float>();
+	anim->Center = center;
+	if (animationList.empty())
 	{
-		json j;
-		j.clear();
-		std::ifstream i(path);
-		i >> j;
-		i.clear();
-		i.close();
-		IntRect rect;
-		Vector2f center;
-
-		if (j.at("IntRect").is_array())
-			rect = IntRect(j.at("IntRect")[0].get<int>(), j.at("IntRect")[1].get<int>(), j.at("IntRect")[2].get<int>(), j.at("IntRect")[3].get<int>());
-		if (j.at("Center").is_array())
-			center = Vector2f(j.at("Center")[0].get<int>(), j.at("Center")[1].get<int>());
-
-		anim.isXMLAnimation = false;
-		anim.AnimationName = j.at("Name").get<string>();
-		anim.rect = rect;
-
-		/*anim.texture.loadFromFile(j["Path"].get<string>());
-		anim.sprite.setTexture(anim.texture);
-		anim.sprite.setTextureRect(rect);
-		anim.sprite.setScale(Vector2f(j.at("Scale").get<float>(), j.at("Scale").get<float>()));*/
-		anim.frame = j.at("Frame").get<int>();
-		anim.speed = j.at("Speed").get<float>();
-		anim.scale.x = j.at("Scale").get<float>();
-		anim.scale.y = j.at("Scale").get<float>();
-		anim.Center = center;
+		animationList.push_back(anim);
+		CurrentAnimation = *animationList.begin();
 	}
 	else
-	{
-		anim.isXMLAnimation = true;
-		anim.frames = loadFromXML(path);
-	}
-	//anim.isXMLAnimation = true;
-	//anim.frames = loadFromXML(j.at("PathToXML").get<string>());
-//	Animation anim2 = CreateAnimation("asd", sf::IntRect(120, 120, 120, 120), "/", 12, 12, sf::Vector2f(12, 12));
-	if (animationList.empty()) 
-	{
-		animationList.push_back(std::pair(anim.AnimationName, anim));
-		CurrentAnimation = animationList.begin()->second;
-	}
-	else
-		animationList.push_back(std::pair(anim.AnimationName, anim));
-	return anim;
+		animationList.push_back(anim);
 }
 
-IntRect AnimationManager::AnimUpdate(float t) 
+IntRect& AnimationManager::AnimUpdate(float t)
 {
-	return CurrentAnimation.tick(t);
+	return CurrentAnimation->tick(t);
 }
 
-vector<IntRect> AnimationManager::loadFromXML(std::string fileName)
+void AnimationManager::LoadAnimation_x(std::string fileName)
 {
 	TiXmlDocument animFile(fileName.c_str());
 
@@ -76,19 +54,18 @@ vector<IntRect> AnimationManager::loadFromXML(std::string fileName)
 	TiXmlElement *head;
 	head = animFile.FirstChildElement("sprites");
 	string img = head->Attribute("image");
-	/*Texture texture;
-
-	texture.loadFromFile("Data/images/" + img);*/
 
 	TiXmlElement *animElement;
 	animElement = head->FirstChildElement("animation");
 
-	string name = animElement->Attribute("title");
-	int delay = atoi(animElement->Attribute("delay"));
+	string Name = animElement->Attribute("title");
+	float delay = atof(animElement->Attribute("delay"));
 
 	vector<IntRect> frames;
 	bool isXMLAnimation = true;
-
+	AnimationXml *anim = new AnimationXml;
+	anim->name = Name;
+	anim->speed = delay;
 	while (animElement)
 	{
 
@@ -106,55 +83,46 @@ vector<IntRect> AnimationManager::loadFromXML(std::string fileName)
 		}
 		animElement = animElement->NextSiblingElement("animation");
 	}
-	return frames;
-}
-
-void AnimationManager::SetSpriteSettings(sf::Sprite & sprite)
-{
-	sprite.setScale(CurrentAnimation.scale);
-	sprite.setTextureRect(CurrentAnimation.rect);
-	sprite.setOrigin(CurrentAnimation.Center);
-	//sprite.setTexture(CurrentAnimation.texture);
+	frames.shrink_to_fit();
+		anim->frameCount = frames.size();
+	anim->frames = std::move(frames);
+	if (animationList.empty())
+	{
+		animationList.push_back(anim);
+		CurrentAnimation = *animationList.begin();
+	}
+	else
+		animationList.push_back(anim);
 }
 
 void AnimationManager::SetCurrAnimation(Animation && anim)
 {
-	currAnim->second = anim;
-	CurrentAnimation = anim;
+	//currAnim = std::forward<Animation>(anim);
+	CurrentAnimation = &anim;
 }
-
-Animation AnimationManager::GetAnimationByName(string Name)
+template<class T>
+T AnimationManager::GetAnimationByName(string Name)
 {
 	for (auto & anim : animationList)
-		if (anim.first == Name)
-			return anim.second;
+		if (anim.name == Name)
+			return anim;
 }
 
-
-AnimationManager::~AnimationManager()
+const std::list<Engine::Animation*>& Engine::AnimationManager::getAnimationList() 
 {
+	return animationList;
 }
 
-
-IntRect Animation::tick(float time)
+IntRect& AnimationJson::tick(float time)
 {
-	if (!isXMLAnimation)
-	{
-		int widht = rect.width;
-		int height = rect.height;
-		int top = rect.top;
-		int left = rect.left;
-		frame += speed * time;
-		if (frame > 2) frame = 0;
-		if (int(frame) >= 1)
-			int z = 5;
-		return IntRect(widht * int(frame), top, widht, height);
-	}
-	else
-	{
-		frame += 0.009 * time;
-		std::cout<<int(frame)<<std::endl;
-		if (frame > 19) frame = 0;
-		return frames[frame];
-	}
+	int widht = rect.width;
+	int height = rect.height;
+	int top = rect.top;
+	int left = rect.left;
+	frame += speed * time;
+	if (frame > 2) frame = 0;
+	if (int(frame) >= 1)
+		int z = 5;
+	IntRect x(widht * int(frame), top, widht, height);
+	return x;
 }

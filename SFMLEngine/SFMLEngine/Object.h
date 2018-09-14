@@ -7,7 +7,8 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "AnimationManager.h"
-
+#include <stdio.h>
+#define SHOW(a) std::cout << #a << ": " << (a) << std::endl
 namespace Engine
 {
 	enum ObjectType
@@ -22,48 +23,49 @@ namespace Engine
 	class Object
 	{
 	protected:
+		ObjectType type;
+		sf::Vector2f position;
+		sf::Texture texture;//?
+		sf::Sprite sprite;//?
 
+		std::string name;
+		bool IsActive;
 	public:
-		Object() = delete;
+		Object() = default;
+		~Object() = default;
+		Object(sf::Vector2f pos, std::string name);
+		Object(sf::Vector2f pos, ObjectType t, std::string name);
+		bool isActive() const { return IsActive; }
+		void destroy() { IsActive = false; }
+		std::string getName() { return name; }
+
+		friend class Debug_Object;
 	};
 
-	class Entity
+	class Entity : public Object
 	{
 	protected:
-		ObjectType  type;
-		Vector2D    position;
-
 		sf::IntRect      localRectangle;
 		sf::FloatRect    globalRectangle;
 		sf::FloatRect    debugRectangle;
-
-		sf::Sprite  sprite;
-		sf::Texture texture;
-		std::string name;
-
 		int         id = 0;
-		bool        active = true;
-		bool        life = true;
 
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
 		Entity(Entity&&) = default;
-		Entity(Vector2D POSITION, std::string NAME);
-		Entity(sf::Image& IMAGE, Vector2D POSITION, std::string NAME);
-		Entity(sf::Image& IMAGE, sf::IntRect r, Vector2D pos, std::string name);
+		Entity(sf::Vector2f POSITION, std::string NAME);
+		Entity(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME);
+		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
 		virtual ~Entity();
 
 
 		virtual void update(float time) = 0;
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
-		void destroy() { active = false; }
-
-		bool isActive() const { return active; }
 
 		sf::IntRect getRect() { return localRectangle; }
-		Vector2D &getPos() { return position; }
-		ObjectType &getType() { return type; }
+		const sf::Vector2f& getPos() { return position; }
+		ObjectType getType() { return type; }
 
 		std::pair<sf::FloatRect*, sf::FloatRect*> getDebugRect() { return std::make_pair(&globalRectangle, &debugRectangle); }
 
@@ -77,21 +79,33 @@ namespace Engine
 
 	class Actor;
 
-	struct IMGUI
+	class Debug
 	{
+	protected:
+		static inline ImVec2 size = {400,400};
 		static void ShowHelpMarker(const char* desc);
-
-		//tuple можно заменить на std::vector<std::pair<string,value>> -- ?
-		template <typename ... T>
-		static void objectStatusInfo(bool *open, std::string name, std::tuple<T...> tup);
+	public:
 	};
 
+	class Debug_Object : public Debug
+	{
+	public:
+		static void objectInfo(bool *open, Object& a);
+		void draw(bool *open, Object& a);
+	};
 
-	class Actor : public Entity, public IMGUI
+	class Debug_Actor : public Debug_Object
+	{
+	public:
+		static void actorInfo(bool *open, Actor& a);
+		void draw(bool *open, Actor& a);
+	};
+
+	class Actor : public Entity, public Debug_Actor
 	{
 	protected:
 		std::vector<ObjectLevel> obj;
-		Vector2D velocity;
+		sf::Vector2f velocity;
 		AnimationManager animManager;
 
 		bool showDebugConsole = false;
@@ -112,10 +126,9 @@ namespace Engine
 
 	public:
 		Actor() = delete;
-		Actor(sf::Image& IMAGE, Vector2D POSITION, sf::IntRect rect, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
+		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, sf::IntRect rect, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
 		{
-			animManager.LoadAnimation("Move.xml", 1);
-			//animManager.SetCurrAnimation(animManager.GetAnimationByName("Move"));
+			animManager.LoadAnimation_x("Move.xml");
 			localRectangle = rect;
 			globalRectangle = sf::FloatRect(position.x, position.y, position.x + rect.width, position.y + rect.top);
 			obj = lvl.GetAllObjects();
@@ -124,66 +137,13 @@ namespace Engine
 			sprite.setTextureRect(localRectangle);
 			window = &w;
 		}
-
 		void handleEvent(sf::Event& e);
-		void checkClashes(Vector2D pos);
+		void checkClashes(sf::Vector2f pos);
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 		void update(float time) override;
 		void getDamage(float dmg);
+
+		friend class Debug_Actor;
 	};
-
-
-
-	template<typename ...T>
-	static inline void IMGUI::objectStatusInfo(bool * open, std::string name, std::tuple<T...> tup)
-	{
-		if (!ImGui::Begin(name.c_str(), open))
-		{
-			ImGui::End();
-			return;
-		}
-		ImGui::SetWindowSize(ImVec2(400, 400));
-		auto[energy, velocityX, velocityY, maxSpeed, CurrAngle] = tup;
-
-		if (ImGui::CollapsingHeader("Game info"))
-		{
-			if (ImGui::TreeNode("Object info"))
-			{
-				ImGui::Text("Entity:");
-				ImGui::SameLine();
-				ShowHelpMarker("HELP MARK");
-				ImGui::Separator();
-				ImGui::Text("energy %.3f", *energy);
-				if (ImGui::BeginPopupContextItem("itemEnergy"))
-				{
-					if (ImGui::Selectable("Set to zero")) *energy = 0.0f;
-					if (ImGui::Selectable("Set to default")) *energy = 0.005;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#energy", energy, 0.001f, 0.001f, 0.09f);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Spacing();
-				ImGui::Text("maxSpeed %.2f", *maxSpeed);
-				if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
-				{
-					if (ImGui::Selectable("Set to zero")) *maxSpeed = 0.0f;
-					if (ImGui::Selectable("Set to default")) *maxSpeed = 0.3;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#maxSpeed", maxSpeed, 0.05f, 0.05f, 1.5f);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Spacing();
-				ImGui::Text("CurrAngle %.2f", *CurrAngle);
-				ShowHelpMarker("immutable value");
-				ImGui::Spacing();
-				ImGui::Text("velocity X = %.3f | Y = %.3f", *velocityX, *velocityY);
-				ShowHelpMarker("immutable value");
-				ImGui::TreePop();
-			}
-		}
-		ImGui::End();
-	}
 }
 

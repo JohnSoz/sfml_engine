@@ -16,6 +16,9 @@ namespace Engine
 	class Game
 	{
 	private:
+		/**
+		 * \brief 
+		 */
 		World*				world;
 		Engine::Menu*		m;
 		sf::RenderWindow*   window;

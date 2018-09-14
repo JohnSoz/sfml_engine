@@ -2,8 +2,10 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "DebuggingSystem.h"
-using namespace std;
 #include <cmath>
+using namespace std;
+
+//#main
 int main()
 {
 	sf::ContextSettings settings;

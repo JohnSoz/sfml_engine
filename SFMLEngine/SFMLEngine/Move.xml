@@ -1,6 +1,6 @@
 <!DOCTYPE SpriteDecomposer>
 <sprites image="AnimTile.png" transparentColor="">
- <animation title="Move" delay="50">
+ <animation title="Move" delay="0.009">
   <cut w="209" x="38" y="39" h="154" row="1" col="1"/>
   <cut w="209" x="285" y="39" h="154" row="1" col="1"/>
   <cut w="209" x="532" y="39" h="154" row="1" col="1"/>

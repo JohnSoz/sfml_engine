@@ -36,7 +36,7 @@ void Engine::Game::update()
 
 			break;
 		case Engine::Run:
-			world->update(*window, time.getTime(), event);
+			world->update(*window, time.getTime(), event); //call draw and handle event
 			break;
 		case Engine::Pause:
 
