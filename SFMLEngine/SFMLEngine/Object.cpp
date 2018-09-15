@@ -7,6 +7,7 @@ Engine::Entity::Entity(sf::Vector2f POSITION, std::string NAME) : Object(POSITIO
 
 Engine::Entity::Entity(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME) : Object(POSITION, NAME)
 {
+	type = ObjectType::OEntity;
 	texture.loadFromImage(IMAGE);
 	texture.setSmooth(true);
 	sprite.setTexture(texture);
@@ -196,6 +197,8 @@ void Engine::Debug::ShowHelpMarker(const char * desc)
 Engine::Object::Object(sf::Vector2f pos, std::string n)
 {
 	position = pos;
+	IsActive = true;
+	type = ObjectType::OEntity;
 	name = n;
 }
 
@@ -213,88 +216,90 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 	{
 		if (ImGui::Begin(a.getName().c_str(), open, ImGuiWindowFlags_NoSavedSettings))
 		{
-			ImGui::BeginChild(a.getName().c_str());
-			ImGui::SetWindowSize(size);
-
-			float *energy = &a.energy;
-			float *friction = &a.friction;
-			float maxSpeed = a.maxSpeed;
-			float CurrAngle = a.CurrAngle;
-			sf::Vector2f *position = &a.position;
-			sf::Vector2f velocity = a.velocity;
-
-			if (ImGui::CollapsingHeader("Actor info"))
+			if (ImGui::BeginChild(a.getName().c_str()))
 			{
-				if (ImGui::CollapsingHeader("Test2 info"))
+				ImGui::SetWindowSize(size);
+
+				float *energy = &a.energy;
+				float *friction = &a.friction;
+				float maxSpeed = a.maxSpeed;
+				float CurrAngle = a.CurrAngle;
+				sf::Vector2f *position = &a.position;
+				sf::Vector2f velocity = a.velocity;
+
+				ImGui::NextColumn();
+				if (ImGui::TreeNode("Actor info"))
 				{
-				}
-				ImGui::Separator();
-				ImGui::Text("energy: %.3f", *energy);
-				if (ImGui::BeginPopupContextItem("itemEnergy"))
-				{
-					if (ImGui::Selectable("Set to zero")) *energy = 0.0f;
-					if (ImGui::Selectable("Set to default")) *energy = 0.005;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#energy", energy, 0.001f, 0.001f, 0.09f);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Separator();
-				ImGui::Text("friction: %.3f", *energy);
-				if (ImGui::BeginPopupContextItem("itemFriction"))
-				{
-					if (ImGui::Selectable("Set to zero")) *friction = 0.0f;
-					if (ImGui::Selectable("Set to default")) *friction = 0.005;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#energy", friction, 0.001f, 0.001f, 0.09f);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Spacing();
-				ImGui::Text("position X = %.1f | Y = %.1f", position->x, position->y);
-				if (ImGui::BeginPopupContextItem("itemPosition"))
-				{
-					if (ImGui::Selectable("Set to zeroX")) position->x = 0.0f;
-					if (ImGui::Selectable("Set to zeroY"))  position->y = 0.0f;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#positionX", &position->x, 2, 0, 1000);
-					ImGui::PopItemWidth();
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#positionY", &position->y, 2, 0, 1000);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Spacing();
-				ImGui::Text("maxSpeed: %.2f", maxSpeed);
-				if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
-				{
-					if (ImGui::Selectable("Set to zero")) maxSpeed = 0.0f;
-					if (ImGui::Selectable("Set to default")) maxSpeed = 0.3;
-					ImGui::PushItemWidth(200);
-					ImGui::DragFloat("#maxSpeed", &maxSpeed, 0.05f, 0.05f, 1.5f);
-					ImGui::PopItemWidth();
-					ImGui::EndPopup();
-				}
-				ImGui::Spacing();
-				ImGui::Text("CurrAngle: %.2f", CurrAngle);
-				ShowHelpMarker("immutable value");
-				ImGui::Spacing();
-				ImGui::Text("velocity X = %.3f | Y = %.3f", velocity.x, velocity.y);
-				ShowHelpMarker("immutable value");
-				if (ImGui::TreeNode("Current animation Info"))
-				{
-					auto animation = *a.animManager.GetCurrAnimation<AnimationXml>();
-					ImGui::Text(("Animation name: " + animation.name).c_str());
 					ImGui::Separator();
-					ImGui::Text("Current frame: %.1f", animation.frame);
+					ImGui::Text("energy: %.3f", *energy);
+					if (ImGui::BeginPopupContextItem("itemEnergy"))
+					{
+						if (ImGui::Selectable("Set to zero")) *energy = 0.0f;
+						if (ImGui::Selectable("Set to default")) *energy = 0.005;
+						ImGui::PushItemWidth(200);
+						ImGui::DragFloat("#energy", energy, 0.001f, 0.001f, 0.09f);
+						ImGui::PopItemWidth();
+						ImGui::EndPopup();
+					}
 					ImGui::Separator();
-					ImGui::Text("Speed: %.3f", animation.speed);
-					ImGui::Separator();
-					ImGui::Text("Frames size(): %.1f", animation.frameCount);
+					ImGui::Text("friction: %.3f", *energy);
+					if (ImGui::BeginPopupContextItem("itemFriction"))
+					{
+						if (ImGui::Selectable("Set to zero")) *friction = 0.0f;
+						if (ImGui::Selectable("Set to default")) *friction = 0.005;
+						ImGui::PushItemWidth(200);
+						ImGui::DragFloat("#energy", friction, 0.001f, 0.001f, 0.09f);
+						ImGui::PopItemWidth();
+						ImGui::EndPopup();
+					}
+					ImGui::Spacing();
+					ImGui::Text("position X = %.1f | Y = %.1f", position->x, position->y);
+					if (ImGui::BeginPopupContextItem("itemPosition"))
+					{
+						if (ImGui::Selectable("Set to zeroX")) position->x = 0.0f;
+						if (ImGui::Selectable("Set to zeroY"))  position->y = 0.0f;
+						ImGui::PushItemWidth(200);
+						ImGui::DragFloat("#positionX", &position->x, 2, 0, 1000);
+						ImGui::PopItemWidth();
+						ImGui::PushItemWidth(200);
+						ImGui::DragFloat("#positionY", &position->y, 2, 0, 1000);
+						ImGui::PopItemWidth();
+						ImGui::EndPopup();
+					}
+					ImGui::Spacing();
+					ImGui::Text("maxSpeed: %.2f", maxSpeed);
+					if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
+					{
+						if (ImGui::Selectable("Set to zero")) maxSpeed = 0.0f;
+						if (ImGui::Selectable("Set to default")) maxSpeed = 0.3;
+						ImGui::PushItemWidth(200);
+						ImGui::DragFloat("#maxSpeed", &maxSpeed, 0.05f, 0.05f, 1.5f);
+						ImGui::PopItemWidth();
+						ImGui::EndPopup();
+					}
+					ImGui::Spacing();
+					ImGui::Text("CurrAngle: %.2f", CurrAngle);
+					ShowHelpMarker("immutable value");
+					ImGui::Spacing();
+					ImGui::Text("velocity X = %.3f | Y = %.3f", velocity.x, velocity.y);
+					ShowHelpMarker("immutable value");
+					ImGui::NextColumn();
+					if (ImGui::TreeNode("Current animation Info"))
+					{
+						auto animation = *a.animManager.GetCurrAnimation<AnimationXml>();
+						ImGui::Text(("Animation name: " + animation.name).c_str());
+						ImGui::Separator();
+						ImGui::Text("Current frame: %.1f", animation.frame);
+						ImGui::Separator();
+						ImGui::Text("Speed: %.3f", animation.speed);
+						ImGui::Separator();
+						ImGui::Text("Frames size(): %.1f", animation.frameCount);
+						ImGui::TreePop();
+					}
 					ImGui::TreePop();
 				}
+				ImGui::EndChild();
 			}
-			ImGui::EndChild();
 			ImGui::End();
 		}
 	}
@@ -313,28 +318,29 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 			sf::Vector2f *position = &a.position;
 			auto ObjectType = a.type;
 
-			if (ImGui::CollapsingHeader("Object info"))
+			if (ImGui::TreeNode("Object info"))
 			{
-					ImGui::Separator();
-					ImGui::Spacing();
-					ImGui::Text("isActive: %.1f", Active);
-					ShowHelpMarker("1 = True; 0 = False");
-					ImGui::Spacing();
-					ImGui::Text("objectType: %.1f", ObjectType);
-					ShowHelpMarker("OEntity = 1, OPawn, OActor");
-					ImGui::Text("position X = %.1f | Y = %.1f", position->x, position->y);
-					if (ImGui::BeginPopupContextItem("itemPosition"))
-					{
-						if (ImGui::Selectable("Set to zeroX")) position->x = 0.0f;
-						if (ImGui::Selectable("Set to zeroY"))  position->y = 0.0f;
-						ImGui::PushItemWidth(200);
-						ImGui::DragFloat("#positionX", &position->x, 2, 0, 1000);
-						ImGui::PopItemWidth();
-						ImGui::PushItemWidth(200);
-						ImGui::DragFloat("#positionY", &position->y, 2, 0, 1000);
-						ImGui::PopItemWidth();
-						ImGui::EndPopup();
-					}
+				ImGui::Separator();
+				ImGui::Spacing();
+				ImGui::Text("isActive: %i", (int)Active);
+				ShowHelpMarker("1 = True; 0 = False");
+				ImGui::Spacing();
+				ImGui::Text("objectType: %i", (int)ObjectType);
+				ShowHelpMarker("None = 0, OEntity, OPawn, OActor");
+				ImGui::Text("position X = %.2f | Y = %.2f", position->x, position->y);
+				if (ImGui::BeginPopupContextItem("itemPosition"))
+				{
+					if (ImGui::Selectable("Set to zeroX")) position->x = 0.0f;
+					if (ImGui::Selectable("Set to zeroY"))  position->y = 0.0f;
+					ImGui::PushItemWidth(200);
+					ImGui::DragFloat("#positionX", &position->x, 2, 0, 1000);
+					ImGui::PopItemWidth();
+					ImGui::PushItemWidth(200);
+					ImGui::DragFloat("#positionY", &position->y, 2, 0, 1000);
+					ImGui::PopItemWidth();
+					ImGui::EndPopup();
+				}
+				ImGui::TreePop();
 			}
 			ImGui::End();
 		}

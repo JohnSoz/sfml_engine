@@ -36,11 +36,14 @@ Engine:
 	   +Сделать для фиксированну позицию и transparency = 40%
 	   +Выводить логи при помощи imGui::text, дабы можно было задавать тексту цвет 
        -Оптимизировать отрисовку rectangles' статических объектов
-
+      -Вызывать отрисовку интерфейса в одном месте(Например DebuggingSystem::drawInterface(...)) 
     Game:
      Time:
       ?Стоит запустить update time в отдельном потоке
-      
+    
+    World:
+     -World::draw(sf::renderWindow&) - должен вызывать только window->draw()
+
 	GUI:
     -Сделать возможным вызов GUI::draw без RenderWinow::display && clear
 	Menu:

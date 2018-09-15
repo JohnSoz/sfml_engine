@@ -4,7 +4,6 @@
 #include "DebuggingSystem.h"
 #include <cmath>
 using namespace std;
-
 //#main
 int main()
 {
@@ -21,6 +20,5 @@ int main()
 	Engine::Game g(window);
 	g.startGame();
 	g.update();
-
 	return 0;
 }

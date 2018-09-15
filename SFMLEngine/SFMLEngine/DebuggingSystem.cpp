@@ -1,9 +1,8 @@
 #include "DebuggingSystem.h"
 #include <windows.h>
 using namespace Engine;
-
+#include "LogConsole.h"
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
-ImGUI::AppLog* Engine::DebuggingSystem::log = new ImGUI::AppLog;
 
 void DebuggingSystem::draw()
 {
@@ -76,7 +75,7 @@ void DebuggingSystem::draw()
 
 		window->draw(triangle);
 	}
-	log->Draw("Hi", &LogConsole);
+	Console::AppLog::Draw("LogConsole", &LogConsole);
 }
 
 void Engine::DebuggingSystem::handleEvent(sf::Event& event)
@@ -151,11 +150,11 @@ void Engine::ImGUI::SimpleOverlay(bool * open)
 				ImGui::Text("Player Position: <invalid>");
 			if (ImGui::BeginPopupContextWindow())
 			{
-				if (ImGui::MenuItem("Custom", NULL, corner == -1)) corner = -1;
-				if (ImGui::MenuItem("Top-left", NULL, corner == 0)) corner = 0;
-				if (ImGui::MenuItem("Top-right", NULL, corner == 1)) corner = 1;
-				if (ImGui::MenuItem("Bottom-left", NULL, corner == 2)) corner = 2;
-				if (ImGui::MenuItem("Bottom-right", NULL, corner == 3)) corner = 3;
+				if (ImGui::MenuItem("Custom", nullptr, corner == -1)) corner = -1;
+				if (ImGui::MenuItem("Top-left", nullptr, corner == 0)) corner = 0;
+				if (ImGui::MenuItem("Top-right", nullptr, corner == 1)) corner = 1;
+				if (ImGui::MenuItem("Bottom-left", nullptr, corner == 2)) corner = 2;
+				if (ImGui::MenuItem("Bottom-right", nullptr, corner == 3)) corner = 3;
 				if (*open && ImGui::MenuItem("Close")) *open = false;
 				ImGui::EndPopup();
 			}
@@ -184,149 +183,4 @@ void Engine::ImGUI::SimpleText(sf::Vector2f position, bool * open, std::string n
 	}
 	else
 		return;
-}
-
-void Engine::ImGUI::AppLog::addLog(Log log)
-{
-	Buffer.push_back(log);
-}
-
-void Engine::ImGUI::AppLog::Draw(const char * title, bool * p_open)
-{
-	if (*p_open)
-	{
-		//ImVec2 window_pos = ImVec2(0, 0);
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
-		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.2));
-		ImGui::SetNextWindowBgAlpha(0.8f);
-		ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
-		if (ImGui::Button("Clear")) Clear();
-		ImGui::SameLine();
-		bool copy = ImGui::Button("Copy");
-		ImGui::SameLine();
-		static bool find = false;
-		ImGui::Checkbox("Find By Type", &find);
-
-		static const char* item_current = items[0];
-		ImGui::PushItemWidth(45);
-		if (ImGui::BeginCombo("", item_current, ImGuiComboFlags_NoArrowButton))
-		{
-
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-			{
-				bool is_selected = (item_current == items[n]);
-				if (ImGui::Selectable(items[n], is_selected))
-					item_current = items[n];
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
-			}
-			ImGui::EndCombo();
-		}
-		ImGui::PopItemWidth();
-		ImGui::SameLine();
-		std::string input;
-		char buff[256] = { 0 };
-		ImGui::PushItemWidth(280);
-		bool value_changed = ImGui::InputText("Filter", buff, IM_ARRAYSIZE(buff));
-		ImGui::PopItemWidth();
-		input = buff;
-		ImGui::Separator();
-
-		ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
-		if (copy) ImGui::LogToClipboard();
-
-		if (value_changed)
-		{
-			for (auto item : Buffer)
-			{
-				std::string found = "";
-				std::size_t start_pos = -1;
-				start_pos = item.text.find_first_of(" ");
-				for (int i = 0; i < input.size(); i++)
-				{
-					std::size_t pos_begin = -1;
-
-					pos_begin = item.text.find_first_of(input[i], start_pos);
-					if (pos_begin != -1)
-					{
-						found += item.text.substr(pos_begin, 1);
-					}
-				}
-				if (found == input)
-				{
-					ImGui::TextColored(item.color, item.text.c_str()); //Test
-				}
-			}
-
-		}
-		else if (find && item_current != "all")
-		{
-			for (auto item : Buffer)
-			{
-				if (item_current == "error")
-				{
-					if (item.type == logType::error)
-						ImGui::TextColored(item.color, item.text.c_str());
-				}
-				else if (item_current == "info")
-				{
-					if (item.type == logType::info)
-						ImGui::TextColored(item.color, item.text.c_str());
-				}
-				else if (item_current == "fatal")
-				{
-					if (item.type == logType::fatal)
-						ImGui::TextColored(item.color, item.text.c_str());
-				}
-				else if (item_current == "system")
-				{
-					if (item.type == logType::system)
-						ImGui::TextColored(item.color, item.text.c_str());
-				}
-
-			}
-		}
-		else
-		{
-			for (auto i : Buffer)
-				ImGui::TextColored(i.color, i.text.c_str()); //Test
-		}
-
-		if (ScrollToBottom)
-			ImGui::SetScrollHere(1.0f);
-		ScrollToBottom = false;
-		ImGui::EndChild();
-		ImGui::End();
-	}
-}
-
-Engine::ImGUI::Log::Log(std::string s, logType t)
-{
-	type = t;
-	//boost::posix_time::ptime utcCur = boost::posix_time::second_clock::local_time();//+ std::to_string(utcCur.time_of_day().seconds());
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	std::string l = "[sec:" + std::to_string(st.wSecond);
-	switch (t)
-	{
-	case Engine::ImGUI::error:
-		color = ImVec4(1, 0.35, 0, 1);
-		l += "type:error]: ";
-		break;
-	case Engine::ImGUI::info:
-		color = ImVec4(0, 1, 0.3, 1);
-		l += "type:info]: ";
-		break;
-	case Engine::ImGUI::fatal:
-		color = ImVec4(1, 0, 0, 1);
-		l += "type:fatal]: ";
-		break;
-	case Engine::ImGUI::system:
-		color = ImVec4(1, 0, 0.8, 1);
-		l += "type:system]: ";
-		break;
-	}
-	l += s;
-	l += " \n";
-	text = l;
 }

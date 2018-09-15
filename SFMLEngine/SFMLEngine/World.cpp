@@ -1,4 +1,5 @@
 #include "World.h"
+#include "LogConsole.h"
 using namespace Engine;
 
 template<class Obj>
@@ -63,7 +64,6 @@ void Engine::World::handleEvent(sf::Event & event)
 	debug.handleEvent(event);
 }
 
-
 void Engine::World::draw(sf::RenderWindow & window)
 {
 	window.clear(sf::Color::White);
@@ -87,10 +87,7 @@ void Engine::World::Init(sf::RenderWindow & window)
 	debug.levelObjects(level.GetAllObjects());
 
 	///TEST
-	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImGUI::logType::info));
-	DebuggingSystem::log->addLog(ImGUI::Log("Lanuch", ImGUI::logType::error));
-	DebuggingSystem::log->addLog(ImGUI::Log("Init",   ImGUI::logType::system));
-	DebuggingSystem::log->addLog(ImGUI::Log("Exit",   ImGUI::logType::fatal));
+	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");

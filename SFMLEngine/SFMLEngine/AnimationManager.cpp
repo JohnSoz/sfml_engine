@@ -78,7 +78,7 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 			int w = atoi(cut->Attribute("w"));
 			int h = atoi(cut->Attribute("h"));
 
-			frames.push_back(IntRect(x, y, w, h));
+			frames.emplace_back(x, y, w, h);
 			cut = cut->NextSiblingElement("cut");
 		}
 		animElement = animElement->NextSiblingElement("animation");

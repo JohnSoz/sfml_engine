@@ -8,15 +8,11 @@
 #include "imgui-sfml.h"
 #include "AnimationManager.h"
 #include <stdio.h>
+
 #define SHOW(a) std::cout << #a << ": " << (a) << std::endl
 namespace Engine
 {
-	enum ObjectType
-	{
-		OEntity = 1,
-		OPawn,
-		OActor
-	};
+	enum ObjectType { None = 0, OEntity, OPawn, OActor };
 
 	class World;
 
@@ -82,7 +78,7 @@ namespace Engine
 	class Debug
 	{
 	protected:
-		static inline ImVec2 size = {400,400};
+		static inline ImVec2 size = { 400,400 };
 		static void ShowHelpMarker(const char* desc);
 	public:
 	};

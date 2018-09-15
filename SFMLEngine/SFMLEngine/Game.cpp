@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "imgui.h"
+#include "imgui-sfml.h"
 
 Engine::Game::Game(sf::RenderWindow & w)
 {
@@ -29,6 +31,7 @@ void Engine::Game::update()
 	{
 		time.Tick();
 		sf::Event event;
+		//ImGui::SFML::Update(*window, deltaClock.restart());
 		handleEvent(event);
 		switch (state)
 		{
@@ -51,8 +54,16 @@ void Engine::Game::update()
 	}
 }
 
+void Engine::Game::draw()
+{
+	window->display();
+	//ImGui::SFML::Render(*window);
+	window->clear();
+}
+
 void Engine::Game::handleEvent(sf::Event & e)
 {
+	//ImGui::SFML::ProcessEvent(e);
 	while (window->pollEvent(e))
 	{
 		if (e.type == sf::Event::Closed)
