@@ -16,7 +16,7 @@ namespace Engine
 #if Debug
 		DebuggingSystem debug;
 #endif
-		ObjectHandler()  = default;
+		ObjectHandler() = default;
 		~ObjectHandler() = default;
 
 		template<class Obj>
@@ -24,6 +24,14 @@ namespace Engine
 		void PushObject(Entity* obj);
 		void UpdateObjects(float time);
 		void RenderObjects(sf::RenderWindow &WINDOW);
+		void handelEvent(sf::Event& e) //Test
+		{
+			for (auto& o : ObjectsArray)
+			{
+				if (o->type == OActor)
+					static_cast<Actor*>(o)->handleEvent(e);
+			}
+		}
 		void refresh();
 	};
 

@@ -7,10 +7,8 @@ namespace Engine
 {
 	enum appState
 	{
-		Start = 0,
-		Run,
-		Pause,
-		InMenu
+		Play = 0,
+		UI
 	};
 
 	class Game
@@ -28,7 +26,7 @@ namespace Engine
 		sf::VideoMode	    videoMode;
 		appState		    state;
 		timer			    time;
-		bool showConsole  = false;
+		bool showConsole = false;
 		sf::Clock pressClock;
 	public:
 		Game(sf::RenderWindow& w);

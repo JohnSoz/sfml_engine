@@ -9,13 +9,12 @@
 #include "AnimationManager.h"
 #include <stdio.h>
 
-#define SHOW(a) std::cout << #a << ": " << (a) << std::endl
 namespace Engine
 {
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
+	enum Direction { Up = 1, Down, Left, Right, State };
 
-	class World;
-
+	//class World;
 	class Object
 	{
 	protected:
@@ -44,8 +43,6 @@ namespace Engine
 		sf::IntRect      localRectangle;
 		sf::FloatRect    globalRectangle;
 		sf::FloatRect    debugRectangle;
-		int         id = 0;
-
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
@@ -66,11 +63,6 @@ namespace Engine
 		std::pair<sf::FloatRect*, sf::FloatRect*> getDebugRect() { return std::make_pair(&globalRectangle, &debugRectangle); }
 
 		friend class ObjectHandler;
-	};
-
-	enum Direction
-	{
-		Up = 1, Down, Left, Right, State
 	};
 
 	class Actor;
@@ -104,16 +96,13 @@ namespace Engine
 		sf::Vector2f velocity;
 		AnimationManager animManager;
 
-		bool showDebugConsole = false;
-		bool isWalk = false;
-		bool isCollision = false;
-		float lives = 100;
-		float armor = 100;
-		float speed = 0;
-		float energy = 0.005;
-		float friction = 0.005;
-		float maxSpeed = 0.3;
-		float CurrAngle = sprite.getRotation(), Radian = 0, LastAngle = 0;
+		bool showDebugConsole;
+		bool isWalk;
+		bool isCollision;
+
+		float lives, armor;
+		float speed, energy, friction, maxSpeed;
+		float CurrAngle = sprite.getRotation(), Radian, LastAngle;
 
 		sf::Clock Pressclock;
 		sf::Vector2f originOffset = {};
@@ -125,6 +114,10 @@ namespace Engine
 		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, sf::IntRect rect, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
 		{
 			animManager.LoadAnimation_x("Move.xml");
+			lives = armor = 100;
+			speed = 0;
+			energy = friction = 0.005;
+			maxSpeed = 0.3;
 			localRectangle = rect;
 			globalRectangle = sf::FloatRect(position.x, position.y, position.x + rect.width, position.y + rect.top);
 			obj = lvl.GetAllObjects();

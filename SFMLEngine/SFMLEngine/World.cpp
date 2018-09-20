@@ -48,32 +48,27 @@ void Engine::ObjectHandler::refresh()
 void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& event)
 {
 	objHandler.GetObjects<Actor>("Test").handleEvent(event);
-	ImGui::SFML::Update(window, deltaClock.restart());
 	objHandler.UpdateObjects(time);
 	if (ShowOverlay)
 	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
 	}
-	draw(window);
+	//draw(window);
 }
 
 
 void Engine::World::handleEvent(sf::Event & event)
 {
-	ImGui::SFML::ProcessEvent(event);
 	debug.handleEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow & window)
 {
-	window.clear(sf::Color::White);
 	//level.DrawLevel(*window);
 	//sf::Sprite sprite(level.DrawLevel2());
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
 	debug.draw();
-	ImGui::SFML::Render(window);
-	window.display();
 }
 
 

@@ -55,9 +55,6 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	auto newW2 = centerX + (w - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //w,y
 	auto newY3 = centerY + (y - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //y,w
 
-	//auto newW2 = centerX + ((w - 30) - centerX) * cos(Radian) - ((y + 15) - centerY) * sin(Radian); //w,y
-	//auto newY3 = centerY + ((y + 15) - centerY) * cos(Radian) + ((w - 30) - centerX) * sin(Radian); //y,w
-
 	debugRectangle.left = newX2;//x2
 	debugRectangle.top = newY2;//y2
 	debugRectangle.width = newW2;//w2
@@ -317,7 +314,6 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 			bool Active = a.IsActive;
 			sf::Vector2f *position = &a.position;
 			auto ObjectType = a.type;
-
 			if (ImGui::TreeNode("Object info"))
 			{
 				ImGui::Separator();
