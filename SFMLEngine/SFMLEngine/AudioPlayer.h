@@ -18,7 +18,14 @@ namespace Engine
 	public:
 		AudioPlayer();
 
-		~AudioPlayer() = default;
+		~AudioPlayer()
+		{
+			for (iter = musList.begin(); iter != musList.end(); ++iter)
+			{
+				delete iter->second;
+			}
+			musList.clear();
+		}
 
 		void Play();
 		void NextSong();

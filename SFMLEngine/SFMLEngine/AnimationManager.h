@@ -87,7 +87,14 @@ namespace Engine
 
 	public:
 		AnimationManager() = default; ///< Standard constructor
-		~AnimationManager() = default; ///< Standard destructor
+		~AnimationManager()///< Standard destructor
+		{
+			for (auto & iter : animationList)
+			{
+				delete iter;
+			}
+			animationList.clear();
+		}
 
 		/*!
 		Loads an animation from a json||Xml file

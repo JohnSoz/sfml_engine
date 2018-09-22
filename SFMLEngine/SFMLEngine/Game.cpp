@@ -11,13 +11,14 @@ Engine::Game::Game(sf::RenderWindow & w)
 	time.setDelta(500);
 	m = new Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
 	m->makeMenu();
+	camera.reset(sf::FloatRect(0, 0, 1920, 1080));
+	window->setView(camera);
 }
 
 Engine::Game::~Game()
 {
 	delete world;
 	delete m;
-	delete window;
 }
 
 void Engine::Game::startGame()
@@ -33,7 +34,6 @@ void Engine::Game::update()
 		sf::Event event;
 		handleEvent(event);
 		ImGui::SFML::Update(*window, deltaClock.restart());
-		std::cout << time;
 		switch (state)
 		{
 		case Engine::Play:
@@ -60,7 +60,6 @@ void Engine::Game::draw()
 
 void Engine::Game::handleEvent(sf::Event & e)
 {
-	ImGui::SFML::ProcessEvent(e);
 	while (window->pollEvent(e))
 	{
 		if (e.type == sf::Event::Closed)
@@ -68,6 +67,7 @@ void Engine::Game::handleEvent(sf::Event & e)
 			window->close();
 			break;
 		}
+		ImGui::SFML::ProcessEvent(e);
 		world->handleEvent(e);
 	}
 }

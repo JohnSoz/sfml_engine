@@ -17,7 +17,14 @@ namespace Engine
 		DebuggingSystem debug;
 #endif
 		ObjectHandler() = default;
-		~ObjectHandler() = default;
+		~ObjectHandler()
+		{
+			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
+			{
+				delete (*iter);
+			}
+			ObjectsArray.clear();
+		}
 
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
@@ -43,7 +50,6 @@ namespace Engine
 		sf::Texture   LevelTexture;
 		ObjectHandler objHandler;
 		Level         level;
-		sf::View      view;
 #if Debug 
 		DebuggingSystem debug;
 		bool ShowOverlay = true;

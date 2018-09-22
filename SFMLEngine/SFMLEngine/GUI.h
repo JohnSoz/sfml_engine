@@ -41,7 +41,7 @@ namespace Engine
 		{
 			render = p;
 			gui.setTarget(target);
-			if (pathToTheme != "")
+			if (!pathToTheme.empty())
 				setTheme(pathToTheme);
 			else
 				setTheme("Data/GUI/MyUI/MainMenu.txt");
@@ -75,7 +75,14 @@ namespace Engine
 		GUI() = default;
 		GUI(const GUI& g) = default;
 		GUI(GUI&& g) = default;
-		~GUI() = default;
+		~GUI()
+		{
+			for (auto & layer : layers)
+			{
+				delete layer;
+			}
+			layers.clear();
+		}
 
 		explicit
 			GUI(sf::RenderWindow& w)

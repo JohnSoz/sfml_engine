@@ -9,7 +9,7 @@
 #include "imgui-sfml.h"
 #include "timer.h"
 #define Debug 1; ///<warning The global flag. Debug = 1 when you need to debug
-
+#include <vector>
 using namespace std;
 
 namespace Engine
@@ -32,7 +32,15 @@ namespace Engine
 		sf::Clock Pressclock;
 	public:
 		DebuggingSystem() = default;
-		~DebuggingSystem() = default;
+		~DebuggingSystem()
+		{
+			for (auto & entite : entites)
+			{
+				delete entite.first;
+				delete entite.second;
+			}
+			entites.clear();
+		}
 
 		static void setWindow(sf::RenderWindow& w) { window = &w; }
 		void draw();

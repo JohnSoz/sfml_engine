@@ -1,17 +1,17 @@
 #include "World.h"
 #include "LogConsole.h"
+#include <algorithm>
 using namespace Engine;
 
 template<class Obj>
 Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 {
-	Entity* retObj = nullptr;
-	for (auto &item : ObjectsArray)
+	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
+		[NAME](const Entity* e1)->bool
 	{
-		if (item->name == NAME)
-			retObj = item;
-	}
-	return *static_cast<Obj*>(retObj);
+		return (e1->name == NAME) ? true : false;
+	});
+	return *static_cast<Obj*>(*retObj);
 }
 
 void Engine::ObjectHandler::PushObject(Entity* obj)
@@ -38,7 +38,8 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 
 void Engine::ObjectHandler::refresh()
 {
-	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray), [](const Entity *entity)
+	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
+		[](const Entity *entity)->bool
 	{
 		return !entity->isActive();
 	}));
@@ -74,8 +75,6 @@ void Engine::World::draw(sf::RenderWindow & window)
 
 void Engine::World::Init(sf::RenderWindow & window)
 {
-	view.reset(sf::FloatRect(0, 0, 1920, 1080));
-	window.setView(view);
 	level.LoadFromFile("Data/Level/map5.tmx", 2);
 	LevelTexture.loadFromImage(*level.DrawLevel2());
 	LevelSprite.setTexture(LevelTexture);

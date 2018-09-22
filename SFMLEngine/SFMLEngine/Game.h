@@ -2,7 +2,6 @@
 #include "World.h"
 #include "GUI.h"
 #include "timer.h"
-
 namespace Engine
 {
 	enum appState
@@ -23,7 +22,7 @@ namespace Engine
 		sf::ContextSettings settings;
 		std::string		    appname;
 		sf::Clock           deltaClock;
-		sf::VideoMode	    videoMode;
+		sf::View            camera;
 		appState		    state;
 		timer			    time;
 		bool showConsole = false;
