@@ -13,7 +13,6 @@ Contains the necessary classes to work with animations
 #include <math.h>
 #include <boost\align.hpp>
 #include "TinyXML/tinyxml.h"
-
 using json = nlohmann::json;
 
 #define PI 3.141592653589793238462643383279502884L 

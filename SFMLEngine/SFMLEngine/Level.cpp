@@ -10,7 +10,7 @@ int ObjectLevel::GetPropertyInt(std::string name)
 
 float ObjectLevel::GetPropertyFloat(std::string name)
 {
-	return strtod(properties[name].c_str(), NULL);
+	return strtod(properties[name].c_str(), nullptr);
 }
 
 std::string ObjectLevel::GetPropertyString(std::string name)
@@ -46,7 +46,6 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 		tilesets.push_back(std::move(Tileset(el)));
 		el = el->NextSiblingElement("tileset");
 	}
-
 
 	TiXmlElement *tilesetElement;
 	tilesetElement = map->FirstChildElement("tileset");
@@ -101,9 +100,9 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 	while (layerElement)
 	{
 		MapLayer layer;
-		if (layerElement->Attribute("opacity") != NULL)
+		if (layerElement->Attribute("opacity") != nullptr)
 		{
-			float opacity = strtod(layerElement->Attribute("opacity"), NULL);
+			float opacity = strtod(layerElement->Attribute("opacity"), nullptr);
 			layer.opacity = 255 * opacity;
 		}
 		else
@@ -115,7 +114,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 		TiXmlElement *layerDataElement;
 		layerDataElement = layerElement->FirstChildElement("data");
 
-		if (layerDataElement == NULL)
+		if (layerDataElement == nullptr)
 		{
 			std::cout << "Bad map. No layer information found." << std::endl;
 		}
@@ -124,7 +123,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 		TiXmlElement *tileElement;
 		tileElement = layerDataElement->FirstChildElement("tile");
 
-		if (tileElement == NULL)
+		if (tileElement == nullptr)
 		{
 			std::cout << "Bad map. No tile information found." << std::endl;
 			return false;
@@ -163,11 +162,11 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 			}
 
 		}
-		std::sort(layer.tiles.begin(), layer.tiles.end(),
+		/*std::sort(layer.tiles.begin(), layer.tiles.end(),
 			[](const sf::Sprite& spr1, const sf::Sprite& spr2)
 		{
 			return ((spr1.getPosition().x + spr1.getPosition().y) < (spr2.getPosition().y + spr2.getPosition().x));
-		});
+		});*/
 
 		layers.push_back(layer);
 
@@ -397,19 +396,16 @@ void Level::DrawLevel(sf::RenderWindow &window)
 		}
 }
 
-sf::Image* Level::DrawLevel2()
+sf::Image Level::DrawLevel2()
 {
-	sf::RenderTexture *t = new sf::RenderTexture;
-	t->create(1920, 1080);
-	t->clear();
+	sf::RenderTexture t;
+	t.create(1920, 1080);
+	t.clear();
 	for (int layer = 0; layer < layers.size(); layer++)
 		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
 		{
-			t->draw(layers[layer].tiles[tile]);
+			t.draw(layers[layer].tiles[tile]);
 		}
-	t->display();
-	sf::Texture texture = t->getTexture();
-	auto z = new sf::Image(texture.copyToImage());
-	delete t;
-	return z;
+	t.display();
+	return sf::Image(t.getTexture().copyToImage());
 }

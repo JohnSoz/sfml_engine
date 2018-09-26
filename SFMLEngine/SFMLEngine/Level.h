@@ -73,42 +73,43 @@ namespace Engine {
 			rows = tilesetImage.getSize().y / tileHeight;
 			CalculateSubRects();
 		}
+		~Tileset() = default;
 		int GetMaxID() { return firstTileID + TileCount; }
 		std::vector<sf::Rect<int>> GetSubRect() { return subRects; }
 
 	};
 
-	struct MapLayer  //слои
+	struct MapLayer 
 	{
-		float opacity;  //непрозрачность слоя
-		std::vector<sf::Sprite> tiles;  //закидываем в вектор тайлы
+		float opacity; 
+		std::vector<sf::Sprite> tiles;  
 	};
 
-	class Level  //главный класс - уровень
+	class Level  
 	{
-	public:
-		bool LoadFromFile(std::string filename, int MapScale = 1);//возвращает false если не получилось загрузить
-		ObjectLevel GetObject(std::string name);
-		std::vector<Tileset> tilesets;
-		std::vector<ObjectLevel> GetObjects(std::string name);//выдаем объект в наш уровень
-		std::vector<ObjectLevel> GetAllObjects();//выдаем все объекты в наш уровень
-		void DrawLevel(sf::RenderWindow &window);//рисуем в окно
-		sf::Image* DrawLevel2();
-		sf::Vector2i GetTileSize();//получаем размер тайла
-		sf::IntRect GetRect() const; //Прямоугольник карты
 	private:
 		int MapScale;
 		int posX = 0;
 		int posY = 0;
 		int Xc = 0;
 		void ParseLayer(TiXmlElement *layerElement);
-		sf::IntRect rect; //Прямоугольник карты
-		int width, height, tileWidth, tileHeight;//в tmx файле width height в начале,затем размер тайла
-		int firstTileID;//получаем айди первого тайла
-		sf::Rect<float> drawingBounds;//размер части карты которую рисуем
-		sf::Texture tilesetImage;//текстура карты
-		std::vector<ObjectLevel> objects;//массив типа Объекты, который мы создали
+		sf::IntRect rect; 
+		int width, height, tileWidth, tileHeight;
+		int firstTileID;
+		sf::Rect<float> drawingBounds;
+		sf::Texture tilesetImage;
+		std::vector<ObjectLevel> objects;
 		std::vector<MapLayer> layers;
+	public:
+		bool LoadFromFile(std::string filename, int MapScale = 1);
+		ObjectLevel GetObject(std::string name);
+		std::vector<Tileset> tilesets;
+		std::vector<ObjectLevel> GetObjects(std::string name);
+		std::vector<ObjectLevel> GetAllObjects();
+		void DrawLevel(sf::RenderWindow &window);
+		sf::Image DrawLevel2();
+		sf::Vector2i GetTileSize();
+		sf::IntRect GetRect() const;
 	};
 
 }

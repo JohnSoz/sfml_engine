@@ -76,7 +76,7 @@ void Engine::World::draw(sf::RenderWindow & window)
 void Engine::World::Init(sf::RenderWindow & window)
 {
 	level.LoadFromFile("Data/Level/map5.tmx", 2);
-	LevelTexture.loadFromImage(*level.DrawLevel2());
+	LevelTexture.loadFromImage(level.DrawLevel2());
 	LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
 

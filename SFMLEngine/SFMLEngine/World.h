@@ -1,9 +1,10 @@
 #pragma once
 #include "DebuggingSystem.h"
-#if Debug 
+#if _Debug_ 
 #include "imgui.h"
 #include "imgui-sfml.h"
 #endif
+#include "Actor.h"
 
 namespace Engine
 {
@@ -13,7 +14,7 @@ namespace Engine
 		std::vector<Entity*>           ObjectsArray;
 		std::vector<Entity*>::iterator iter;
 	public:
-#if Debug
+#if _Debug_
 		DebuggingSystem debug;
 #endif
 		ObjectHandler() = default;
@@ -50,13 +51,14 @@ namespace Engine
 		sf::Texture   LevelTexture;
 		ObjectHandler objHandler;
 		Level         level;
-#if Debug 
+#if _Debug_  ///<warning The global flag. Debug = 1 when you need to debug
+
 		DebuggingSystem debug;
 		bool ShowOverlay = true;
 #endif
 		void pushEntity(Entity* e)
 		{
-#if Debug
+#if _Debug_
 			debug.pushRectangle(e->getDebugRect());
 #endif
 			objHandler.PushObject(e);

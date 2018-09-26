@@ -9,7 +9,7 @@ Engine::Game::Game(sf::RenderWindow & w)
 	window = &w;
 	world = new World();
 	time.setDelta(500);
-	m = new Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
+	m = new  Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
 	m->makeMenu();
 	camera.reset(sf::FloatRect(0, 0, 1920, 1080));
 	window->setView(camera);

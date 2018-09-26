@@ -44,7 +44,7 @@ namespace Console
 	private:
 		static bool        ScrollToBottom; ///< Flag, true if the scrollbar
 		static vector<Log> Buffer; ///< Ñontainer log, stores logs
-		static const char* items[5]; ///< The text representation of the enumeration types of the log
+		static std::string items[5]; ///< The text representation of the enumeration types of the log
 	public:
 		static void Clear() { Buffer.clear(); Buffer.shrink_to_fit(); } ///< Clears the logs console \warning This method removes logs from the buffer
 

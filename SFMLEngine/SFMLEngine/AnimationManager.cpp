@@ -84,7 +84,7 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 		animElement = animElement->NextSiblingElement("animation");
 	}
 	frames.shrink_to_fit();
-		anim->frameCount = frames.size();
+	anim->frameCount = frames.size();
 	anim->frames = std::move(frames);
 	if (animationList.empty())
 	{

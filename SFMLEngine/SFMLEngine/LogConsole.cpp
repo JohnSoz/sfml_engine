@@ -1,7 +1,7 @@
 #include "LogConsole.h"
 
 vector<Console::Log> Console::AppLog::Buffer = {};
-const char*          Console::AppLog::items[5] = { "all", "error", "info", "fatal", "system" };
+std::string         Console::AppLog::items[5] = { "all", "error", "info", "fatal", "system" };
 bool                 Console::AppLog::ScrollToBottom = 0;
 void Console::AppLog::Draw(const char* title, bool *p_open)
 {
@@ -19,15 +19,15 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		static bool find = false;
 		ImGui::Checkbox("Find By Type", &find);
 
-		static const char* item_current = items[0];
+		static std::string item_current = items[0];
 		ImGui::PushItemWidth(45);
-		if (ImGui::BeginCombo("", item_current, ImGuiComboFlags_NoArrowButton))
+		if (ImGui::BeginCombo("", item_current.c_str(), ImGuiComboFlags_NoArrowButton))
 		{
 
 			for (auto & item : items)
 			{
 				bool is_selected = (item_current == item);
-				if (ImGui::Selectable(item, is_selected))
+				if (ImGui::Selectable(item.c_str(), is_selected))
 					item_current = item;
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
