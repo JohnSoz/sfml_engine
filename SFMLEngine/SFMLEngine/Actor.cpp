@@ -21,8 +21,8 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	auto w = globalRectangle.width;
 	auto h = globalRectangle.height;
 
-	float centerX = sprite.getPosition().x;
-	float centerY = sprite.getPosition().y;
+	float centerX = position.x;
+	float centerY = position.y;
 
 	auto newX = centerX + (x - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //x,y
 	auto newY = centerY + (y - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //y,x
@@ -88,12 +88,14 @@ void Engine::Actor::handleEvent(sf::Event & e)
 	else if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		isWalk = true;
+		if (direction != Left) speed -= speed * 0.5;
 		direction = Direction::Left;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
-		isWalk += true;
+		isWalk = true;
+		if (direction != Right) speed -= speed * 0.5;
 		direction = Direction::Right;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
@@ -103,7 +105,7 @@ void Engine::Actor::handleEvent(sf::Event & e)
 		(speed > 0) ? speed -= friction : speed = 0;
 	}
 
-	if (Keyboard::isKeyPressed(Keyboard::T))
+	if (Keyboard::isKeyPressed(Keyboard::U))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
 			showDebugConsole = !showDebugConsole;
@@ -117,7 +119,6 @@ void Engine::Actor::checkClashes(sf::Vector2f pos)
 	{
 		sf::FloatRect Intersection;
 		sf::FloatRect objGlobalRect = { i.rect.left, i.rect.top, i.rect.width, i.rect.height };
-		auto zzxc = sprite.getGlobalBounds();
 		if (sprite.getGlobalBounds().intersects(objGlobalRect, Intersection))
 		{
 			if (i.name == "barrier")
@@ -141,12 +142,16 @@ void Engine::Actor::update(float time)
 	case Left:  velocity.x = -speed; velocity.y = 0;  break;
 	case Right: velocity.x = speed; velocity.y = 0;  break;
 	}
+
 	localRectangle = sprite.getTextureRect();
-	globalRectangle = sf::FloatRect(position.x - originOffset.x, position.y - originOffset.y, position.x - originOffset.x + localRectangle.width, position.y - originOffset.y + localRectangle.height);
+	sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
+	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
 
 	RotateToMouse(0.2 * time, *window);
 	position += velocity * time;
+
 	checkClashes(position);
+
 	draw(&showDebugConsole, *this);
 	if (isWalk)
 		sprite.setTextureRect(animManager.AnimUpdate(time));
@@ -183,7 +188,7 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 
 				float *energy = &a.energy;
 				float *friction = &a.friction;
-				float maxSpeed = a.maxSpeed;
+				float *maxSpeed = &a.maxSpeed;
 				float CurrAngle = a.CurrAngle;
 				sf::Vector2f *position = &a.position;
 				sf::Vector2f velocity = a.velocity;
@@ -203,7 +208,7 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::EndPopup();
 					}
 					ImGui::Separator();
-					ImGui::Text("friction: %.3f", *energy);
+					ImGui::Text("friction: %.3f", *friction);
 					if (ImGui::BeginPopupContextItem("itemFriction"))
 					{
 						if (ImGui::Selectable("Set to zero")) *friction = 0.0f;
@@ -228,13 +233,13 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::EndPopup();
 					}
 					ImGui::Spacing();
-					ImGui::Text("maxSpeed: %.2f", maxSpeed);
+					ImGui::Text("maxSpeed: %.2f", *maxSpeed);
 					if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
 					{
-						if (ImGui::Selectable("Set to zero")) maxSpeed = 0.0f;
-						if (ImGui::Selectable("Set to default")) maxSpeed = 0.3;
+						if (ImGui::Selectable("Set to zero")) *maxSpeed = 0.0f;
+						if (ImGui::Selectable("Set to default")) *maxSpeed = 0.3;
 						ImGui::PushItemWidth(200);
-						ImGui::DragFloat("#maxSpeed", &maxSpeed, 0.05f, 0.05f, 1.5f);
+						ImGui::DragFloat("#maxSpeed", maxSpeed, 0.01f, 0.01f, 1.5f);
 						ImGui::PopItemWidth();
 						ImGui::EndPopup();
 					}
@@ -255,6 +260,15 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::Text("Speed: %.3f", animation.speed);
 						ImGui::Separator();
 						ImGui::Text("Frames size(): %.1f", animation.frameCount);
+						if (ImGui::TreeNode("Current animation Image"))
+						{
+							sf::Sprite spr = a.sprite;
+							float size_x = a.localRectangle.width;
+							float size_y = a.localRectangle.height;
+							ImGui::Text("%.0fx%.0f", size_x, size_y);
+							ImGui::Image(*spr.getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)a.localRectangle);
+							ImGui::TreePop();
+						}
 						ImGui::TreePop();
 					}
 					ImGui::TreePop();
@@ -318,4 +332,14 @@ void Engine::Debug_Actor::draw(bool *open, Actor& a)
 {
 	Debug_Object::draw(open, a);
 	actorInfo(open, a);
+}
+
+sf::FloatRect Engine::operator*(const sf::FloatRect& rect, float scale)
+{
+	sf::FloatRect ret;
+	ret.width = rect.width * scale;
+	ret.height = rect.height * scale;
+	ret.left = rect.left * scale;
+	ret.top = rect.top * scale;
+	return ret;
 }

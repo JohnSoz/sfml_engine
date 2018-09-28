@@ -30,6 +30,7 @@ namespace Engine
 		std::vector<sf::FloatRect> obj;
 		bool overlay = false;
 		bool LogConsole = false;
+		bool showVertex = false;
 		sf::Clock Pressclock;
 	public:
 		DebuggingSystem() = default;

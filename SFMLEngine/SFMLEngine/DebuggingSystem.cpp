@@ -6,74 +6,76 @@ sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
 
 void DebuggingSystem::draw()
 {
-
-	int count = 0;
-	for (auto &i : entites)
+	if (showVertex)
 	{
-		//auto x = i.second->x - 90;
-		//auto y = i.second->y - 120;
-		auto x = i.first->left;
-		auto y = i.first->top;
-		auto w = i.first->width;
-		auto h = i.first->height;
+		int count = 0;
+		for (auto &i : entites)
+		{
+			//auto x = i.second->x - 90;
+			//auto y = i.second->y - 120;
+			auto x = i.first->left;
+			auto y = i.first->top;
+			auto w = i.first->width;
+			auto h = i.first->height;
 
-		auto x2 = i.second->left;
-		auto y2 = i.second->top;
-		auto w2 = i.second->width;
-		auto h2 = i.second->height;
+			auto x2 = i.second->left;
+			auto y2 = i.second->top;
+			auto w2 = i.second->width;
+			auto h2 = i.second->height;
 
-		sf::VertexArray triangle(sf::LinesStrip, 5);
-		triangle[0] = sf::Vector2f(x, y);
-		triangle[0].color = sf::Color::Red;
+			sf::VertexArray triangle(sf::LinesStrip, 5);
+			triangle[0] = sf::Vector2f(x, y);
+			triangle[0].color = sf::Color::Red;
 
-		triangle[1].position = sf::Vector2f(w2, h2);
-		triangle[1].color = sf::Color::Blue;
+			triangle[1].position = sf::Vector2f(w2, h2);
+			triangle[1].color = sf::Color::Blue;
 
-		triangle[2].position = sf::Vector2f(w, h);
-		triangle[2].color = sf::Color::Red;
+			triangle[2].position = sf::Vector2f(w, h);
+			triangle[2].color = sf::Color::Red;
 
-		triangle[3].position = sf::Vector2f(x2, y2);
-		triangle[3].color = sf::Color::Blue;
+			triangle[3].position = sf::Vector2f(x2, y2);
+			triangle[3].color = sf::Color::Blue;
 
-		triangle[4].position = sf::Vector2f(x, y);
-		triangle[4].color = sf::Color::Red;
+			triangle[4].position = sf::Vector2f(x, y);
+			triangle[4].color = sf::Color::Red;
 
-		ImGUI::SimpleText(sf::Vector2f(x - 102, y - 70), &overlay, "D_Window_" + std::to_string(count));
-		count++;
-		ImGUI::SimpleText(sf::Vector2f(w, h), &overlay, "D_Window_" + std::to_string(count));
-		count++;
+			ImGUI::SimpleText(sf::Vector2f(x - 102, y - 70), &overlay, "D_Window_" + std::to_string(count));
+			count++;
+			ImGUI::SimpleText(sf::Vector2f(w, h), &overlay, "D_Window_" + std::to_string(count));
+			count++;
 
-		window->draw(triangle);
-	}
-	for (auto i : obj) //Оптимизировать
-	{
-		auto x = i.left;
-		auto y = i.top;
-		auto w = i.width;
-		auto h = i.height;
+			window->draw(triangle);
+		}
+		for (auto i : obj) //Оптимизировать
+		{
+			auto x = i.left;
+			auto y = i.top;
+			auto w = i.width;
+			auto h = i.height;
 
-		sf::VertexArray triangle(sf::LinesStrip, 5);
-		triangle[0] = sf::Vector2f(x, y);
-		triangle[0].color = sf::Color::Blue;
+			sf::VertexArray triangle(sf::LinesStrip, 5);
+			triangle[0] = sf::Vector2f(x, y);
+			triangle[0].color = sf::Color::Blue;
 
-		triangle[1].position = sf::Vector2f(x + w, y);
-		triangle[1].color = sf::Color::Blue;
+			triangle[1].position = sf::Vector2f(x + w, y);
+			triangle[1].color = sf::Color::Blue;
 
-		triangle[2].position = sf::Vector2f(x + w, y + h);
-		triangle[2].color = sf::Color::Blue;
+			triangle[2].position = sf::Vector2f(x + w, y + h);
+			triangle[2].color = sf::Color::Blue;
 
-		triangle[3].position = sf::Vector2f(x, y + h);
-		triangle[3].color = sf::Color::Blue;
+			triangle[3].position = sf::Vector2f(x, y + h);
+			triangle[3].color = sf::Color::Blue;
 
-		triangle[4].position = sf::Vector2f(x, y);
-		triangle[4].color = sf::Color::Blue;
+			triangle[4].position = sf::Vector2f(x, y);
+			triangle[4].color = sf::Color::Blue;
 
-		ImGUI::SimpleText(sf::Vector2f(x, y), &overlay, "D_Window_" + std::to_string(count));
-		count++;
-		ImGUI::SimpleText(sf::Vector2f(x + w, y + h), &overlay, "D_Window_" + std::to_string(count));
-		count++;
+			ImGUI::SimpleText(sf::Vector2f(x, y), &overlay, "D_Window_" + std::to_string(count));
+			count++;
+			ImGUI::SimpleText(sf::Vector2f(x + w, y + h), &overlay, "D_Window_" + std::to_string(count));
+			count++;
 
-		window->draw(triangle);
+			window->draw(triangle);
+		}
 	}
 	Console::AppLog::Draw("LogConsole", &LogConsole);
 }
@@ -85,6 +87,14 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
 			overlay = !overlay;
+			Pressclock.restart();
+		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
+	{
+		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
+		{
+			showVertex= !showVertex;
 			Pressclock.restart();
 		}
 	}

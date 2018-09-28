@@ -11,10 +11,9 @@ Engine::Game::Game(sf::RenderWindow & w)
 	time.setDelta(500);
 	m = new  Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
 	m->makeMenu();
-	camera.reset(sf::FloatRect(0, 0, 1920, 1080));
+	camera.reset(sf::FloatRect(0, 0, 1000, 563));
 	window->setView(camera);
 }
-
 Engine::Game::~Game()
 {
 	delete world;

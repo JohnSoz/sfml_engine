@@ -32,6 +32,8 @@ namespace Engine
 		void draw(bool *open, Actor& a);
 	};
 
+	sf::FloatRect operator * (const sf::FloatRect& rect, float scale);
+
 	class Actor : public Entity, public Debug_Actor
 	{
 	protected:
@@ -46,6 +48,7 @@ namespace Engine
 
 		float lives, armor;
 		float speed, energy, friction, maxSpeed;
+		float scale = 0.5;
 		float CurrAngle = sprite.getRotation(), Radian, LastAngle;
 
 		sf::Clock Pressclock;
@@ -69,6 +72,7 @@ namespace Engine
 			originOffset = { 90,120 };
 			sprite.setOrigin(originOffset);
 			sprite.setTextureRect(localRectangle);
+			sprite.setScale(scale, scale);
 			window = &w;
 		}
 		void handleEvent(sf::Event& e);

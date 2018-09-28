@@ -32,7 +32,13 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
+		sf::CircleShape shape(2);
+		shape.setOrigin(1, 1);
+		shape.setFillColor(sf::Color::Red);
+		sf::Vector2f pos = o->sprite.getPosition();
+		shape.setPosition(pos);
 		WINDOW.draw(o->sprite);
+		WINDOW.draw(shape);
 	}
 }
 
@@ -75,7 +81,7 @@ void Engine::World::draw(sf::RenderWindow & window)
 
 void Engine::World::Init(sf::RenderWindow & window)
 {
-	level.LoadFromFile("Data/Level/map5.tmx", 2);
+	level.LoadFromFile("Data/Level/map5.tmx");
 	LevelTexture.loadFromImage(level.DrawLevel2());
 	LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
