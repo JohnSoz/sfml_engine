@@ -4,7 +4,7 @@
 #include <iostream>
 #include <SFML\Graphics.hpp>
 #include "Object.h"
-#include <typeinfo> 
+#include <assert.h>
 namespace Engine
 {
 
@@ -13,9 +13,8 @@ namespace Engine
 	{
 	public:
 		Item() = default;
-		Item(std::string name) { type = ItemType::item; weight = 0; }
+		Item(std::string name) : Object(name) { type = ItemType::item; weight = 0; }
 		virtual ~Item() {};
-
 		float getWeight() { return weight; }
 		int getInt() { return 1; } //LoL?
 		ItemType getType() { return type; }
@@ -33,7 +32,7 @@ namespace Engine
 		Gun() = default;
 		Gun(std::string Name, float dmg, float rate, float w) : RateOfFire(rate), damage(dmg)
 		{
-
+			AmmoInGun = 0;
 			LoadSprite(Name);
 			weight = w;
 			name = Name;
@@ -88,7 +87,6 @@ namespace Engine
 		int Count = 0;
 		std::vector<Item*> inv;
 		std::vector<Item*>::iterator iter;
-		int Size = 0;
 	public:
 		~Inventory()
 		{
@@ -96,91 +94,55 @@ namespace Engine
 				delete *iter;
 			inv.clear();
 		}
-		/////////////////////////
-		///Базовая инициализация масиива 
-		/////////////////////////
+
 		void baseIni()
 		{
 			inv.push_back(new Gun("M9", 2, 2, 0.7));
 			inv.push_back(new Gun("AR-15", 8, 12, 3.9));
 			inv.push_back(new Gun("RPG", 15, 1, 6.3));
 			inv.push_back(new Heal("HP", 20));
-			Size = inv.size();
 		}
 
-		/////////////////////////
-		///Добавляет элемент в конец массива
-		/////////////////////////
-		void AddItem(Item* i) { inv.push_back(i); Size++; }
+		void AddItem(Item* i) { inv.push_back(i); }
 
-		/////////////////////////
-		///Удаляет элемент массива по его имени
-		/////////////////////////
 		void delItem(std::string Name)
 		{
-			for (iter = inv.begin(); iter != inv.end(); iter++)
-				if ((*iter)->getName() == Name) {
-					inv.erase(iter);
-					break;
-				}
-			Size = inv.size();
+			auto eraseIter = std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
+			{
+				if (item->getName() == Name)
+					return item;
+			});
+			delete *eraseIter;
+			inv.erase(eraseIter);
 		}
 
-		int getNumItem(std::string Name)
+		template<class T>
+		T* getItemByName(std::string Name)
 		{
-			for (int i = 0; i < Size; i++)
+			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item* item)
 			{
-				if (inv[i]->getName() == Name)
-				{
-					return i;
-				}
-			}
+				return (item->getName() == Name) ? true : false;
+			});
+			return dynamic_cast<T*>(*ret);
 		}
 
 		void nextItem() { (Count >= inv.size() - 1) ? Count = 0 : Count++; }
 
-		/////////////////////////
-		///Возвращает имя элемента по его id
-		/////////////////////////
-		std::string  getItemName(int num) const { return (num > Size - 1) ? '\0' : inv[num]->getName(); }
+		std::string getItemName(int num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
 
-		/////////////////////////
-		///Возвращает указатель на Item по его id
-		/////////////////////////
 		template<class T>
 		T* getItem(int index)
 		{
-			//assert(Index > Size);
-			return (index > Size - 1) ? nullptr : dynamic_cast<T*>(inv[index]);
+			assert(index > inv.size(), "out of range");
+			return (index > inv.size() - 1) ? nullptr : dynamic_cast<T*>(inv[index]);
 		}
-		/////////////////////////
-		///Возвращает указатель на текущий элемент
-		/////////////////////////
+
 		Item* getCurrItem() const { return inv[Count]; }
 
-		/////////////////////////
-		///Возвращает id текущего элемента
-		/////////////////////////
 		int getCurrCount() { return Count; }
 
-		/////////////////////////
-		///Задает id текущего элемента
-		/////////////////////////
 		void setCount(int i) { Count = i; }
 
-		/////////////////////////
-		///Задает размер массиву элементов
-		/////////////////////////
-		void setSize(int i) { Size = i; }
-
-		/////////////////////////
-		///Возвращает размер массива элементов
-		/////////////////////////
-		int getInvSize() { return Size; }
-
-		/////////////////////////
-		///Возвращает вес всех item в инвентаре
-		/////////////////////////
 		float getWeight()
 		{
 			float weight = 0;
@@ -191,9 +153,6 @@ namespace Engine
 			return weight;
 		}
 
-		/////////////////////////
-		///Возвращает массив 
-		/////////////////////////
 		std::vector<Item*> getArrayItem() { return inv; }
 	};
 }

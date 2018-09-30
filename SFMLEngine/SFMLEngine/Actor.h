@@ -61,6 +61,7 @@ namespace Engine
 		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, sf::IntRect rect, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
 		{
 			inventory.baseIni();
+			inventory.delItem("M9");
 			animManager.LoadAnimation_x("Move.xml");
 			lives = armor = 100;
 			speed = 0;

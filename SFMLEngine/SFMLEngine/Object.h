@@ -12,13 +12,14 @@ namespace Engine
 	protected:
 		ObjectType type;
 		sf::Vector2f position;
-		sf::Texture texture;//?
-		sf::Sprite sprite;//?
+		sf::Texture texture;
+		sf::Sprite sprite;
 
 		std::string name;
 		bool IsActive;
 	public:
-		Object() = default;
+		Object() { type = ObjectType::None; }
+		Object(std::string);
 		~Object() = default;
 		Object(sf::Vector2f pos, std::string name);
 		Object(sf::Vector2f pos, ObjectType t, std::string name);
