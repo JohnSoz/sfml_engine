@@ -1,8 +1,6 @@
-
 #include "Game.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
-
 Engine::Game::Game(sf::RenderWindow & w)
 {
 	state = appState::UI;
@@ -10,6 +8,7 @@ Engine::Game::Game(sf::RenderWindow & w)
 	world = new World();
 	time.setDelta(500);
 	m = new  Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
+	musicPlayer = new AudioPlayer();
 	m->makeMenu();
 	camera.reset(sf::FloatRect(0, 0, 1000, 563));
 	window->setView(camera);
@@ -18,11 +17,13 @@ Engine::Game::~Game()
 {
 	delete world;
 	delete m;
+	delete musicPlayer;
 }
 
 void Engine::Game::startGame()
 {
 	world->Init(*window);
+	musicPlayer->Play();
 }
 
 void Engine::Game::update()

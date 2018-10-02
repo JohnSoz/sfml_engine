@@ -17,7 +17,6 @@ namespace Engine
 		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
 		virtual ~Entity();
 
-
 		virtual void update(float time) = 0;
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
 

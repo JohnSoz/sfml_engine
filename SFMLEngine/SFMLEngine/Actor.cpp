@@ -70,7 +70,6 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 		sprite.setRotation(LastAngle);
 	}
 }
-
 void Engine::Actor::handleEvent(sf::Event & e)
 {
 	if (Keyboard::isKeyPressed(Keyboard::W))
@@ -112,7 +111,6 @@ void Engine::Actor::handleEvent(sf::Event & e)
 			Pressclock.restart();
 		}
 }
-
 void Engine::Actor::checkClashes(sf::Vector2f pos)
 {
 	for (auto & i : obj)
@@ -132,39 +130,37 @@ void Engine::Actor::checkClashes(sf::Vector2f pos)
 			isCollision = false;
 	}
 }
-
 void Engine::Actor::update(float time)
 {
-	switch (direction)
+	if (!debug_actor.isSelected)
 	{
-	case Up:    velocity.y = -speed; velocity.x = 0;  break;
-	case Down:  velocity.y = speed; velocity.x = 0;  break;
-	case Left:  velocity.x = -speed; velocity.y = 0;  break;
-	case Right: velocity.x = speed; velocity.y = 0;  break;
+		auto age = meta::getMemberValue<ObjectType>(*static_cast<Object*>(this), "type");
+		std::cout << "Got person's age: " << age << '\n';
+		switch (direction)
+		{
+		case Up:    velocity.y = -speed; velocity.x = 0;  break;
+		case Down:  velocity.y = speed; velocity.x = 0;  break;
+		case Left:  velocity.x = -speed; velocity.y = 0;  break;
+		case Right: velocity.x = speed; velocity.y = 0;  break;
+		}
+
+		localRectangle = sprite.getTextureRect();
+		sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
+		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
+		RotateToMouse(0.2 * time, *window);
+		position += velocity * time;
+		checkClashes(position);
+
+		if (isWalk)
+			sprite.setTextureRect(animManager.AnimUpdate(time));
+		sprite.setPosition(position);
 	}
-
-	localRectangle = sprite.getTextureRect();
-	sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
-	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
-
-	RotateToMouse(0.2 * time, *window);
-	position += velocity * time;
-
-	checkClashes(position);
-
-	draw(&showDebugConsole, *this);
-	if (isWalk)
-		sprite.setTextureRect(animManager.AnimUpdate(time));
-	sprite.setPosition(position);
+	debug_actor.draw(&showDebugConsole, *this);
 }
-
 void Engine::Actor::getDamage(float dmg)
 {
 	lives -= dmg * ((100 - armor) / 100);
 }
-
-
-
 void Engine::Debug::ShowHelpMarker(const char * desc)
 {
 	if (ImGui::IsItemHovered())
@@ -281,13 +277,13 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 	else
 		return;
 }
-
 void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 {
 	if (*open)
 	{
 		if (ImGui::Begin(a.getName().c_str(), open, ImGuiWindowFlags_NoSavedSettings))
 		{
+			isSelected = ImGui::IsAnyWindowFocused();
 			ImGui::SetWindowSize(size);
 			bool Active = a.IsActive;
 			sf::Vector2f *position = &a.position;
@@ -322,18 +318,15 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 	else
 		return;
 }
-
 void Engine::Debug_Object::draw(bool *open, Object& a)
 {
 	objectInfo(open, a);
 }
-
 void Engine::Debug_Actor::draw(bool *open, Actor& a)
 {
 	Debug_Object::draw(open, a);
 	actorInfo(open, a);
 }
-
 sf::FloatRect Engine::operator*(const sf::FloatRect& rect, float scale)
 {
 	sf::FloatRect ret;

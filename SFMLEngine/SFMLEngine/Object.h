@@ -2,6 +2,12 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <stdio.h>
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+#include <MetaStuff/Meta.h>
+using namespace meta;
 namespace Engine
 {
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
@@ -28,6 +34,22 @@ namespace Engine
 		std::string getName() { return name; }
 		const sf::Sprite& GetSprite() { return sprite; }
 		friend class Debug_Object;
+		friend auto meta::registerMembers<Object>();
 	};
+
 }
 
+namespace meta 
+{
+	template <>
+	inline auto registerMembers<Engine::Object>()
+	{
+		return members(
+			member("name", &Engine::Object::name),
+			member("type", &Engine::Object::type),
+			member("texture", &Engine::Object::texture),
+			member("sprite", &Engine::Object::sprite),
+			member("IsActive", &Engine::Object::IsActive)
+			);
+	}
+}

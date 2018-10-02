@@ -2,6 +2,7 @@
 #include "World.h"
 #include "GUI.h"
 #include "timer.h"
+#include "AudioPlayer.h"
 namespace Engine
 {
 	enum appState
@@ -19,6 +20,7 @@ namespace Engine
 		World*				world;
 		Engine::Menu*		m;
 		sf::RenderWindow*   window;
+		AudioPlayer*        musicPlayer;
 		sf::ContextSettings settings;
 		std::string		    appname;
 		sf::Clock           deltaClock;

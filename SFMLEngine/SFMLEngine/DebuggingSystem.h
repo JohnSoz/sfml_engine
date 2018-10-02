@@ -21,7 +21,13 @@ namespace Engine
 		static void SimpleOverlay(bool *open);
 		static void SimpleText(sf::Vector2f position, bool *open, std::string name);
 	};
+	class ImGuiInterface 
+	{
+	private:
+		static bool isSelected;
+	public:
 
+	};
 	class DebuggingSystem
 	{
 	public:

@@ -6,6 +6,7 @@
 #include "imgui-sfml.h"
 #include "Level.h"
 #include <typeinfo>
+#include <MetaStuff/Meta.h>
 namespace Engine
 {
 	class Actor;
@@ -13,34 +14,40 @@ namespace Engine
 	class Debug
 	{
 	protected:
-		static inline ImVec2 size = { 400,400 };
-		static void ShowHelpMarker(const char* desc);
+		ImVec2 size;
 	public:
+		bool isSelected;
+		Debug()
+		{
+			isSelected = false; size = { 400,400 };
+		}
+		void ShowHelpMarker(const char* desc);
 	};
 
 	class Debug_Object : public Debug
 	{
 	public:
-		static void objectInfo(bool *open, Object& a);
+		void objectInfo(bool *open, Object& a);
 		void draw(bool *open, Object& a);
 	};
 
 	class Debug_Actor : public Debug_Object
 	{
 	public:
-		static void actorInfo(bool *open, Actor& a);
+		void actorInfo(bool *open, Actor& a);
 		void draw(bool *open, Actor& a);
 	};
 
 	sf::FloatRect operator * (const sf::FloatRect& rect, float scale);
 
-	class Actor : public Entity, public Debug_Actor
+	class Actor : public Entity
 	{
 	protected:
 		std::vector<ObjectLevel> obj;
 		sf::Vector2f velocity;
 		Inventory inventory;
 		AnimationManager animManager;
+		Debug_Actor debug_actor;
 
 		bool showDebugConsole;
 		bool isWalk;
