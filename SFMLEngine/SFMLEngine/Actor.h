@@ -5,8 +5,7 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "Level.h"
-#include <typeinfo>
-#include <MetaStuff/Meta.h>
+using namespace meta;
 namespace Engine
 {
 	class Actor;
@@ -38,7 +37,7 @@ namespace Engine
 		void draw(bool *open, Actor& a);
 	};
 
-	sf::FloatRect operator * (const sf::FloatRect& rect, float scale);
+	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
 
 	class Actor : public Entity
 	{
@@ -72,8 +71,8 @@ namespace Engine
 			animManager.LoadAnimation_x("Move.xml");
 			lives = armor = 100;
 			speed = 0;
-			energy = friction = 0.005;
-			maxSpeed = 0.3;
+			energy = 0.002; friction = 0.004;
+			maxSpeed = 0.24;
 			localRectangle = rect;
 			globalRectangle = sf::FloatRect(position.x, position.y, position.x + rect.width, position.y + rect.top);
 			obj = lvl.GetAllObjects();
@@ -84,11 +83,24 @@ namespace Engine
 			window = &w;
 		}
 		void handleEvent(sf::Event& e);
-		void checkClashes(sf::Vector2f pos);
+		void checkClashes();
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 		void update(float time) override;
 		void getDamage(float dmg);
 
 		friend class Debug_Actor;
+		friend auto meta::registerMembers<Engine::Actor>();
 	};
+}
+
+namespace meta
+{
+	template <>
+	inline auto registerMembers<Engine::Actor>()
+	{
+		return members(
+			member("direction", &Engine::Actor::direction),
+			member("energy", &Engine::Actor::energy)
+		);
+	}
 }

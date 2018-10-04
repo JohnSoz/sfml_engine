@@ -13,6 +13,20 @@ namespace Engine
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
 	enum Direction { Up = 1, Down, Left, Right, State };
 
+	template<class T>
+	class DebugWindow
+	{
+	private:
+		T* ptr;
+	public:
+		DebugWindow()
+		{
+		}
+		void setObjectPtr(T& obj) { ptr = obj; }
+		void draw() {}
+		void getInfo() { ptr->getName(); }
+	};
+
 	class Object
 	{
 	protected:
@@ -20,7 +34,6 @@ namespace Engine
 		sf::Vector2f position;
 		sf::Texture texture;
 		sf::Sprite sprite;
-
 		std::string name;
 		bool IsActive;
 	public:
@@ -39,7 +52,8 @@ namespace Engine
 
 }
 
-namespace meta 
+
+namespace meta
 {
 	template <>
 	inline auto registerMembers<Engine::Object>()
@@ -49,7 +63,8 @@ namespace meta
 			member("type", &Engine::Object::type),
 			member("texture", &Engine::Object::texture),
 			member("sprite", &Engine::Object::sprite),
+			member("position", &Engine::Object::position),
 			member("IsActive", &Engine::Object::IsActive)
-			);
+		);
 	}
 }

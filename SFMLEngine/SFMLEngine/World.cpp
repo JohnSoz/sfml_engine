@@ -91,5 +91,5 @@ void Engine::World::Init(sf::RenderWindow & window)
 
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-	pushEntity(new Engine::Actor(i, sf::Vector2f(100, 120), sf::IntRect(38, 39, 209, 154), "Test", window, level));
+	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), sf::IntRect(38, 39, 209, 154), "Test", window, level));
 }

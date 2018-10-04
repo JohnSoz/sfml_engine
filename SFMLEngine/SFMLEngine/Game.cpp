@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
+
+
 Engine::Game::Game(sf::RenderWindow & w)
 {
 	state = appState::UI;
@@ -12,18 +14,31 @@ Engine::Game::Game(sf::RenderWindow & w)
 	m->makeMenu();
 	camera.reset(sf::FloatRect(0, 0, 1000, 563));
 	window->setView(camera);
+	testWindow = new A("TestLua");
 }
 Engine::Game::~Game()
 {
 	delete world;
 	delete m;
 	delete musicPlayer;
+	delete testWindow;
 }
 
 void Engine::Game::startGame()
 {
+	L = luaL_newstate();
+	luaL_openlibs(L);
+	luabridge::getGlobalNamespace(L)
+		.beginClass<A>("A")
+		.addConstructor<void(*) (std::string)>()
+		.addFunction("addWindow", &A::addWindow)
+		.addFunction("addText", &A::addText_l)
+		.endClass();
+	luabridge::push(L, testWindow);
+	lua_setglobal(L, "L_testWindow");
+	testWindow->addText("Text From C++");
 	world->Init(*window);
-	musicPlayer->Play();
+	musicPlayer->Play();	
 }
 
 void Engine::Game::update()
@@ -34,26 +49,40 @@ void Engine::Game::update()
 		sf::Event event;
 		handleEvent(event);
 		ImGui::SFML::Update(*window, deltaClock.restart());
+		luaL_dofile(L, "script.lua");
+		lua_pcall(L, 0, 0, 0);
+
+		bool stateChange = false;
 		switch (state)
 		{
 		case Engine::Play:
 			world->update(*window, time.getTime(), event);
 			break;
 		case Engine::UI:
-			m->update();
-			state = appState::Play;
-			break;
-		default:
+			stateChange = m->update(event);
 			break;
 		}
+
 		draw();
+
+		if (stateChange) state = Engine::Play;
 	}
 }
 
 void Engine::Game::draw()
 {
 	window->clear(sf::Color::White);
-	world->draw(*window);
+
+	switch (state)
+	{
+	case Engine::Play:
+		world->draw(*window);
+		break;
+	case Engine::UI:
+		m->draw();
+		break;
+	}
+
 	ImGui::SFML::Render(*window);
 	window->display();
 }

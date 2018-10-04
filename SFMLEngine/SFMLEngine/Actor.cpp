@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include "Math.h"
 using sf::Keyboard;
 
 void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
@@ -72,38 +73,42 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 }
 void Engine::Actor::handleEvent(sf::Event & e)
 {
-	if (Keyboard::isKeyPressed(Keyboard::W))
+	if (isCollision == false)
 	{
-		isWalk = true;
-		direction = Direction::Up;
-		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+		if (Keyboard::isKeyPressed(Keyboard::W))
+		{
+			isWalk = true;
+			direction = Direction::Up;
+			if (direction != Up) speed -= speed * 0.5;
+			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::S))
+		{
+			isWalk = true;
+			if (direction != Down) speed -= speed * 0.5;
+			direction = Direction::Down;
+			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::A))
+		{
+			isWalk = true;
+			if (direction != Left) speed -= speed * 0.5;
+			direction = Direction::Left;
+			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+		}
+		else if (Keyboard::isKeyPressed(Keyboard::D))
+		{
+			isWalk = true;
+			if (direction != Right) speed -= speed * 0.5;
+			direction = Direction::Right;
+			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+		}
+		else
+		{
+			isWalk = false;
+			(speed > 0) ? speed -= friction : speed = 0;
+		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::S))
-	{
-		isWalk = true;
-		direction = Direction::Down;
-		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::A))
-	{
-		isWalk = true;
-		if (direction != Left) speed -= speed * 0.5;
-		direction = Direction::Left;
-		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-	}
-	else if (Keyboard::isKeyPressed(Keyboard::D))
-	{
-		isWalk = true;
-		if (direction != Right) speed -= speed * 0.5;
-		direction = Direction::Right;
-		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-	}
-	else
-	{
-		isWalk = false;
-		(speed > 0) ? speed -= friction : speed = 0;
-	}
-
 	if (Keyboard::isKeyPressed(Keyboard::U))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
@@ -111,31 +116,39 @@ void Engine::Actor::handleEvent(sf::Event & e)
 			Pressclock.restart();
 		}
 }
-void Engine::Actor::checkClashes(sf::Vector2f pos)
+void Engine::Actor::checkClashes()
 {
 	for (auto & i : obj)
 	{
-		sf::FloatRect Intersection;
-		sf::FloatRect objGlobalRect = { i.rect.left, i.rect.top, i.rect.width, i.rect.height };
-		if (sprite.getGlobalBounds().intersects(objGlobalRect, Intersection))
+		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
+		auto objectRect = Rectangle::fromSfmlRect(i.rect);
+		if (sprite.getGlobalBounds().intersects(i.rect))
 		{
 			if (i.name == "barrier")
 			{
-				float offset = (abs(Intersection.width) > abs(Intersection.height)) ? Intersection.height : Intersection.width;
 				isCollision = true;
-				//	std::cout << "W = " << Intersection.width << " H = " << Intersection.height << " Top = " << Intersection.top << " Left = " << Intersection.left << std::endl;
+				if (abs(speed) > 0)
+				{
+					auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect); //in most cases, returns values in the range [-2;2]
+					isWalk = false;
+					//if (abs(offset.x) < 6 && abs(offset.y) < 6)
+					//{
+					//	if (offset.x > offset.y)
+					//		offset.x += 0.01;
+					//	else
+					//		offset.y += 0.01;
+						position = position + offset.GetSfmlVector();
+					//	std::cout << "x = " << offset.x << "  y = " << offset.y << std::endl;
+					//}
+				}
 			}
 		}
-		else
-			isCollision = false;
 	}
 }
 void Engine::Actor::update(float time)
 {
 	if (!debug_actor.isSelected)
 	{
-		auto age = meta::getMemberValue<ObjectType>(*static_cast<Object*>(this), "type");
-		std::cout << "Got person's age: " << age << '\n';
 		switch (direction)
 		{
 		case Up:    velocity.y = -speed; velocity.x = 0;  break;
@@ -149,7 +162,7 @@ void Engine::Actor::update(float time)
 		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
 		RotateToMouse(0.2 * time, *window);
 		position += velocity * time;
-		checkClashes(position);
+		checkClashes();
 
 		if (isWalk)
 			sprite.setTextureRect(animManager.AnimUpdate(time));
@@ -180,12 +193,14 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 		{
 			if (ImGui::BeginChild(a.getName().c_str()))
 			{
+				ImGui::Spacing();
+				ImGui::Spacing();
 				ImGui::SetWindowSize(size);
-
 				float *energy = &a.energy;
 				float *friction = &a.friction;
 				float *maxSpeed = &a.maxSpeed;
 				float CurrAngle = a.CurrAngle;
+				bool Walk = a.isWalk;
 				sf::Vector2f *position = &a.position;
 				sf::Vector2f velocity = a.velocity;
 
@@ -214,7 +229,7 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::PopItemWidth();
 						ImGui::EndPopup();
 					}
-					ImGui::Spacing();
+					ImGui::Separator();
 					ImGui::Text("position X = %.1f | Y = %.1f", position->x, position->y);
 					if (ImGui::BeginPopupContextItem("itemPosition"))
 					{
@@ -228,7 +243,7 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::PopItemWidth();
 						ImGui::EndPopup();
 					}
-					ImGui::Spacing();
+					ImGui::Separator();
 					ImGui::Text("maxSpeed: %.2f", *maxSpeed);
 					if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
 					{
@@ -239,10 +254,13 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 						ImGui::PopItemWidth();
 						ImGui::EndPopup();
 					}
-					ImGui::Spacing();
+					ImGui::Separator();
+					ImGui::Text("isWalk: %i", Walk);
+					ShowHelpMarker("immutable value");
+					ImGui::Separator();
 					ImGui::Text("CurrAngle: %.2f", CurrAngle);
 					ShowHelpMarker("immutable value");
-					ImGui::Spacing();
+					ImGui::Separator();
 					ImGui::Text("velocity X = %.3f | Y = %.3f", velocity.x, velocity.y);
 					ShowHelpMarker("immutable value");
 					ImGui::NextColumn();
@@ -279,11 +297,15 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 }
 void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 {
+	//isSelected = *open;
 	if (*open)
 	{
 		if (ImGui::Begin(a.getName().c_str(), open, ImGuiWindowFlags_NoSavedSettings))
 		{
-			isSelected = ImGui::IsAnyWindowFocused();
+			if (ImGui::Button("PlayerMovement"))
+				isSelected = !isSelected;
+			ImGui::Spacing();
+
 			ImGui::SetWindowSize(size);
 			bool Active = a.IsActive;
 			sf::Vector2f *position = &a.position;
@@ -294,9 +316,10 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 				ImGui::Spacing();
 				ImGui::Text("isActive: %i", (int)Active);
 				ShowHelpMarker("1 = True; 0 = False");
-				ImGui::Spacing();
+				ImGui::Separator();
 				ImGui::Text("objectType: %i", (int)ObjectType);
 				ShowHelpMarker("None = 0, OEntity, OPawn, OActor");
+				ImGui::Separator();
 				ImGui::Text("position X = %.2f | Y = %.2f", position->x, position->y);
 				if (ImGui::BeginPopupContextItem("itemPosition"))
 				{
@@ -327,12 +350,9 @@ void Engine::Debug_Actor::draw(bool *open, Actor& a)
 	Debug_Object::draw(open, a);
 	actorInfo(open, a);
 }
-sf::FloatRect Engine::operator*(const sf::FloatRect& rect, float scale)
+
+sf::Vector2f Engine::operator+(const sf::Vector2f& rect, float scale)
 {
-	sf::FloatRect ret;
-	ret.width = rect.width * scale;
-	ret.height = rect.height * scale;
-	ret.left = rect.left * scale;
-	ret.top = rect.top * scale;
-	return ret;
+	return sf::Vector2f(rect.x + scale, rect.y + scale);
 }
+

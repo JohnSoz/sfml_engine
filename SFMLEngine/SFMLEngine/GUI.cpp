@@ -1,4 +1,5 @@
 #include "GUI.h"
+#include <assert.h> 
 using namespace Engine;
 
 
@@ -9,7 +10,7 @@ bool operator==(const pair_s& left, const pair_s& right)
 
 void Layer::addWidjet(tgui::Widget::Ptr w, std::string type)
 {
-	if (type != "")
+	if (!type.empty())
 		w->setRenderer(theme.getRenderer(type));
 	gui.add(w);
 }
@@ -63,21 +64,10 @@ void Engine::GUI::handleEvent(sf::Event & e)
 	}
 }
 
-void Engine::GUI::update()
+bool Engine::GUI::update(sf::Event& e)
 {
-	while (showGui)
-	{
-		sf::Event event;
-		while (window->pollEvent(event))
-		{
-			if (event.type == sf::Event::Closed)
-				window->close();
-			handleEvent(event);
-		}
-		window->clear(sf::Color::Red);
-		draw();
-		window->display();
-	}
+	handleEvent(e);
+	return !showGui;
 }
 
 void Engine::GUI::draw()
@@ -102,6 +92,8 @@ void Engine::GUI::addLayer(std::string name, sf::RenderWindow & target, renderPr
 tgui::Button::Ptr Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f)
 {
 	auto Button = tgui::Button::create();
+	POS.x -= SIZE.x / 2;
+	POS.y -= SIZE.y / 2;
 	Button->setPosition(POS);
 	Button->setText(TEXT);
 	if (f)
@@ -110,12 +102,25 @@ tgui::Button::Ptr Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vec
 	return Button;
 }
 
-tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair_s pos)
+tgui::Button::Ptr Engine::makeButton(std::string TEXT, pair_s pos, sf::Vector2f SIZE, std::function<void()> f)
+{
+	auto Button = tgui::Button::create();
+	Button->setPosition(pos.first, pos.second);
+	Button->setText(TEXT);
+	if (f)
+		Button->connect("Pressed", f);
+	Button->setSize(SIZE);
+	return Button;
+}
+
+tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos)
 {
 	auto textbox = tgui::TextBox::create();
 	textbox->setSize(SIZE);
 	textbox->disable();
-	textbox->setPosition(pos.first, pos.second);
+	pos.x -= SIZE.x / 2;
+	pos.y -= SIZE.y / 2;
+	textbox->setPosition(pos);
 	textbox->addText(TEXT);
 	return textbox;
 }

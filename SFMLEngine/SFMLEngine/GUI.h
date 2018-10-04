@@ -21,7 +21,9 @@ namespace Engine
 
 	tgui::Button::Ptr makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE = { 50,40 }, std::function<void()> f = nullptr);
 
-	tgui::TextBox::Ptr makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair_s pos);
+	tgui::Button::Ptr makeButton(std::string TEXT, pair_s pos, sf::Vector2f SIZE = { 50,40 }, std::function<void()> f = nullptr);
+
+	tgui::TextBox::Ptr makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos);
 
 	tgui::Canvas::Ptr makeCanvas(sf::Sprite spr);
 
@@ -112,7 +114,7 @@ namespace Engine
 
 		void handleEvent(sf::Event& e);
 
-		void update();
+		bool update(sf::Event& e);
 
 		void draw();
 
@@ -138,13 +140,13 @@ namespace Engine
 			t.loadFromFile("Data/images/bg.png");
 			sf::Sprite spr(t);
 			addWidjetToLayer(makeCanvas(spr), "");
-			addWidjetToLayer(makeButton("Run", sf::Vector2f(200, 48), sf::Vector2f(150, 60),
+			addWidjetToLayer(makeButton("Run", sf::Vector2f(220, 250), sf::Vector2f(150, 60),
 				[&]()
 			{
 				showGui = false;
 			}
 			), "Button");
-			addWidjetToLayer(makeTextBox("TestMenu", sf::Vector2f(120, 60), pair_s("50%", "10%")), "TextBox");
+			addWidjetToLayer(makeTextBox("TestMenu", sf::Vector2f(120, 60), sf::Vector2f(960, 40)), "TextBox");
 		}
 	};
 }
