@@ -8,14 +8,14 @@ using namespace sf;
 
 namespace Engine
 {
-	typedef void(*func)();
+//	typedef void(*func)();
 	typedef std::pair<std::string, std::string> pair_s;
 
 	enum renderPriority
 	{
 		Low = 0,
 		Medium,
-		High
+		Highc
 	};
 
 
@@ -128,7 +128,7 @@ namespace Engine
 	class Menu : public GUI
 	{
 	private:
-
+		
 	public:
 		Menu() = default;
 		Menu(std::string pathToTheme, sf::RenderWindow& w) : GUI(pathToTheme, w) {}

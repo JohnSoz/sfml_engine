@@ -17,7 +17,8 @@ int main()
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.00001", sf::Style::Default, settings);
-	window.setFramerateLimit(350);
+	//window.setVerticalSyncEnabled(true);
+	window.setFramerateLimit(400);
 #if _Debug_
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();

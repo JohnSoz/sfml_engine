@@ -21,7 +21,7 @@ namespace Engine
 		static void SimpleOverlay(bool *open);
 		static void SimpleText(sf::Vector2f position, bool *open, std::string name);
 	};
-	class ImGuiInterface 
+	class ImGuiInterface
 	{
 	private:
 		static bool isSelected;
@@ -38,12 +38,20 @@ namespace Engine
 		bool LogConsole = false;
 		bool showVertex = false;
 		sf::Clock Pressclock;
+		void drawDebugWindows(bool open)
+		{
+			if (open)
+			{
+				if (ImGui::Begin("DebugWindows", NULL)){}
+				ImGui::End();
+			}
+		}
 	public:
 		DebuggingSystem() = default;
 		~DebuggingSystem() = default;
 
 		static void setWindow(sf::RenderWindow& w) { window = &w; }
-		void draw();
+		void draw(sf::RenderTarget& target = *window);
 		void pushRectangle(std::pair<sf::FloatRect*, sf::FloatRect*> e)
 		{
 			entites.push_back(e);

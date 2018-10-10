@@ -2,9 +2,9 @@
 #include <windows.h>
 using namespace Engine;
 #include "LogConsole.h"
+#include "staticVariable.h"
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
-
-void DebuggingSystem::draw()
+void DebuggingSystem::draw(sf::RenderTarget& target)
 {
 	if (showVertex)
 	{
@@ -39,12 +39,12 @@ void DebuggingSystem::draw()
 			triangle[4].position = sf::Vector2f(x, y);
 			triangle[4].color = sf::Color::Red;
 
-			ImGUI::SimpleText(sf::Vector2f(x - 102, y - 70), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f(x  * 1.92, y  * 1.92), &overlay, "D_Window_" + std::to_string(count));
 			count++;
-			ImGUI::SimpleText(sf::Vector2f(w, h), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f(w* 1.92, h* 1.92), &overlay, "D_Window_" + std::to_string(count));
 			count++;
 
-			window->draw(triangle);
+			target.draw(triangle);
 		}
 		for (auto i : obj) //Оптимизировать
 		{
@@ -69,14 +69,15 @@ void DebuggingSystem::draw()
 			triangle[4].position = sf::Vector2f(x, y);
 			triangle[4].color = sf::Color::Blue;
 
-			ImGUI::SimpleText(sf::Vector2f(x, y), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f(x * 1.92, y* 1.92), &overlay, "D_Window_" + std::to_string(count));
 			count++;
-			ImGUI::SimpleText(sf::Vector2f(x + w, y + h), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f((x + w)  * 1.92, (y + h)  * 1.92), &overlay, "D_Window_" + std::to_string(count));
 			count++;
 
-			window->draw(triangle);
+			target.draw(triangle);
 		}
 	}
+	drawDebugWindows(Engine::VStaticContainer::ShowDemoWindows);
 	Console::AppLog::Draw("LogConsole", &LogConsole);
 }
 
@@ -94,7 +95,7 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 	{
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
-			showVertex= !showVertex;
+			showVertex = !showVertex;
 			Pressclock.restart();
 		}
 	}
@@ -103,6 +104,14 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
 			LogConsole = !LogConsole;
+			Pressclock.restart();
+		}
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+	{
+		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
+		{
+			Engine::VStaticContainer::ShowDemoWindows = !Engine::VStaticContainer::ShowDemoWindows;
 			Pressclock.restart();
 		}
 	}
@@ -134,7 +143,7 @@ void Engine::ImGUI::SimpleOverlay(bool * open)
 			ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, window_pos_pivot);
 		ImGui::SetNextWindowBgAlpha(0.3f);
 
-		if (ImGui::Begin("Overlay", open, (corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+		if (ImGui::Begin("Overlay", open, (corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoNav))
 		{
 			ImGui::Text("Show player position");
 			ImGui::Separator();
@@ -180,8 +189,7 @@ void Engine::ImGUI::SimpleText(sf::Vector2f position, bool * open, std::string n
 		ImVec2 window_pos = ImVec2(position.x, position.y);
 		ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(0, 0));
 		ImGui::SetNextWindowBgAlpha(0.6f);
-		ImGui::SetNextWindowSize(ImVec2(102, 70));
-		if (ImGui::Begin(name.c_str(), open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
+		if (ImGui::Begin(name.c_str(), open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 		{
 			ImGui::SetWindowFontScale(1);
 			ImGui::Text("Info:");

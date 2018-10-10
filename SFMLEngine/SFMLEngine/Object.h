@@ -7,26 +7,117 @@
 #include <unordered_map>
 #include <iostream>
 #include <MetaStuff/Meta.h>
+#include "imgui.h"
+#include "imgui-sfml.h"
+#include "staticVariable.h"
 using namespace meta;
 namespace Engine
 {
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
 	enum Direction { Up = 1, Down, Left, Right, State };
+	enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE };
 
+	class Object;
 	template<class T>
-	class DebugWindow
+	class DebugWindows
 	{
-	private:
-		T* ptr;
 	public:
-		DebugWindow()
+		DebugWindows() {};
+		~DebugWindows()
 		{
 		}
-		void setObjectPtr(T& obj) { ptr = obj; }
-		void draw() {}
-		void getInfo() { ptr->getName(); }
-	};
+		void set(T* p)
+		{
+			ptr = p;
+			static_assert(meta::isRegistered<T>(), "ною!");
+		}
+		void draw(std::string nameTree, bool isFirstDraw = false)
+		{
+			if (Engine::VStaticContainer::ShowDemoWindows)
+			{
+				if (ImGui::Begin("DebugWindows", NULL))
+				{
+					ImGui::SetWindowSize(size);
+					if (isFirstDraw)
+					{
+						ImGui::Text(ptr->getName().c_str());
+					}
+					if (ImGui::TreeNode((void*)ptr, nameTree.c_str()))
+					{
+						meta::doForAllMembers<T>(
+							[&](const auto& member)
+						{
+							std::string field = "";
+							switch (checkType<decltype(member.getCopy(*ptr))>())
+							{
+							case Engine::SPRITE:
+								if (ImGui::TreeNode("Object Sprite"))
+								{
+									auto spr = (Object*)ptr;
+									float size_x = spr->GetSprite().getTextureRect().width;
+									float size_y = spr->GetSprite().getTextureRect().height;
+									ImGui::Text("%.0fx%.0f", size_x, size_y);
+									ImGui::Image(*spr->GetSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->GetSprite().getTextureRect());
+									ImGui::TreePop();
+								}
+								break;
+							case Engine::INT:
+								field = (std::string)member.getName() + ": %.i";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								break;
+							case Engine::BOOL:
+								field = (std::string)member.getName() + ": %.i";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								break;
+							case Engine::FLOAT:
+								field = (std::string)member.getName() + ": %.4f";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								break;
+							case Engine::STRING:
+								field = (std::string)member.getName() + ": " + meta::getMemberValue<std::string>(*ptr, member.getName());
+								ImGui::Text(field.c_str());
+								break;
+							case Engine::VECTOR2F:
+								field = (std::string)member.getName() + ": (%.2f %.2f)";
+								auto vec = meta::getMemberValue<sf::Vector2f>(*ptr, member.getName());
+								ImGui::Text(field.c_str(), vec.x, vec.y);
+								break;
+							}
+						}
+						);
+						ImGui::TreePop();
+					}
 
+					if (!isFirstDraw)
+					{
+						ImGui::Spacing();
+						ImGui::Separator();
+						ImGui::Spacing();
+					}
+				}
+				ImGui::End();
+			}
+		}
+	private:
+		template<class Type>
+		valueType checkType()
+		{
+			if (typeid(Type) == typeid(std::string))
+				return STRING;
+			else if (typeid(Type) == typeid(int))
+				return INT;
+			else if (typeid(Type) == typeid(bool))
+				return BOOL;
+			else if (typeid(Type) == typeid(float))
+				return FLOAT;
+			else if (typeid(Type) == typeid(sf::Vector2f))
+				return VECTOR2F;
+			else if (typeid(Type) == typeid(sf::Sprite))
+				return SPRITE;
+		}
+		T* ptr;
+		sf::Vector2f size = { 400,400 };
+	};
 	class Object
 	{
 	protected:
@@ -36,17 +127,22 @@ namespace Engine
 		sf::Sprite sprite;
 		std::string name;
 		bool IsActive;
+		DebugWindows<Object> dw_o;
 	public:
-		Object() { type = ObjectType::None; }
+		Object()
+		{
+			type = ObjectType::None;
+			dw_o.set(this);
+		}
 		Object(std::string);
 		~Object() = default;
 		Object(sf::Vector2f pos, std::string name);
 		Object(sf::Vector2f pos, ObjectType t, std::string name);
 		bool isActive() const { return IsActive; }
 		void destroy() { IsActive = false; }
-		std::string getName() { return name; }
+		const std::string& getName() const { return name; }
 		const sf::Sprite& GetSprite() { return sprite; }
-		friend class Debug_Object;
+		friend class DebugWindow;
 		friend auto meta::registerMembers<Object>();
 	};
 
@@ -59,10 +155,10 @@ namespace meta
 	inline auto registerMembers<Engine::Object>()
 	{
 		return members(
-			member("name", &Engine::Object::name),
-			member("type", &Engine::Object::type),
-			member("texture", &Engine::Object::texture),
-			member("sprite", &Engine::Object::sprite),
+			member("name", &Engine::Object::getName),
+			//member("type", &Engine::Object::type)
+			//member("texture", &Engine::Object::texture),
+			//member("sprite", &Engine::Object::sprite),
 			member("position", &Engine::Object::position),
 			member("IsActive", &Engine::Object::IsActive)
 		);

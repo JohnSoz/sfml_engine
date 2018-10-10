@@ -12,12 +12,13 @@ Engine::Game::Game(sf::RenderWindow & w)
 	m = new  Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
 	musicPlayer = new AudioPlayer();
 	m->makeMenu();
-	camera.reset(sf::FloatRect(0, 0, 1000, 563));
+	camera.reset(sf::FloatRect(0, 0, 1000, 563)); //1000 563
 	window->setView(camera);
 	testWindow = new A("TestLua");
 }
 Engine::Game::~Game()
 {
+	lua_close(L);
 	delete world;
 	delete m;
 	delete musicPlayer;
@@ -38,7 +39,7 @@ void Engine::Game::startGame()
 	lua_setglobal(L, "L_testWindow");
 	testWindow->addText("Text From C++");
 	world->Init(*window);
-	musicPlayer->Play();	
+	musicPlayer->Play();
 }
 
 void Engine::Game::update()
@@ -50,7 +51,6 @@ void Engine::Game::update()
 		handleEvent(event);
 		ImGui::SFML::Update(*window, deltaClock.restart());
 		luaL_dofile(L, "script.lua");
-		lua_pcall(L, 0, 0, 0);
 
 		bool stateChange = false;
 		switch (state)
@@ -64,7 +64,6 @@ void Engine::Game::update()
 		}
 
 		draw();
-
 		if (stateChange) state = Engine::Play;
 	}
 }

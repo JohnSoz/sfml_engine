@@ -8,12 +8,14 @@ Engine::Object::Object(sf::Vector2f pos, std::string n)
 	IsActive = true;
 	type = ObjectType::None;
 	name = n;
+	dw_o.set(this);
 }
 
 Engine::Object::Object(std::string Name)
 {
 	name = Name;
 	type = ObjectType::None;
+	dw_o.set(this);
 }
 
 Engine::Object::Object(sf::Vector2f pos, ObjectType t, std::string n)
@@ -22,6 +24,7 @@ Engine::Object::Object(sf::Vector2f pos, ObjectType t, std::string n)
 	type = t;
 	name = n;
 	IsActive = true;
+	dw_o.set(this);
 }
 
 

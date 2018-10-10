@@ -39,7 +39,7 @@ namespace Engine
 		virtual sf::IntRect& tick(float time) = 0;
 	};
 
-	class AnimationXml : public Animation
+	class AnimationXml final : public Animation
 	{
 	public:
 		std::vector<sf::IntRect> frames;
@@ -82,8 +82,7 @@ namespace Engine
 		int step; ///< Not use
 		std::list <Animation*> animationList; ///< Container with the animations
 		std::list <Animation*>::iterator currAnim; ///< Iterator to traverse the container \warning also stores the current animation
-		Animation *CurrentAnimation; ///< Stores the current animation
-
+		Animation *CurrentAnimation; /// meta::doForAllMembers<T>([]() {});
 	public:
 		AnimationManager() = default; ///< Standard constructor
 		~AnimationManager()///< Standard destructor

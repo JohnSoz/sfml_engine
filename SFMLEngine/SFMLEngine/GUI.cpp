@@ -72,10 +72,13 @@ bool Engine::GUI::update(sf::Event& e)
 
 void Engine::GUI::draw()
 {
-	std::sort(layers.begin(), layers.end(), [](Layer* l, Layer* l2) {return (l->getRenderPriority() < l2->getRenderPriority()); });
-	for (auto &i : layers)
+	if (showGui)
 	{
-		i->gui.draw();
+		std::sort(layers.begin(), layers.end(), [](Layer* l, Layer* l2) {return (l->getRenderPriority() < l2->getRenderPriority()); });
+		for (auto &i : layers)
+		{
+			i->gui.draw();
+		}
 	}
 }
 

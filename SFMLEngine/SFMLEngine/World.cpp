@@ -22,9 +22,16 @@ void Engine::ObjectHandler::PushObject(Entity* obj)
 
 void Engine::ObjectHandler::UpdateObjects(float time)
 {
-	for (auto& o : ObjectsArray)
+	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
 	{
-		o->update(time);
+		(*iter)->update(time);
+		if ((*iter)->IsActive == false) 
+		{ 
+			delete (*iter);
+			iter = ObjectsArray.erase(iter);
+		}
+		else
+			++iter;
 	}
 }
 
@@ -32,13 +39,17 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
-		sf::CircleShape shape(2);
-		shape.setOrigin(1, 1);
-		shape.setFillColor(sf::Color::Red);
-		sf::Vector2f pos = o->sprite.getPosition();
-		shape.setPosition(pos);
 		WINDOW.draw(o->sprite);
-		WINDOW.draw(shape);
+		if (o->getType() == OActor)
+		{
+			auto z = static_cast<Actor*>(o);
+			sf::CircleShape shape(1);
+			//shape.setOrigin(2, 2);
+			shape.setFillColor(sf::Color::Blue);
+			sf::Vector2f pos = z->getPointOfFire();
+			shape.setPosition(pos);
+			WINDOW.draw(shape);
+		}
 	}
 }
 
@@ -48,7 +59,7 @@ void Engine::ObjectHandler::refresh()
 		[](const Entity *entity)->bool
 	{
 		return !entity->isActive();
-	}));
+	}), ObjectsArray.end());
 }
 
 
@@ -67,6 +78,19 @@ void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& eve
 void Engine::World::handleEvent(sf::Event & event)
 {
 	debug.handleEvent(event);
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	{
+		if (!Engine::VStaticContainer::ShowDemoWindows)
+		{
+			if (gunClock.getElapsedTime().asMilliseconds() > 500)
+			{
+				sf::Image i;
+				i.loadFromFile("Data/images/bullet.png");
+				pushEntity(new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), objHandler.GetObjects<Actor>("Test").getPointOfFire(), "Bullet", objHandler.GetObjects<Actor>("Test").Radian, 12, level));
+				gunClock.restart();
+			}
+		}
+	}
 }
 
 void Engine::World::draw(sf::RenderWindow & window)

@@ -17,6 +17,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float rotation = (atan2f(v, a)) * 180 / 3.14159265;
 	CurrAngle = rotation; //?
 
+	//////////////////////////////////////////////rotate debug rectangle////////////////////////
 	auto x = globalRectangle.left;
 	auto y = globalRectangle.top;
 	auto w = globalRectangle.width;
@@ -35,16 +36,20 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	auto newW2 = centerX + (w - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //w,y
 	auto newY3 = centerY + (y - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //y,w
 
-	debugRectangle.left = newX2;//x2
-	debugRectangle.top = newY2;//y2
-	debugRectangle.width = newW2;//w2
-	debugRectangle.height = newY3;//h2
+	debugRectangle.left = newX2;   //x2
+	debugRectangle.top = newY2;    //y2
+	debugRectangle.width = newW2;  //w2
+	debugRectangle.height = newY3; //h2
 
 	globalRectangle.left = newX;
 	globalRectangle.top = newY;
 	globalRectangle.width = newW;
 	globalRectangle.height = newH;
-
+	///////////////////////////////////////////////////////////////////////////////////////////
+	if (Radian <= 1 && Radian >= -2.5)
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(Radian + 0.02) * 52, position.y + sinf(Radian + 0.02) * 52));
+	else
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(Radian + 0.05) * 52, position.y + sinf(Radian + 0.04) * 52));
 	if (CurrAngle > 180) CurrAngle -= 360;
 	if (CurrAngle < -180) CurrAngle += 360;
 	posMouse.x = CurrAngle - LastAngle;
@@ -71,43 +76,41 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 		sprite.setRotation(LastAngle);
 	}
 }
+
 void Engine::Actor::handleEvent(sf::Event & e)
 {
-	if (isCollision == false)
+	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
-		if (Keyboard::isKeyPressed(Keyboard::W))
-		{
-			isWalk = true;
-			direction = Direction::Up;
-			if (direction != Up) speed -= speed * 0.5;
-			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::S))
-		{
-			isWalk = true;
-			if (direction != Down) speed -= speed * 0.5;
-			direction = Direction::Down;
-			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::A))
-		{
-			isWalk = true;
-			if (direction != Left) speed -= speed * 0.5;
-			direction = Direction::Left;
-			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-		}
-		else if (Keyboard::isKeyPressed(Keyboard::D))
-		{
-			isWalk = true;
-			if (direction != Right) speed -= speed * 0.5;
-			direction = Direction::Right;
-			speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
-		}
-		else
-		{
-			isWalk = false;
-			(speed > 0) ? speed -= friction : speed = 0;
-		}
+		isWalk = true;
+		direction = Direction::Up;
+		if (direction != Up) speed -= speed * 0.5;
+		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::S))
+	{
+		isWalk = true;
+		if (direction != Down) speed -= speed * 0.5;
+		direction = Direction::Down;
+		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::A))
+	{
+		isWalk = true;
+		if (direction != Left) speed -= speed * 0.5;
+		direction = Direction::Left;
+		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+	}
+	else if (Keyboard::isKeyPressed(Keyboard::D))
+	{
+		isWalk = true;
+		if (direction != Right) speed -= speed * 0.5;
+		direction = Direction::Right;
+		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
+	}
+	else
+	{
+		isWalk = false;
+		(speed > 0) ? speed -= friction : speed = 0;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::U))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
@@ -116,7 +119,8 @@ void Engine::Actor::handleEvent(sf::Event & e)
 			Pressclock.restart();
 		}
 }
-void Engine::Actor::checkClashes()
+
+void Engine::Actor::checkClashes(float time)
 {
 	for (auto & i : obj)
 	{
@@ -131,61 +135,50 @@ void Engine::Actor::checkClashes()
 				{
 					auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect); //in most cases, returns values in the range [-2;2]
 					isWalk = false;
-					//if (abs(offset.x) < 6 && abs(offset.y) < 6)
-					//{
-					//	if (offset.x > offset.y)
-					//		offset.x += 0.01;
-					//	else
-					//		offset.y += 0.01;
-						position = position + offset.GetSfmlVector();
-					//	std::cout << "x = " << offset.x << "  y = " << offset.y << std::endl;
-					//}
+					if (offset.x == 0)
+						offset.y *= time * 0.2;
+					else
+						offset.x *= time * 0.2;
+					position = position + offset.GetSfmlVector();
+					//std::cout << "x = " << offset.x << "  y = " << offset.y << std::endl;
 				}
 			}
 		}
 	}
 }
+
 void Engine::Actor::update(float time)
 {
-	if (!debug_actor.isSelected)
+
+	switch (direction)
 	{
-		switch (direction)
-		{
-		case Up:    velocity.y = -speed; velocity.x = 0;  break;
-		case Down:  velocity.y = speed; velocity.x = 0;  break;
-		case Left:  velocity.x = -speed; velocity.y = 0;  break;
-		case Right: velocity.x = speed; velocity.y = 0;  break;
-		}
-
-		localRectangle = sprite.getTextureRect();
-		sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
-		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
-		RotateToMouse(0.2 * time, *window);
-		position += velocity * time;
-		checkClashes();
-
-		if (isWalk)
-			sprite.setTextureRect(animManager.AnimUpdate(time));
-		sprite.setPosition(position);
+	case Up:    velocity.y = -speed; velocity.x = 0;  break;
+	case Down:  velocity.y = speed; velocity.x = 0;  break;
+	case Left:  velocity.x = -speed; velocity.y = 0;  break;
+	case Right: velocity.x = speed; velocity.y = 0;  break;
 	}
-	debug_actor.draw(&showDebugConsole, *this);
+
+	localRectangle = sprite.getTextureRect();
+	sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
+	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
+	RotateToMouse(0.2 * time, *window);
+	position += velocity * time;
+	checkClashes(time);
+
+	if (isWalk)
+		sprite.setTextureRect(animManager.AnimUpdate(time));
+	sprite.setPosition(position);
+	dw_a.draw("Actor", true);
+	dw_o.draw("Object");
 }
+
 void Engine::Actor::getDamage(float dmg)
 {
 	lives -= dmg * ((100 - armor) / 100);
 }
-void Engine::Debug::ShowHelpMarker(const char * desc)
-{
-	if (ImGui::IsItemHovered())
-	{
-		ImGui::BeginTooltip();
-		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-		ImGui::TextUnformatted(desc);
-		ImGui::PopTextWrapPos();
-		ImGui::EndTooltip();
-	}
-}
-void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
+
+
+void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 {
 	if (*open)
 	{
@@ -287,15 +280,29 @@ void Engine::Debug_Actor::actorInfo(bool *open, Actor& a)
 					}
 					ImGui::TreePop();
 				}
-				ImGui::EndChild();
 			}
-			ImGui::End();
+			ImGui::EndChild();
 		}
+		ImGui::End();
+
 	}
 	else
 		return;
 }
-void Engine::Debug_Object::objectInfo(bool *open, Object& a)
+
+void Engine::DebugWindow::ShowHelpMarker(const char * desc)
+{
+	if (ImGui::IsItemHovered())
+	{
+		ImGui::BeginTooltip();
+		ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+		ImGui::TextUnformatted(desc);
+		ImGui::PopTextWrapPos();
+		ImGui::EndTooltip();
+	}
+}
+
+void Engine::DebugWindow::objectInfo(bool *open, Object& a)
 {
 	//isSelected = *open;
 	if (*open)
@@ -305,7 +312,6 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 			if (ImGui::Button("PlayerMovement"))
 				isSelected = !isSelected;
 			ImGui::Spacing();
-
 			ImGui::SetWindowSize(size);
 			bool Active = a.IsActive;
 			sf::Vector2f *position = &a.position;
@@ -341,15 +347,8 @@ void Engine::Debug_Object::objectInfo(bool *open, Object& a)
 	else
 		return;
 }
-void Engine::Debug_Object::draw(bool *open, Object& a)
-{
-	objectInfo(open, a);
-}
-void Engine::Debug_Actor::draw(bool *open, Actor& a)
-{
-	Debug_Object::draw(open, a);
-	actorInfo(open, a);
-}
+
+
 
 sf::Vector2f Engine::operator+(const sf::Vector2f& rect, float scale)
 {
