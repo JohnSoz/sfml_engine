@@ -53,16 +53,16 @@ namespace Engine {
 	class Rectangle
 	{
 	public:
-		Rectangle(int x = 0, int y = 0, int w = 0, int h = 0);
+		Rectangle(double x = 0, double y = 0, double w = 0, double h = 0);
 		~Rectangle(void) {};
 
-		inline int Left(void) const { return x; }
-		inline int Right(void) const { return x + w; }
-		inline int Top(void) const { return y; }
-		inline int Bottom(void) const { return y + h; }
+		inline double Left(void) const { return x; }
+		inline double Right(void) const { return x + w; }
+		inline double Top(void) const { return y; }
+		inline double Bottom(void) const { return y + h; }
 
 		bool Contains(Vector2D& vVec) const;
-		bool Contains(int x, int y) const;
+		bool Contains(double x, double y) const;
 
 		sf::IntRect getSfmlRect_i();
 		sf::FloatRect *getSfmlRect_f();
@@ -83,7 +83,7 @@ namespace Engine {
 		bool operator!= (const Rectangle& r2) const;
 
 	public:
-		float x, y, w, h;
+		double x, y, w, h;
 	};
 }
 #endif

@@ -110,7 +110,8 @@ namespace meta
 	{
 		return members(
 			member("direction", &Engine::Actor::direction),
-			member("sprite", &Engine::Actor::sprite),
+			member("velocity", &Engine::Actor::velocity),
+			//member("sprite", &Engine::Actor::sprite),
 			member("friction", &Engine::Actor::friction),
 			member("CurrAngle", &Engine::Actor::CurrAngle),
 			member("maxSpeed", &Engine::Actor::maxSpeed),

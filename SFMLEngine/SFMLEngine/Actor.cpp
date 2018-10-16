@@ -82,8 +82,8 @@ void Engine::Actor::handleEvent(sf::Event & e)
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		isWalk = true;
-		direction = Direction::Up;
 		if (direction != Up) speed -= speed * 0.5;
+		direction = Direction::Up;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::S))
@@ -140,7 +140,6 @@ void Engine::Actor::checkClashes(float time)
 					else
 						offset.x *= time * 0.2;
 					position = position + offset.GetSfmlVector();
-					//std::cout << "x = " << offset.x << "  y = " << offset.y << std::endl;
 				}
 			}
 		}

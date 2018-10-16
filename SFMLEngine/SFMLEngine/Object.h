@@ -29,7 +29,7 @@ namespace Engine
 		void set(T* p)
 		{
 			ptr = p;
-			static_assert(meta::isRegistered<T>(), "ною!");
+			static_assert(meta::isRegistered<T>(), "Err");
 		}
 		void draw(std::string nameTree, bool isFirstDraw = false)
 		{
@@ -158,7 +158,7 @@ namespace meta
 			member("name", &Engine::Object::getName),
 			//member("type", &Engine::Object::type)
 			//member("texture", &Engine::Object::texture),
-			//member("sprite", &Engine::Object::sprite),
+			member("sprite", &Engine::Object::sprite),
 			member("position", &Engine::Object::position),
 			member("IsActive", &Engine::Object::IsActive)
 		);

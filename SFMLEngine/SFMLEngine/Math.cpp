@@ -184,7 +184,7 @@ bool Vector2D::operator!= (const Vector2D& v2) const
 //-----------------------------------------------------------------------------
 // Задача: Конструктор
 //-----------------------------------------------------------------------------
-Rectangle::Rectangle(int x, int y, int w, int h)
+Rectangle::Rectangle(double x, double y, double w, double h)
 {
 	this->x = x;
 	this->y = y;
@@ -211,7 +211,7 @@ bool Rectangle::Contains(Vector2D& vVec) const
 //-----------------------------------------------------------------------------
 // Задача: Содержит ли прямоугольник координаты x и y
 //-----------------------------------------------------------------------------
-bool Rectangle::Contains(int x, int y) const
+bool Rectangle::Contains(double x, double y) const
 {
 	if ((x >= this->x) &&
 		(x <= this->x + this->w) &&
