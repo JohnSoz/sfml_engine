@@ -269,9 +269,8 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 	return true;
 }
 
-ObjectLevel Level::GetObject(std::string name)
+ObjectLevel Level::GetObjectByName(std::string name)
 {
-
 	for (int i = 0; i < objects.size(); i++)
 		if (objects[i].name == name)
 			return objects[i];

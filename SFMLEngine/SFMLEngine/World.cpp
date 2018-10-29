@@ -25,8 +25,8 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
 	{
 		(*iter)->update(time);
-		if ((*iter)->IsActive == false) 
-		{ 
+		if ((*iter)->IsActive == false)
+		{
 			delete (*iter);
 			iter = ObjectsArray.erase(iter);
 		}
@@ -86,7 +86,7 @@ void Engine::World::handleEvent(sf::Event & event)
 			{
 				sf::Image i;
 				i.loadFromFile("Data/images/bullet.png");
-				pushEntity(new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), objHandler.GetObjects<Actor>("Test").getPointOfFire(), "Bullet", objHandler.GetObjects<Actor>("Test").Radian, 12, level));
+				pushEntity(objHandler.GetObjects<Actor>("Test").shot(level));
 				gunClock.restart();
 			}
 		}
@@ -115,5 +115,5 @@ void Engine::World::Init(sf::RenderWindow & window)
 
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/AnimTile.png");
-	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), sf::IntRect(38, 39, 209, 154), "Test", window, level));
+	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), "Test", window, level));
 }

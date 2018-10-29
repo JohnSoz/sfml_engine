@@ -15,7 +15,7 @@ namespace Engine
 {
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
 	enum Direction { Up = 1, Down, Left, Right, State };
-	enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE };
+	enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE, ANIMATIONMANAGER };
 
 	class Object;
 	template<class T>
@@ -78,9 +78,13 @@ namespace Engine
 								ImGui::Text(field.c_str());
 								break;
 							case Engine::VECTOR2F:
+							{
 								field = (std::string)member.getName() + ": (%.2f %.2f)";
 								auto vec = meta::getMemberValue<sf::Vector2f>(*ptr, member.getName());
 								ImGui::Text(field.c_str(), vec.x, vec.y);
+							}
+							break;
+							default:
 								break;
 							}
 						}
@@ -156,8 +160,7 @@ namespace meta
 	{
 		return members(
 			member("name", &Engine::Object::getName),
-			//member("type", &Engine::Object::type)
-			//member("texture", &Engine::Object::texture),
+			member("type", &Engine::Object::type),
 			member("sprite", &Engine::Object::sprite),
 			member("position", &Engine::Object::position),
 			member("IsActive", &Engine::Object::IsActive)

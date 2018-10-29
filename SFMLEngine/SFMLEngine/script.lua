@@ -1,5 +1,4 @@
 
-local openWindow = false;
 if openWindow == true then
 L_testWindow:addWindow(openWindow)
 for i = 1, 50 do 

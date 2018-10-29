@@ -19,7 +19,8 @@ namespace Engine
 	{
 		static void ShowHelpMarker(const char* desc);
 		static void SimpleOverlay(bool *open);
-		static void SimpleText(sf::Vector2f position, bool *open, std::string name);
+		static void SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text = "");
+		static void Text(sf::Vector2f position, bool *open, std::string name, std::string text = "");
 	};
 	class ImGuiInterface
 	{
@@ -33,7 +34,7 @@ namespace Engine
 	public:
 		static sf::RenderWindow* window;
 		std::vector<std::pair<sf::FloatRect*, sf::FloatRect*>> entites;
-		std::vector<sf::FloatRect> obj;
+		std::vector<std::pair<std::string, sf::FloatRect>> obj;
 		bool overlay = false;
 		bool LogConsole = false;
 		bool showVertex = false;
@@ -42,7 +43,7 @@ namespace Engine
 		{
 			if (open)
 			{
-				if (ImGui::Begin("DebugWindows", NULL)){}
+				if (ImGui::Begin("DebugWindows", NULL)) {}
 				ImGui::End();
 			}
 		}
@@ -59,7 +60,7 @@ namespace Engine
 		void levelObjects(std::vector<ObjectLevel> objs)
 		{
 			for (auto i : objs)
-				obj.push_back(i.rect);
+				obj.push_back(pair(i.name, i.rect));
 		}
 		void handleEvent(sf::Event& event);
 	};

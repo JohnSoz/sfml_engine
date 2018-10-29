@@ -5,10 +5,10 @@
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
-namespace Engine {
+namespace Engine 
+{
 	class Vector2D
 	{
-
 	public:
 		Vector2D(float x = 0, float y = 0);
 		Vector2D(Vector2D&&) = default;
@@ -49,7 +49,20 @@ namespace Engine {
 	public:
 		float x, y;
 	};
-
+    //     rect1(left,top) |------------------------| rect2(left,top)
+    //                     |                        |
+    //                     |                        |
+    //                     |                        |
+    //                     |                        |
+    // rect2(widht,height) |------------------------| rect1(widgt,heigt)
+	class Quad
+	{
+	public:
+		Quad(float left, float top, float left2, float top2, float widht, float height, float widht2, float height2) : rect1(left, top, widht, height), rect2(left2, top2, widht2, height2) {}
+		Quad() = default;
+		sf::FloatRect rect1;
+		sf::FloatRect rect2;
+	};
 	class Rectangle
 	{
 	public:
@@ -83,7 +96,7 @@ namespace Engine {
 		bool operator!= (const Rectangle& r2) const;
 
 	public:
-		double x, y, w, h;
+		float x, y, w, h;
 	};
 }
 #endif

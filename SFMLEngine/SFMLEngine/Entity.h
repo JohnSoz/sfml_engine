@@ -4,19 +4,6 @@
 #include <utility>
 namespace Engine
 {
-	struct Quad
-	{
-		//     rect1(left,top)|------------------------| rect2(left,top)
-		//                    |                        |
-		//                    |                        |
-		//                    |                        |
-		//                    |                        |
-		// rect2(widht,height)|________________________| rect1(widgt,heigt)
-
-		sf::FloatRect rect1;
-		sf::FloatRect rect2;
-	};
-
 	class Entity : public Object
 	{
 	protected:

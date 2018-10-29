@@ -102,7 +102,7 @@ namespace Engine {
 		std::vector<MapLayer> layers;
 	public:
 		bool LoadFromFile(std::string filename, int MapScale = 1);
-		ObjectLevel GetObject(std::string name);
+		ObjectLevel GetObjectByName(std::string name);
 		std::vector<Tileset> tilesets;
 		std::vector<ObjectLevel> GetObjects(std::string name);
 		std::vector<ObjectLevel> GetAllObjects();

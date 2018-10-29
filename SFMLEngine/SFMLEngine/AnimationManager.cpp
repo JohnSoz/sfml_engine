@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include <boost/lexical_cast.hpp>
 
 using namespace Engine;
 using std::string;
@@ -34,7 +35,7 @@ void AnimationManager::LoadAnimation_j(string path)
 	if (animationList.empty())
 	{
 		animationList.push_back(anim);
-		CurrentAnimation = *animationList.begin();
+		currAnim = animationList.begin();
 	}
 	else
 		animationList.push_back(anim);
@@ -42,7 +43,15 @@ void AnimationManager::LoadAnimation_j(string path)
 
 IntRect& AnimationManager::AnimUpdate(float t)
 {
-	return CurrentAnimation->tick(t);
+	if ((*currAnim)->looped == false && (*currAnim)->state == AEnd)
+	{
+		(*currAnim)->state = APause;
+		if (currAnim == --animationList.end())
+			currAnim = animationList.begin();
+		else
+			currAnim++;
+	}
+	return (*currAnim)->tick(t);
 }
 
 void AnimationManager::LoadAnimation_x(std::string fileName)
@@ -55,6 +64,9 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 	head = animFile.FirstChildElement("sprites");
 	string img = head->Attribute("image");
 
+	TiXmlElement *settings;
+	settings = head->FirstChildElement("settings");
+
 	TiXmlElement *animElement;
 	animElement = head->FirstChildElement("animation");
 
@@ -64,11 +76,28 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 	vector<IntRect> frames;
 	bool isXMLAnimation = true;
 	AnimationXml *anim = new AnimationXml;
+
+	auto origin = settings->FirstChildElement("origin");
+	anim->origin.x = atoi(origin->Attribute("x"));
+	anim->origin.y = atoi(origin->Attribute("y"));
+
+	auto rect = settings->FirstChildElement("rect");
+	anim->rect.left = atoi(rect->Attribute("left"));
+	anim->rect.top = atoi(rect->Attribute("top"));
+	anim->rect.width = atoi(rect->Attribute("widht"));
+	anim->rect.height = atoi(rect->Attribute("height"));
+
+	auto loop = settings->FirstChildElement("loop");
+	using boost::lexical_cast;
+	anim->looped = lexical_cast<bool>(loop->Attribute("value"));
+
 	anim->name = Name;
 	anim->speed = delay;
+	anim->texture.loadFromFile("Data\\OSprite\\" + img);
+	anim->texture.setSmooth(true);
+	anim->sprite.setTexture(anim->texture);
 	while (animElement)
 	{
-
 		TiXmlElement *cut;
 		cut = animElement->FirstChildElement("cut");
 		while (cut)
@@ -81,34 +110,38 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 			frames.emplace_back(x, y, w, h);
 			cut = cut->NextSiblingElement("cut");
 		}
+		anim->frameCount++;
 		animElement = animElement->NextSiblingElement("animation");
 	}
 	frames.shrink_to_fit();
 	anim->frameCount = frames.size();
 	anim->frames = std::move(frames);
+	anim->sprite.setTextureRect(anim->frames[0]);
 	if (animationList.empty())
 	{
 		animationList.push_back(anim);
-		CurrentAnimation = *animationList.begin();
+		currAnim = animationList.begin();
 	}
 	else
 		animationList.push_back(anim);
 }
 
-void AnimationManager::SetCurrAnimation(Animation && anim)
+void AnimationManager::SetCurrAnimation(std::list <Animation*>::iterator iter)
 {
 	//currAnim = std::forward<Animation>(anim);
-	CurrentAnimation = &anim;
-}
-template<class T>
-T AnimationManager::GetAnimationByName(string Name)
-{
-	for (auto & anim : animationList)
-		if (anim.name == Name)
-			return anim;
+	currAnim = iter;
 }
 
-const std::list<Engine::Animation*>& Engine::AnimationManager::getAnimationList() 
+std::list <Animation*>::iterator AnimationManager::GetAnimationByName(string Name)
+{
+	for (auto iter = animationList.begin(); iter != animationList.end(); ++iter)
+	{
+		if ((*iter)->name == Name)
+			return iter;
+	}
+}
+
+const std::list<Engine::Animation*>& Engine::AnimationManager::getAnimationList()
 {
 	return animationList;
 }

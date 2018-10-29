@@ -14,9 +14,34 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float v = posMouse.y - sprite.getPosition().y;
 
 	Radian = atan2f(v, a);
-	float rotation = (atan2f(v, a)) * 180 / 3.14159265;
+	float rotation = (atan2f(v, a)) * 180 / PI;
 	CurrAngle = rotation; //?
+	if (CurrAngle > 180) CurrAngle -= 360;
+	if (CurrAngle < -180) CurrAngle += 360;
+	posMouse.x = CurrAngle - LastAngle;
+	posMouse.y = 360 + posMouse.x;
+	if (posMouse.y > 360) posMouse.y -= 720;
+	if (abs(posMouse.x) > abs(posMouse.y)) posMouse.x = posMouse.y;
 
+	if (CurrAngle != LastAngle)
+	{
+		if (abs(posMouse.x) < rotateSpeed)
+		{
+			LastAngle = CurrAngle;
+		}
+		else
+		{
+			if (posMouse.x > 0)
+				LastAngle += rotateSpeed;
+			else
+				LastAngle -= rotateSpeed;
+		}
+	}
+	float lastradian = LastAngle * PI / 180;
+	if (lastradian <= 1 && lastradian >= -2.5)
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian + 0.02) * 52, position.y + sinf(lastradian + 0.02) * 52));
+	else
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian + 0.05) * 52, position.y + sinf(lastradian + 0.04) * 52));
 	//////////////////////////////////////////////rotate debug rectangle////////////////////////
 	auto x = globalRectangle.left;
 	auto y = globalRectangle.top;
@@ -26,15 +51,15 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float centerX = position.x;
 	float centerY = position.y;
 
-	auto newX = centerX + (x - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //x,y
-	auto newY = centerY + (y - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //y,x
-	auto newW = centerX + (w - centerX) * cos(Radian) - (h - centerY) * sin(Radian); //w,h
-	auto newH = centerY + (h - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //h,w
+	auto newX = centerX + (x - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //x,y
+	auto newY = centerY + (y - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //y,x
+	auto newW = centerX + (w - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //w,h
+	auto newH = centerY + (h - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //h,w
 
-	auto newX2 = centerX + (x - centerX) * cos(Radian) - (h - centerY) * sin(Radian); //x,h
-	auto newY2 = centerY + (h - centerY) * cos(Radian) + (x - centerX) * sin(Radian); //h,x
-	auto newW2 = centerX + (w - centerX) * cos(Radian) - (y - centerY) * sin(Radian); //w,y
-	auto newY3 = centerY + (y - centerY) * cos(Radian) + (w - centerX) * sin(Radian); //y,w
+	auto newX2 = centerX + (x - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //x,h
+	auto newY2 = centerY + (h - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //h,x
+	auto newW2 = centerX + (w - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //w,y
+	auto newY3 = centerY + (y - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //y,w
 
 	debugRectangle.left = newX2;   //x2
 	debugRectangle.top = newY2;    //y2
@@ -45,32 +70,6 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	globalRectangle.top = newY;
 	globalRectangle.width = newW;
 	globalRectangle.height = newH;
-	///////////////////////////////////////////////////////////////////////////////////////////
-	if (Radian <= 1 && Radian >= -2.5)
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(Radian + 0.02) * 52, position.y + sinf(Radian + 0.02) * 52));
-	else
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(Radian + 0.05) * 52, position.y + sinf(Radian + 0.04) * 52));
-	if (CurrAngle > 180) CurrAngle -= 360;
-	if (CurrAngle < -180) CurrAngle += 360;
-	posMouse.x = CurrAngle - LastAngle;
-	posMouse.y = 360 + posMouse.x;
-	if (posMouse.y > 360) posMouse.y -= 720;
-	if (abs(posMouse.x) > abs(posMouse.y)) posMouse.x = posMouse.y;
-
-	if (CurrAngle == LastAngle)
-		return;
-
-	if (abs(posMouse.x) < rotateSpeed)
-	{
-		LastAngle = CurrAngle;
-	}
-	else
-	{
-		if (posMouse.x > 0)
-			LastAngle += rotateSpeed;
-		else
-			LastAngle -= rotateSpeed;
-	}
 	if (window.hasFocus())
 	{
 		sprite.setRotation(LastAngle);
@@ -148,7 +147,6 @@ void Engine::Actor::checkClashes(float time)
 
 void Engine::Actor::update(float time)
 {
-
 	switch (direction)
 	{
 	case Up:    velocity.y = -speed; velocity.x = 0;  break;
@@ -158,15 +156,24 @@ void Engine::Actor::update(float time)
 	}
 
 	localRectangle = sprite.getTextureRect();
-	sf::Vector2f pos = { position.x - originOffset.x * scale ,position.y - originOffset.y * scale };
+	sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
 	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
 	RotateToMouse(0.2 * time, *window);
 	position += velocity * time;
 	checkClashes(time);
 
-	if (isWalk)
-		sprite.setTextureRect(animManager.AnimUpdate(time));
+	auto curAnim = animManager.GetCurrAnimation<Animation>();
+	sprite = curAnim->sprite;
+	localRectangle = curAnim->rect;
+	sprite.setTextureRect(localRectangle);
+	sprite.setScale(scale, scale);
+	originOffset = curAnim->origin;
+	sprite.setOrigin(originOffset);
+	sprite.setRotation(CurrAngle);
 	sprite.setPosition(position);
+	sprite.setTextureRect(animManager.AnimUpdate(time));
+	sprite.setPosition(position);
+
 	dw_a.draw("Actor", true);
 	dw_o.draw("Object");
 }

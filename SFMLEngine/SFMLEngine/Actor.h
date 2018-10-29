@@ -41,7 +41,7 @@ namespace Engine
 
 	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
 
-	class Actor final : public Entity
+	class Actor : public Entity
 	{
 	protected:
 		std::vector<ObjectLevel> obj;
@@ -67,24 +67,24 @@ namespace Engine
 
 	public:
 		float Radian;
-		Actor() = delete;
 		~Actor() = default;
-		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, sf::IntRect rect, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
+		Actor() = delete;
+		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
 		{
+			//auto spawn = lvl.GetObjectByName("playerSpawn");
 			type = OActor;
-			inventory.baseIni();
-			//код неполон!
 			dw_a.set(this);
-			inventory.delItem("M9");
 			animManager.LoadAnimation_x("Move.xml");
+			auto currAnim = animManager.GetCurrAnimation<Animation>();
+			animManager.LoadAnimation_x("ShootHandGun.xml");
 			lives = armor = 100;
 			speed = 0;
 			energy = 0.002; friction = 0.004;
 			maxSpeed = 0.24;
-			localRectangle = rect;
-			globalRectangle = sf::FloatRect(position.x, position.y, position.x + rect.width, position.y + rect.top);
+			localRectangle = currAnim->rect;
+			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 			obj = lvl.GetAllObjects();
-			originOffset = { 90,120 };
+			originOffset = currAnim->origin;
 			sprite.setOrigin(originOffset);
 			sprite.setTextureRect(localRectangle);
 			sprite.setScale(scale, scale);
@@ -92,9 +92,39 @@ namespace Engine
 			PointOfFire.setPosition(position);
 		}
 		sf::Vector2f getPointOfFire() { return PointOfFire.getPosition(); }
-		void handleEvent(sf::Event& e);
+		virtual void handleEvent(sf::Event& e);
 		void checkClashes(float time);
 		void RotateToMouse(float speed, sf::RenderWindow& window);
+		Engine::Bullet* shot(Level& lvl)
+		{
+			sf::Image i;
+			i.loadFromFile("Data/images/bullet.png");
+			animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
+			auto curAnim = animManager.GetCurrAnimation<Animation>();
+			sprite = curAnim->sprite;
+			localRectangle = curAnim->rect;
+			sprite.setTextureRect(localRectangle);
+			sprite.setScale(scale, scale);
+			originOffset = curAnim->origin;
+			sprite.setOrigin(originOffset);
+			sprite.setRotation(CurrAngle);
+			sprite.setPosition(position);
+		
+			return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, 12, lvl);
+		}
+		void changeAnim()
+		{
+			animManager.SetCurrAnimation(animManager.GetAnimationByName("Move"));
+			auto curAnim = animManager.GetCurrAnimation<Animation>();
+			sprite = curAnim->sprite;
+			localRectangle = curAnim->rect;
+			sprite.setTextureRect(localRectangle);
+			sprite.setScale(scale, scale);
+			originOffset = curAnim->origin;
+			sprite.setOrigin(originOffset);
+			sprite.setRotation(CurrAngle);
+			sprite.setPosition(position);
+		}
 		void update(float time) override;
 		void getDamage(float dmg);
 

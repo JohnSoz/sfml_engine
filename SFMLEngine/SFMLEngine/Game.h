@@ -4,11 +4,13 @@
 #include "timer.h"
 #include "AudioPlayer.h"
 #include <LuaBridge/LuaBridge.h>
-extern "C" {
+extern "C" 
+{
 #include <Lua/lua.h>
 #include <Lua/lauxlib.h>
 #include <Lua/lualib.h>
 }
+#include "Camera.h"
 namespace Engine
 {
 	enum appState
@@ -64,11 +66,11 @@ namespace Engine
 		A*                  testWindow;
 		Engine::Menu*		m;
 		sf::RenderWindow*   window;
-		AudioPlayer*        musicPlayer;
+		AudioPlayer        musicPlayer;
 		sf::ContextSettings settings;
 		std::string		    appname;
 		sf::Clock           deltaClock;
-		sf::View            camera;
+		Camera              camera;
 		appState		    state;
 		timer			    time;
 		bool showConsole = false;

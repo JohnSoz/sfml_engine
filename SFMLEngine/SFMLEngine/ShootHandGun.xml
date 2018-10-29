@@ -1,0 +1,13 @@
+<!DOCTYPE SpriteDecomposer>
+<sprites image="nandGunShoot.png" transparentColor="">
+ <settings>
+  <origin x="90" y="120"/>	
+  <rect left="2" top="34" widht="208" height="185"/>	
+  <loop value="0" />	
+ </settings>
+ <animation title="handGunShoot" delay="60">
+  <cut w="210" x="0" y="33" h="154" row="1" col="1"/>
+  <cut w="200" x="318" y="33" h="154" row="1" col="1"/>
+  <cut w="205" x="589" y="33" h="154" row="1" col="1"/>
+ </animation>
+</sprites>

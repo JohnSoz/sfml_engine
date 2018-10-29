@@ -87,20 +87,20 @@ namespace Engine
 		int Count = 0;
 		std::vector<Item*> inv;
 		std::vector<Item*>::iterator iter;
-	public:
-		~Inventory()
-		{
-			for (auto iter = inv.begin(); iter != inv.end(); ++iter)
-				delete *iter;
-			inv.clear();
-		}
-
 		void baseIni()
 		{
 			inv.push_back(new Gun("M9", 2, 2, 0.7));
 			inv.push_back(new Gun("AR-15", 8, 12, 3.9));
 			inv.push_back(new Gun("RPG", 15, 1, 6.3));
 			inv.push_back(new Heal("HP", 20));
+		}
+	public:
+		Inventory() { baseIni(); }
+		~Inventory()
+		{
+			for (auto iter = inv.begin(); iter != inv.end(); ++iter)
+				delete *iter;
+			inv.clear();
 		}
 
 		void AddItem(Item* i) { inv.push_back(i); }

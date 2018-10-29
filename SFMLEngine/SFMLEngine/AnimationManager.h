@@ -26,16 +26,24 @@ namespace Engine
 	\example
 	\todo
 	*/
-
+	enum AnimationState { APlay, APause, AEnd };
 	class Animation
 	{
 	public:
 		float frame; ///< Number of frames
 		float frameCount;
 		float speed; ///< The speed of the animation
-		std::string name;
-		sf::Vector2f scale;
+		bool looped;
 
+		std::string  name;
+		sf::Vector2f scale;
+		sf::Sprite   sprite;
+		sf::Texture  texture;
+		sf::IntRect  rect;
+		sf::Vector2f origin;
+		AnimationState state;
+
+		Animation() { frameCount = 0; }
 		virtual sf::IntRect& tick(float time) = 0;
 	};
 
@@ -43,14 +51,18 @@ namespace Engine
 	{
 	public:
 		std::vector<sf::IntRect> frames;
+
+		AnimationXml() { looped = false; state = APause; }
+
 		sf::IntRect& tick(float time) override
 		{
+			state = APlay;
 			frame += 0.009 * time;
-			if (frame > 19) frame = 0;
+			if (frame > frameCount) { frame = 0; state = AEnd; }
+			sprite.setTextureRect(frames[frame]);
 			return frames[frame];
 		}
 	};
-
 	class AnimationJson : public Animation
 	{
 	public:
@@ -82,7 +94,6 @@ namespace Engine
 		int step; ///< Not use
 		std::list <Animation*> animationList; ///< Container with the animations
 		std::list <Animation*>::iterator currAnim; ///< Iterator to traverse the container \warning also stores the current animation
-		Animation *CurrentAnimation; /// meta::doForAllMembers<T>([]() {});
 	public:
 		AnimationManager() = default; ///< Standard constructor
 		~AnimationManager()///< Standard destructor
@@ -108,7 +119,7 @@ namespace Engine
 		 \warning Can throw std::bad_cast
 		*/
 		template<class T>
-		T* GetCurrAnimation() { return dynamic_cast<T*>(CurrentAnimation); }
+		T* GetCurrAnimation() { return dynamic_cast<T*>(*currAnim); }
 
 		/*!
 		Updates the current animation
@@ -121,7 +132,7 @@ namespace Engine
 		Sets the current animation
 		 \warning this animation will not be put into pull animations(bag)
 		*/
-		void SetCurrAnimation(Animation&& ANIM);
+		void SetCurrAnimation(std::list <Animation*>::iterator iter);
 
 		/*!
 		Loads the animation from xml file
@@ -130,10 +141,19 @@ namespace Engine
 		void LoadAnimation_x(std::string fileName);
 
 		/*!
+		Loads the animation from xml file
+		 \details load animation from xml file and return vector from frames (rectangles) for animation
+		*/
+		void AnimationSwitcher(std::string animationName)
+		{
+			SetCurrAnimation(GetAnimationByName(animationName));
+
+		}
+
+		/*!
 		Returns the animation by name
 		*/
-		template<class T>
-		T GetAnimationByName(std::string NAME);
+		std::list <Animation*>::iterator GetAnimationByName(std::string NAME);
 
 		const std::list<Animation*>& getAnimationList();
 	};
