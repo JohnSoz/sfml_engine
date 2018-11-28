@@ -1,9 +1,13 @@
 Button {
-    Texture         = "GuiSet.png" Part( 0, 0, 200, 47);
-    TextureHover    = "GuiSet.png" Part( 0, 0, 200, 47);
-    TextureDown     = "GuiSet.png" Part( 0, 0, 200, 47);
+    Texture         = "GuiSet.png" Part( 0, 0, 200, 49)  Middle(10, 10 ,127 ,23);
+    TextureHover    = "GuiSet.png" Part( 0, 0, 200, 49)  Middle(3, 0, 197, 43);
+    TextureDown     = "GuiSet.png" Part( 0, 0, 200, 49)  Middle(3, 0, 197 ,43);
     TextColor       = rgb(154, 122, 37);
     TextColorHover  = rgb(206, 162, 51);
+}
+
+ToolTip{
+    TextColor = rgb(255,106,0);
 }
 
 ButtonInv {
