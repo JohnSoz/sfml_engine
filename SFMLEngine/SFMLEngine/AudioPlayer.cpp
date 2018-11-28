@@ -5,7 +5,7 @@ using namespace std;
 void Engine::AudioPlayer::GetMusic()
 {
 	std::string path = "Music/";
-	for (auto & p : fs::directory_iterator(path)) 
+	for (auto & p : fs::directory_iterator(path))
 	{
 		auto fileName = p.path().filename().generic_string();
 		const size_t pos = fileName.find_last_of(".");
@@ -27,7 +27,8 @@ void Engine::AudioPlayer::Play()
 
 void Engine::AudioPlayer::NextSong()
 {
-	if (iter + 1 != musList.end()) {
+	if (iter + 1 != musList.end())
+	{
 		(*iter).second->stop();
 		iter++;
 		(*iter).second->setVolume(volume);
@@ -72,7 +73,7 @@ void Engine::AudioPlayer::LoadMusic(std::string name, std::string patch)
 	Mus->openFromFile(patch);
 	Mus->setVolume(volume);
 	Console::AppLog::addLog("Load music at path(" + patch + ")", Console::logType::system);
-	musList.emplace_back(name, Mus);
+	musList.push_back(std::pair(name, Mus));
 }
 
 void Engine::AudioPlayer::Update()

@@ -37,11 +37,13 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 				LastAngle -= rotateSpeed;
 		}
 	}
+
 	float lastradian = LastAngle * PI / 180;
 	if (lastradian <= 1 && lastradian >= -2.5)
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian + 0.02) * 52, position.y + sinf(lastradian + 0.02) * 52));
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.1) * 46, position.y + sinf(lastradian - 0.1) * 46));
 	else
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian + 0.05) * 52, position.y + sinf(lastradian + 0.04) * 52));
+		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.05) * 46, position.y + sinf(lastradian - 0.05) * 46));
+
 	//////////////////////////////////////////////rotate debug rectangle////////////////////////
 	auto x = globalRectangle.left;
 	auto y = globalRectangle.top;
@@ -70,6 +72,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	globalRectangle.top = newY;
 	globalRectangle.width = newW;
 	globalRectangle.height = newH;
+
 	if (window.hasFocus())
 	{
 		sprite.setRotation(LastAngle);
@@ -81,28 +84,28 @@ void Engine::Actor::handleEvent(sf::Event & e)
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		isWalk = true;
-		if (direction != Up) speed -= speed * 0.5;
+		if (direction != Up) speed -= speed * 0.8;
 		direction = Direction::Up;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::S))
 	{
 		isWalk = true;
-		if (direction != Down) speed -= speed * 0.5;
+		if (direction != Down) speed -= speed * 0.8;
 		direction = Direction::Down;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		isWalk = true;
-		if (direction != Left) speed -= speed * 0.5;
+		if (direction != Left) speed -= speed * 0.8;
 		direction = Direction::Left;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		isWalk = true;
-		if (direction != Right) speed -= speed * 0.5;
+		if (direction != Right) speed -= speed * 0.8;
 		direction = Direction::Right;
 		speed = (speed < maxSpeed) ? speed += energy : speed = maxSpeed;
 	}
@@ -111,12 +114,19 @@ void Engine::Actor::handleEvent(sf::Event & e)
 		isWalk = false;
 		(speed > 0) ? speed -= friction : speed = 0;
 	}
-	if (Keyboard::isKeyPressed(Keyboard::U))
+	if (Keyboard::isKeyPressed(Keyboard::I))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
-			showDebugConsole = !showDebugConsole;
+			inv.getShowGui() = (inv.getShowGui() == true) ? false : true;
+			inv.activateOrDisabled();
 			Pressclock.restart();
 		}
+}
+
+void Engine::Actor::invHandleEvent(sf::Event&e)
+{
+	if (inv.getShowGui())
+		inv.handleEvent(e);
 }
 
 void Engine::Actor::checkClashes(float time)
@@ -147,33 +157,48 @@ void Engine::Actor::checkClashes(float time)
 
 void Engine::Actor::update(float time)
 {
-	switch (direction)
+	if (inv.getShowGui() == false)
 	{
-	case Up:    velocity.y = -speed; velocity.x = 0;  break;
-	case Down:  velocity.y = speed; velocity.x = 0;  break;
-	case Left:  velocity.x = -speed; velocity.y = 0;  break;
-	case Right: velocity.x = speed; velocity.y = 0;  break;
+		switch (direction)
+		{
+		case Up:    velocity.y = -speed; velocity.x = 0;  break;
+		case Down:  velocity.y = speed; velocity.x = 0;  break;
+		case Left:  velocity.x = -speed; velocity.y = 0;  break;
+		case Right: velocity.x = speed; velocity.y = 0;  break;
+		}
+
+		localRectangle = sprite.getTextureRect();
+		sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
+		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
+		RotateToMouse(0.2 * time, *window);
+		position += velocity * time;
+		checkClashes(time);
+		if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot")
+		{
+			sprite.setTextureRect(animManager.AnimUpdate(time));
+			if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot" && animManager.GetCurrAnimation<AnimationXml>()->state == AEnd)
+			{
+				animManager.GetCurrAnimation<AnimationXml>()->state = APause;
+				animManager.SetCurrAnimation(animManager.GetAnimationByName("nandGunMove"));
+				auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
+				scale = currAnim->scale;
+				originOffset = currAnim->origin;
+				localRectangle = currAnim->rect;
+				sprite.setOrigin(originOffset);
+				sprite.setScale(scale, scale);
+				sprite.setTexture(currAnim->texture);
+				sprite.setTextureRect(localRectangle);
+			}
+		}
+		else
+		{
+			if (isWalk)
+				sprite.setTextureRect(animManager.AnimUpdate(time));
+		}
+
+		sprite.setPosition(position);
 	}
-
-	localRectangle = sprite.getTextureRect();
-	sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
-	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
-	RotateToMouse(0.2 * time, *window);
-	position += velocity * time;
-	checkClashes(time);
-
-	auto curAnim = animManager.GetCurrAnimation<Animation>();
-	sprite = curAnim->sprite;
-	localRectangle = curAnim->rect;
-	sprite.setTextureRect(localRectangle);
-	sprite.setScale(scale, scale);
-	originOffset = curAnim->origin;
-	sprite.setOrigin(originOffset);
-	sprite.setRotation(CurrAngle);
-	sprite.setPosition(position);
-	sprite.setTextureRect(animManager.AnimUpdate(time));
-	sprite.setPosition(position);
-
+	inventory.update();
 	dw_a.draw("Actor", true);
 	dw_o.draw("Object");
 }

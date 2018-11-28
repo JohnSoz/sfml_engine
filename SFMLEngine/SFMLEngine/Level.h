@@ -99,7 +99,7 @@ namespace Engine {
 		sf::Rect<float> drawingBounds;
 		sf::Texture tilesetImage;
 		std::vector<ObjectLevel> objects;
-		std::vector<MapLayer> layers;
+		std::vector<MapLayer>    layers;
 	public:
 		bool LoadFromFile(std::string filename, int MapScale = 1);
 		ObjectLevel GetObjectByName(std::string name);

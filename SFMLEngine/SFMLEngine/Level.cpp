@@ -220,11 +220,10 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 					sprite.setTextureRect(subRects[atoi(objectElement->Attribute("gid")) - firstTileID]);
 				}
 
-
 				ObjectLevel object;
-				object.name = objectName;
-				object.type = objectType;
-				object.sprite = sprite;
+				object.name   = std::move(objectName);
+				object.type   = std::move(objectType);
+				object.sprite = std::move(sprite);
 
 				sf::Rect <float> objectRect;
 				objectRect.top = y * MapScale;
@@ -232,7 +231,6 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 				objectRect.height = height * MapScale;
 				objectRect.width = width * MapScale;
 				object.rect = objectRect;
-
 
 				TiXmlElement *properties;
 				properties = objectElement->FirstChildElement("properties");
@@ -278,12 +276,10 @@ ObjectLevel Level::GetObjectByName(std::string name)
 
 std::vector<ObjectLevel> Level::GetObjects(std::string name)
 {
-
 	std::vector<ObjectLevel> vec;
 	for (int i = 0; i < objects.size(); i++)
 		if (objects[i].name == name)
 			vec.push_back(objects[i]);
-
 	return vec;
 }
 
@@ -390,8 +386,8 @@ void Level::DrawLevel(sf::RenderWindow &window)
 		for (int tile = 0; tile < layers[layer].tiles.size(); tile++)
 		{
 			window.draw(layers[layer].tiles[tile]);
-			//	Sleep(10);
-			//	window.display();
+			Sleep(10);
+			window.display();
 		}
 }
 

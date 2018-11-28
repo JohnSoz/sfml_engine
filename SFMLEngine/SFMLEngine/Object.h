@@ -8,8 +8,9 @@
 #include <iostream>
 #include <MetaStuff/Meta.h>
 #include "imgui.h"
-#include "imgui-sfml.h"
+#include "imgui-SFML.h"
 #include "staticVariable.h"
+
 using namespace meta;
 namespace Engine
 {
@@ -33,7 +34,7 @@ namespace Engine
 		}
 		void draw(std::string nameTree, bool isFirstDraw = false)
 		{
-			if (Engine::VStaticContainer::ShowDemoWindows)
+			if (Engine::VStaticContainer::ShowDebugWindow)
 			{
 				if (ImGui::Begin("DebugWindows", NULL))
 				{
@@ -54,10 +55,10 @@ namespace Engine
 								if (ImGui::TreeNode("Object Sprite"))
 								{
 									auto spr = (Object*)ptr;
-									float size_x = spr->GetSprite().getTextureRect().width;
-									float size_y = spr->GetSprite().getTextureRect().height;
+									float size_x = spr->getSprite().getTextureRect().width;
+									float size_y = spr->getSprite().getTextureRect().height;
 									ImGui::Text("%.0fx%.0f", size_x, size_y);
-									ImGui::Image(*spr->GetSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->GetSprite().getTextureRect());
+									ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->getSprite().getTextureRect());
 									ImGui::TreePop();
 								}
 								break;
@@ -145,7 +146,8 @@ namespace Engine
 		bool isActive() const { return IsActive; }
 		void destroy() { IsActive = false; }
 		const std::string& getName() const { return name; }
-		const sf::Sprite& GetSprite() { return sprite; }
+		const sf::Sprite& getSprite() { return sprite; }
+		sf::Texture& getTexture() { return texture; }
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Object>();
 	};

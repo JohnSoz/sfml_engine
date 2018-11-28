@@ -3,6 +3,8 @@
 #include "AnimationManager.h"
 #include "Inventory.h"
 #include <MetaStuff/Meta.h>
+#include "JsonLoader.h"
+#include "InventoryMenu.h"
 using namespace meta;
 namespace Engine
 {
@@ -40,7 +42,6 @@ namespace Engine
 
 
 	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
-
 	class Actor : public Entity
 	{
 	protected:
@@ -49,8 +50,8 @@ namespace Engine
 		Inventory inventory;
 		AnimationManager animManager;
 		DebugWindows<Actor> dw_a;
+		InventoryMenu inv;
 
-		bool showDebugConsole;
 		bool isWalk;
 		bool isCollision;
 
@@ -60,6 +61,7 @@ namespace Engine
 		float CurrAngle = sprite.getRotation(), LastAngle;
 
 		sf::Clock Pressclock;
+		sf::Clock gunClock;
 		sf::Vector2f originOffset = {};
 		Direction direction = Direction::State;
 		sf::RenderWindow* window;
@@ -69,62 +71,62 @@ namespace Engine
 		float Radian;
 		~Actor() = default;
 		Actor() = delete;
-		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME)
+		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME), inv("Data/GUI/MyUI/MainMenu.txt", w)
 		{
-			//auto spawn = lvl.GetObjectByName("playerSpawn");
 			type = OActor;
 			dw_a.set(this);
-			animManager.LoadAnimation_x("Move.xml");
-			auto currAnim = animManager.GetCurrAnimation<Animation>();
+			animManager.LoadAnimation_x("MoveHandGun.xml");
+			auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
 			animManager.LoadAnimation_x("ShootHandGun.xml");
 			lives = armor = 100;
 			speed = 0;
-			energy = 0.002; friction = 0.004;
-			maxSpeed = 0.24;
+			energy = 0.001; friction = 0.005;
+			maxSpeed = 0.2;
 			localRectangle = currAnim->rect;
 			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 			obj = lvl.GetAllObjects();
 			originOffset = currAnim->origin;
+			sprite.setTexture(currAnim->texture);
 			sprite.setOrigin(originOffset);
 			sprite.setTextureRect(localRectangle);
 			sprite.setScale(scale, scale);
 			window = &w;
 			PointOfFire.setPosition(position);
+			inv.makeMenu(inventory);
 		}
 		sf::Vector2f getPointOfFire() { return PointOfFire.getPosition(); }
 		virtual void handleEvent(sf::Event& e);
 		void checkClashes(float time);
 		void RotateToMouse(float speed, sf::RenderWindow& window);
-		Engine::Bullet* shot(Level& lvl)
+		Engine::Bullet* shotUpdate(Level& lvl)
 		{
-			sf::Image i;
-			i.loadFromFile("Data/images/bullet.png");
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
-			auto curAnim = animManager.GetCurrAnimation<Animation>();
-			sprite = curAnim->sprite;
-			localRectangle = curAnim->rect;
-			sprite.setTextureRect(localRectangle);
-			sprite.setScale(scale, scale);
-			originOffset = curAnim->origin;
-			sprite.setOrigin(originOffset);
-			sprite.setRotation(CurrAngle);
-			sprite.setPosition(position);
-		
-			return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, 12, lvl);
+			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+			{
+				if (!Engine::VStaticContainer::ShowDebugWindow)
+				{
+					if (gunClock.getElapsedTime().asMilliseconds() > 500)
+					{
+						sf::Image i;
+						i.loadFromFile("Data/images/bullet.png");
+						animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
+						auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
+						sprite.setTexture(currAnim->texture);
+						localRectangle = currAnim->rect;
+						originOffset = currAnim->origin;
+						scale = currAnim->scale;
+						sprite.setScale(scale, scale);
+						sprite.setOrigin(originOffset);
+						sprite.setTextureRect(localRectangle);
+						gunClock.restart();
+						return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, 12, lvl);
+					}
+				}
+			}
+			return nullptr;
 		}
-		void changeAnim()
-		{
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("Move"));
-			auto curAnim = animManager.GetCurrAnimation<Animation>();
-			sprite = curAnim->sprite;
-			localRectangle = curAnim->rect;
-			sprite.setTextureRect(localRectangle);
-			sprite.setScale(scale, scale);
-			originOffset = curAnim->origin;
-			sprite.setOrigin(originOffset);
-			sprite.setRotation(CurrAngle);
-			sprite.setPosition(position);
-		}
+
+		void draw() { inv.draw(); }
+		void invHandleEvent(sf::Event&);
 		void update(float time) override;
 		void getDamage(float dmg);
 
@@ -141,7 +143,6 @@ namespace meta
 		return members(
 			member("direction", &Engine::Actor::direction),
 			member("velocity", &Engine::Actor::velocity),
-			//member("sprite", &Engine::Actor::sprite),
 			member("friction", &Engine::Actor::friction),
 			member("CurrAngle", &Engine::Actor::CurrAngle),
 			member("maxSpeed", &Engine::Actor::maxSpeed),

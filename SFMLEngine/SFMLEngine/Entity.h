@@ -19,8 +19,18 @@ namespace Engine
 		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
 		virtual ~Entity();
 
-		virtual void update(float time) = 0;
+		virtual void update(float time) { dw_o.draw(name); }
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
+
+		void CollisionUpdate(std::vector<Entity*> objarray)
+		{
+			/*for (auto &i : objarray)
+			{
+				if (i->getName() != name)
+					if (i->getSprite().getGlobalBounds().intersects(sprite.getGlobalBounds()))
+						i->getNa
+			}*/
+		}
 
 		sf::IntRect getRect() { return localRectangle; }
 		const sf::Vector2f& getPos() { return position; }
@@ -30,6 +40,24 @@ namespace Engine
 
 		friend class ObjectHandler;
 	};
+
+	class Test : public Entity
+	{
+	public:
+		Test(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name) : Entity(IMAGE, r, pos, name)
+		{
+			hp = 100;
+			sprite.setScale(0.5, 0.5);
+			scale = 0.5;
+			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width * scale, position.y + localRectangle.height * scale);
+			debugRectangle = sf::FloatRect(position.x + localRectangle.width * scale, position.y, position.x, position.y + localRectangle.height * scale);
+		}
+		void getDamage() { hp -= 1; }
+
+		float scale;
+		float hp;
+	};
+
 	class Bullet final : public Entity
 	{
 	private:

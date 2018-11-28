@@ -1,6 +1,7 @@
 #include "JsonLoader.h"
+#include <iomanip>
 
-bool Engine::JsonLoader::saveJson(std::string json, std::string path)
+bool Engine::JsonLoader::saveJson(std::string path, std::string json)
 {
 	assert(!path.empty());
 	std::ofstream o;
@@ -11,12 +12,13 @@ bool Engine::JsonLoader::saveJson(std::string json, std::string path)
 	}
 	catch (std::fstream::failure & err)
 	{
-		Console::AppLog::addLog("Exception opening/reading file: " + std::string(err.what()), Console::logType::error);
+		Console::AppLog::addLog("Exception open/read file: " + std::string(err.what()), Console::logType::error);
 		return false;
 	}
 	j.clear();
-	j.parse(json);
-	o << j << std::endl;
+	j = json::parse(json);
+	o << std::setw(4) << j << std::endl;
+	o.close();
 }
 
 std::string Engine::JsonLoader::LoadFromPath(std::string path)
@@ -35,5 +37,6 @@ std::string Engine::JsonLoader::LoadFromPath(std::string path)
 	}
 	j.clear();
 	i >> j;
+	i.close();
 	return j.dump();
 }

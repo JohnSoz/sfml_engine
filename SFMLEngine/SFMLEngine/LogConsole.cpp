@@ -1,5 +1,5 @@
 #include "LogConsole.h"
-
+#include <cmath>
 vector<Console::Log> Console::AppLog::Buffer = {};
 std::string         Console::AppLog::items[5] = { "all", "error", "info", "fatal", "system" };
 bool                 Console::AppLog::ScrollToBottom = 0;
@@ -9,7 +9,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 	{
 		//ImVec2 window_pos = ImVec2(0, 0);
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
-		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.2));
+		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3));
 		ImGui::SetNextWindowBgAlpha(0.8f);
 		ImGui::Begin(title, p_open, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
 		if (ImGui::Button("Clear")) Clear();
@@ -42,6 +42,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		bool value_changed = ImGui::InputText("Filter", buff, IM_ARRAYSIZE(buff));
 		ImGui::PopItemWidth();
 		input = buff;
+		ImGui::Spacing();
 		ImGui::Separator();
 
 		ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
@@ -66,7 +67,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 				}
 				if (found == input)
 				{
-					ImGui::TextColored(item.color, item.text.c_str()); //Test
+					ImGui::TextColored(item.color, item.text.c_str());
 				}
 			}
 
@@ -95,13 +96,14 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 					if (item.type == logType::system)
 						ImGui::TextColored(item.color, item.text.c_str());
 				}
-
 			}
 		}
 		else
 		{
 			for (auto i : Buffer)
+			{
 				ImGui::TextColored(i.color, i.text.c_str()); //Test
+			}
 		}
 
 		if (ScrollToBottom)
@@ -116,27 +118,28 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 Console::Log::Log(std::string s, logType t)
 {
 	type = t;
-	//boost::posix_time::ptime utcCur = boost::posix_time::second_clock::local_time();//+ std::to_string(utcCur.time_of_day().seconds());
-	SYSTEMTIME st;
-	GetLocalTime(&st);
-	std::string l = "[sec:" + std::to_string(st.wSecond);
+	double time = clock();
+	std::string ti = std::to_string(std::round(time / 1000 * 10) / 10);
+	ti.erase(ti.find_first_of('.') + 2, ti.size());
+	std::string l = "[sec:" + ti;
+
 	switch (t)
 	{
 	case logType::error:
 		color = ImVec4(1, 0.35, 0, 1);
-		l += "type:error]: ";
+		l += " type:error]: ";
 		break;
 	case logType::info:
 		color = ImVec4(0, 1, 0.3, 1);
-		l += "type:info]: ";
+		l += " type:info]: ";
 		break;
 	case logType::fatal:
 		color = ImVec4(1, 0, 0, 1);
-		l += "type:fatal]: ";
+		l += " type:fatal]: ";
 		break;
 	case logType::system:
 		color = ImVec4(1, 0, 0.8, 1);
-		l += "type:system]: ";
+		l += " type:system]: ";
 		break;
 	}
 	l += s;

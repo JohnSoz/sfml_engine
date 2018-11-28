@@ -1,10 +1,14 @@
 {
-        "Name":"Move",
-        "Path": "images/AnimTile.png",
-        "PathToXML":"Move.xml",
-        "Frame":19,
-        "Speed":0.009,
-        "IntRect": [45, 45, 200, 140],
-        "Scale": 0,
-        "Center":[90,120]
+        "NamePack":"AnimationPlayer",
+        "AnimationCount":2,
+        "MoveAnimation":
+        {
+        	"Name":"nandGunMove",
+        	"Path":"Animations\\MoveHandGun.xml"
+        },
+ 		"ShootAnimation":
+ 		{
+ 			"Name":"handGunShoot",
+        	"Path":"Animations\\ShootHandGun.xml"
+ 		}
 }

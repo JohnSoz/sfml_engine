@@ -3,6 +3,15 @@
 #include <algorithm>
 using namespace Engine;
 
+void Engine::ObjectHandler::handelEvent(sf::Event& e)
+{
+	for (auto& o : ObjectsArray)
+	{
+		if (o->type == OActor)
+			static_cast<Actor*>(o)->handleEvent(e);
+	}
+}
+
 template<class Obj>
 Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 {
@@ -67,6 +76,7 @@ void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& eve
 {
 	objHandler.GetObjects<Actor>("Test").handleEvent(event);
 	objHandler.UpdateObjects(time);
+	objHandler.CollisionUpdate();
 	if (ShowOverlay)
 	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
@@ -78,19 +88,20 @@ void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& eve
 void Engine::World::handleEvent(sf::Event & event)
 {
 	debug.handleEvent(event);
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+	//objHandler.handelEvent(event);
+	objHandler.GetObjects<Actor>("Test").invHandleEvent(event);
+	Console::AppLog::addLog("shoot", Console::logType::info);
+	if (auto z = objHandler.GetObjects<Actor>("Test").shotUpdate(level); z != nullptr)
 	{
-		if (!Engine::VStaticContainer::ShowDemoWindows)
-		{
-			if (gunClock.getElapsedTime().asMilliseconds() > 500)
-			{
-				sf::Image i;
-				i.loadFromFile("Data/images/bullet.png");
-				pushEntity(objHandler.GetObjects<Actor>("Test").shot(level));
-				gunClock.restart();
-			}
-		}
+		pushEntity(z);
 	}
+	/*
+	sf::Image i;
+	i.loadFromFile("Data/images/bullet.png");
+	pushEntity(objHandler.GetObjects<Actor>("Test").shot(level));
+	gunClock.restart();
+	*/
+
 }
 
 void Engine::World::draw(sf::RenderWindow & window)
@@ -100,20 +111,24 @@ void Engine::World::draw(sf::RenderWindow & window)
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
 	debug.draw();
+	objHandler.GetObjects<Actor>("Test").draw();
 }
 
 
 void Engine::World::Init(sf::RenderWindow & window)
 {
 	level.LoadFromFile("Data/Level/map5.tmx");
-	LevelTexture.loadFromImage(level.DrawLevel2());
-	LevelSprite.setTexture(LevelTexture);
+	this->LevelTexture.loadFromImage(level.DrawLevel2());
+	this->LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
-
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 
 	sf::Image i;
-	i.loadFromFile("Data/OSprite/AnimTile.png");
+	i.loadFromFile("Data/OSprite/nandGunMove.png");
 	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), "Test", window, level));
+
+	sf::Image i2;
+	i2.loadFromFile("Data/OSprite/nandGunMove.png");
+	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));
 }

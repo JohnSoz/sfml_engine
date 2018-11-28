@@ -2,22 +2,26 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 
-
 Engine::Game::Game(sf::RenderWindow & w)
 {
 	state = appState::UI;
 	window = &w;
 	world = new World();
 	time.setDelta(500);
-	m = new  Engine::Menu("Data/GUI/MyUI/MainMenu.txt", w);
-	m->makeMenu();
+	initMenu(w);
+	m->makeMenu(path);
 	testWindow = new A("TestLua");
 }
+
+void Engine::Game::initMenu(sf::RenderWindow& w)
+{
+	m = new Engine::MainMenu("Data/GUI/MyUI/MainMenu.txt", w);
+}
+
 Engine::Game::~Game()
 {
 	lua_close(L);
 	delete world;
-	delete m;
 	delete testWindow;
 }
 
@@ -27,7 +31,7 @@ void Engine::Game::startGame()
 	luaL_openlibs(L);
 	luabridge::getGlobalNamespace(L)
 		.beginClass<A>("A")
-		.addConstructor<void(*) (std::string)>()
+		.addConstructor<void(*) (std::string, float, float)>()
 		.addFunction("addWindow", &A::addWindow)
 		.addFunction("addText", &A::addText_l)
 		.endClass();
@@ -46,27 +50,29 @@ void Engine::Game::update()
 		sf::Event event;
 		handleEvent(event);
 		ImGui::SFML::Update(*window, deltaClock.restart());
+
 		luaL_dofile(L, "script.lua");
 
-		bool stateChange = false;
 		switch (state)
 		{
+		case Exits:
+			window->close();
+			break;
 		case Engine::Play:
 			world->update(*window, time.getTime(), event);
 			break;
 		case Engine::UI:
-			stateChange = m->update(event);
+			state = (appState)m->update();
 			break;
 		}
-		//camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos());
+		camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(),*window);
 		draw();
-		if (stateChange) state = Engine::Play;
 	}
 }
 
 void Engine::Game::draw()
 {
-	window->clear(sf::Color::Blue);
+	window->clear();
 
 	switch (state)
 	{
@@ -85,13 +91,14 @@ void Engine::Game::draw()
 
 void Engine::Game::handleEvent(sf::Event & e)
 {
-	while (window->pollEvent(e))
+	while (window->pollEvent(e))	
 	{
 		if (e.type == sf::Event::Closed)
 		{
 			window->close();
 			break;
 		}
+		m->handleEvent(e);
 		ImGui::SFML::ProcessEvent(e);
 		world->handleEvent(e);
 	}

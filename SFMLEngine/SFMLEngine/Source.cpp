@@ -5,7 +5,6 @@
 #include <cmath>
 #include "LogConsole.h"
 using namespace std;
-using namespace luabridge;
 
 //#main
 int main()
@@ -23,12 +22,19 @@ int main()
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();
 	IO.Fonts->Clear();
-	IO.Fonts->AddFontFromFileTTF("Data\\Fonts\\SackersGothicStd-Medium.otf", 13.5f);
+	IO.Fonts->AddFontFromFileTTF("Data\\Fonts\\ArialRegular.ttf", 16.f);
 	ImGui::SFML::UpdateFontTexture();
 #endif
 	Engine::DebuggingSystem::setWindow(window);
 	Engine::Game g(window);
-	g.startGame();
-	g.update();
+	try
+	{
+		g.startGame();
+		g.update();
+	}
+	catch (...)
+	{
+		std::cout << "err" << std::endl;
+	}
 	return 0;
 }

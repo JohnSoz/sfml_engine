@@ -15,13 +15,13 @@ using namespace std;
 
 namespace Engine
 {
-	struct ImGUI
+	namespace ImGUI
 	{
-		static void ShowHelpMarker(const char* desc);
-		static void SimpleOverlay(bool *open);
-		static void SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text = "");
-		static void Text(sf::Vector2f position, bool *open, std::string name, std::string text = "");
-	};
+		void ShowHelpMarker(const char* desc);
+		void SimpleOverlay(bool *open);
+		void SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text = "");
+		void Text(sf::Vector2f position, bool *open, std::string name, std::string text = "");
+	}
 	class ImGuiInterface
 	{
 	private:

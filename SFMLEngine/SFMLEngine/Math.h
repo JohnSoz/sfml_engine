@@ -7,6 +7,8 @@
 #include <SFML/Graphics/Rect.hpp>
 namespace Engine 
 {
+	sf::Vector2f VectorAbs(sf::Vector2f vec);
+
 	class Vector2D
 	{
 	public:

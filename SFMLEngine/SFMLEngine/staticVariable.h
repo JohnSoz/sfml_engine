@@ -3,6 +3,6 @@ namespace Engine
 {
 	struct VStaticContainer 
 	{
-		static bool ShowDemoWindows;
+		static bool ShowDebugWindow;
 	};
 }

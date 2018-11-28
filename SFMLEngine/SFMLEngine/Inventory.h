@@ -7,7 +7,6 @@
 #include <assert.h>
 namespace Engine
 {
-
 	enum ItemType { item = 0, gun, heal };
 	class Item : public Engine::Object
 	{
@@ -18,6 +17,8 @@ namespace Engine
 		float getWeight() { return weight; }
 		int getInt() { return 1; } //LoL?
 		ItemType getType() { return type; }
+		std::string getType_s();
+		void update() { dw_o.draw(name); };
 	protected:
 		ItemType type;
 		float weight;
@@ -49,19 +50,19 @@ namespace Engine
 
 		void LoadSprite(std::string name)  //Выглядит плохо, нужно заменить; Даже enum будет выглядеть лучше 
 		{
-			if (name == "M9")
+			if (name == "pistol")
 			{
-				texture.loadFromFile("images/Pistolet.png");
+				texture.loadFromFile("Data/images/Pistolet.png");
 				sprite.setTexture(texture);
 			}
-			else if (name == "AR-15")
+			else if (name == "rifle")
 			{
-				texture.loadFromFile("images/AK_47.png");
+				texture.loadFromFile("Data/images/AK_47.png");
 				sprite.setTexture(texture);
 			}
-			else if (name == "RPG")
+			else if (name == "rocketLauncher")
 			{
-				texture.loadFromFile("images/RPG.png");
+				texture.loadFromFile("Data/images/RPG.png");
 				sprite.setTexture(texture);
 			}
 			else
@@ -89,9 +90,9 @@ namespace Engine
 		std::vector<Item*>::iterator iter;
 		void baseIni()
 		{
-			inv.push_back(new Gun("M9", 2, 2, 0.7));
-			inv.push_back(new Gun("AR-15", 8, 12, 3.9));
-			inv.push_back(new Gun("RPG", 15, 1, 6.3));
+			inv.push_back(new Gun("pistol", 2, 5, 0.7));
+			inv.push_back(new Gun("rifle", 8, 2, 3.9));
+			inv.push_back(new Gun("rocketLauncher", 15, 10, 6.3));
 			inv.push_back(new Heal("HP", 20));
 		}
 	public:
@@ -116,6 +117,16 @@ namespace Engine
 			inv.erase(eraseIter);
 		}
 
+		Item* operator[](int n) { return inv[n]; }
+
+		void update()
+		{
+			for (auto& i : inv)
+			{
+				i->update();
+			}
+		}
+
 		template<class T>
 		T* getItemByName(std::string Name)
 		{
@@ -133,7 +144,7 @@ namespace Engine
 		template<class T>
 		T* getItem(int index)
 		{
-			assert(index > inv.size(), "out of range");
+			//assert(index > inv.size(), "out of range");
 			return (index > inv.size() - 1) ? nullptr : dynamic_cast<T*>(inv[index]);
 		}
 
@@ -151,6 +162,24 @@ namespace Engine
 				weight += i->getWeight();
 			}
 			return weight;
+		}
+
+		int getSize() { return inv.size(); }
+
+		int getIndexItem(std::string_view name)
+		{
+			for (auto i = 0; i < inv.size(); ++i)
+				if (inv[i]->getName() == name)
+					return i;
+		}
+
+		std::vector<Gun*> getGunItems()
+		{
+			std::vector<Gun*> vec;
+			for (auto& i : inv)
+				if (i->getType() == gun)
+					vec.push_back(static_cast<Gun*>(i));
+			return vec;
 		}
 
 		std::vector<Item*> getArrayItem() { return inv; }

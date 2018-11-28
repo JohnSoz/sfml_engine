@@ -36,8 +36,7 @@ namespace Engine
 		bool looped;
 
 		std::string  name;
-		sf::Vector2f scale;
-		sf::Sprite   sprite;
+        float        scale;
 		sf::Texture  texture;
 		sf::IntRect  rect;
 		sf::Vector2f origin;
@@ -50,7 +49,7 @@ namespace Engine
 	class AnimationXml final : public Animation
 	{
 	public:
-		std::vector<sf::IntRect> frames;
+		std::vector<sf::IntRect> frames;			
 
 		AnimationXml() { looped = false; state = APause; }
 
@@ -59,7 +58,6 @@ namespace Engine
 			state = APlay;
 			frame += 0.009 * time;
 			if (frame > frameCount) { frame = 0; state = AEnd; }
-			sprite.setTextureRect(frames[frame]);
 			return frames[frame];
 		}
 	};
@@ -72,12 +70,12 @@ namespace Engine
 
 		AnimationJson()
 		{
-			frame = 0; scale.x = 0; scale.y = 0; speed = 0;
+			frame = 0; scale = 0;  speed = 0;
 		}
 		/*!
 		Updates the current animation frame, angle-rotation angle of the sprite
 		*/
-		sf::IntRect& tick(float time) override;
+	    sf::IntRect& tick(float time) override;
 	};
 
 	/*!
@@ -111,7 +109,7 @@ namespace Engine
 		 \param PATH path to animation file (xml or json)
 		 \param LOADXML Flag true if you are going to load xml animation
 		*/
-		void LoadAnimation_j(std::string PATH);
+		void LoadAnimation_j(std::string_view PATH);
 
 		/*!
 		Returns the current animation
@@ -138,23 +136,13 @@ namespace Engine
 		Loads the animation from xml file
 		 \details load animation from xml file and return vector from frames (rectangles) for animation
 		*/
-		void LoadAnimation_x(std::string fileName);
-
-		/*!
-		Loads the animation from xml file
-		 \details load animation from xml file and return vector from frames (rectangles) for animation
-		*/
-		void AnimationSwitcher(std::string animationName)
-		{
-			SetCurrAnimation(GetAnimationByName(animationName));
-
-		}
+		void LoadAnimation_x(std::string_view fileName);
 
 		/*!
 		Returns the animation by name
 		*/
-		std::list <Animation*>::iterator GetAnimationByName(std::string NAME);
+		std::list <Animation*>::iterator GetAnimationByName(std::string_view NAME);
 
-		const std::list<Animation*>& getAnimationList();
+		const std::list<Animation*>&     getAnimationList();
 	};
 }

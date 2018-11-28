@@ -8,12 +8,12 @@ using sf::Vector2f;
 using sf::Texture;
 using std::vector;
 
-void AnimationManager::LoadAnimation_j(string path)
+void AnimationManager::LoadAnimation_j(std::string_view path)
 {
 	AnimationJson* anim = new AnimationJson;
 	json j;
 	j.clear();
-	std::ifstream i(path);
+	std::ifstream i(path.data());
 	i >> j;
 	i.clear();
 	i.close();
@@ -29,8 +29,7 @@ void AnimationManager::LoadAnimation_j(string path)
 	anim->rect = rect;
 	anim->frame = j.at("Frame").get<int>();
 	anim->speed = j.at("Speed").get<float>();
-	anim->scale.x = j.at("Scale").get<float>();
-	anim->scale.y = j.at("Scale").get<float>();
+	anim->scale = j.at("Scale").get<float>();
 	anim->Center = center;
 	if (animationList.empty())
 	{
@@ -43,20 +42,12 @@ void AnimationManager::LoadAnimation_j(string path)
 
 IntRect& AnimationManager::AnimUpdate(float t)
 {
-	if ((*currAnim)->looped == false && (*currAnim)->state == AEnd)
-	{
-		(*currAnim)->state = APause;
-		if (currAnim == --animationList.end())
-			currAnim = animationList.begin();
-		else
-			currAnim++;
-	}
-	return (*currAnim)->tick(t);
+	return (*currAnim)->tick(t);	
 }
 
-void AnimationManager::LoadAnimation_x(std::string fileName)
+void AnimationManager::LoadAnimation_x(std::string_view fileName)
 {
-	TiXmlDocument animFile(fileName.c_str());
+	TiXmlDocument animFile(fileName.data());
 
 	animFile.LoadFile();
 
@@ -77,25 +68,27 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 	bool isXMLAnimation = true;
 	AnimationXml *anim = new AnimationXml;
 
-	auto origin = settings->FirstChildElement("origin");
-	anim->origin.x = atoi(origin->Attribute("x"));
-	anim->origin.y = atoi(origin->Attribute("y"));
+	auto xml_origin = settings->FirstChildElement("origin");
+	anim->origin.x = atoi(xml_origin->Attribute("x"));
+	anim->origin.y = atoi(xml_origin->Attribute("y"));
 
-	auto rect = settings->FirstChildElement("rect");
-	anim->rect.left = atoi(rect->Attribute("left"));
-	anim->rect.top = atoi(rect->Attribute("top"));
-	anim->rect.width = atoi(rect->Attribute("widht"));
-	anim->rect.height = atoi(rect->Attribute("height"));
+	auto xml_rect = settings->FirstChildElement("rect");
+	anim->rect.left = atoi(xml_rect->Attribute("left"));
+	anim->rect.top = atoi(xml_rect->Attribute("top"));
+	anim->rect.width = atoi(xml_rect->Attribute("widht"));
+	anim->rect.height = atoi(xml_rect->Attribute("height"));
 
-	auto loop = settings->FirstChildElement("loop");
+	auto xml_loop = settings->FirstChildElement("loop");
 	using boost::lexical_cast;
-	anim->looped = lexical_cast<bool>(loop->Attribute("value"));
+	anim->looped = lexical_cast<bool>(xml_loop->Attribute("value"));
+
+	auto xml_scale = settings->FirstChildElement("scale");
+	anim->scale = atof(xml_scale->Attribute("value"));
 
 	anim->name = Name;
 	anim->speed = delay;
 	anim->texture.loadFromFile("Data\\OSprite\\" + img);
 	anim->texture.setSmooth(true);
-	anim->sprite.setTexture(anim->texture);
 	while (animElement)
 	{
 		TiXmlElement *cut;
@@ -116,7 +109,6 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 	frames.shrink_to_fit();
 	anim->frameCount = frames.size();
 	anim->frames = std::move(frames);
-	anim->sprite.setTextureRect(anim->frames[0]);
 	if (animationList.empty())
 	{
 		animationList.push_back(anim);
@@ -124,21 +116,23 @@ void AnimationManager::LoadAnimation_x(std::string fileName)
 	}
 	else
 		animationList.push_back(anim);
+
+	animFile.Clear();
 }
 
 void AnimationManager::SetCurrAnimation(std::list <Animation*>::iterator iter)
 {
-	//currAnim = std::forward<Animation>(anim);
 	currAnim = iter;
 }
 
-std::list <Animation*>::iterator AnimationManager::GetAnimationByName(string Name)
+std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::string_view Name)
 {
-	for (auto iter = animationList.begin(); iter != animationList.end(); ++iter)
+	return
+		std::find_if(animationList.begin(), animationList.end(),
+			[=](Animation* anim)
 	{
-		if ((*iter)->name == Name)
-			return iter;
-	}
+		return (anim->name == Name) ? true : false;
+	});
 }
 
 const std::list<Engine::Animation*>& Engine::AnimationManager::getAnimationList()
@@ -157,5 +151,5 @@ IntRect& AnimationJson::tick(float time)
 	if (int(frame) >= 1)
 		int z = 5;
 	IntRect x(widht * int(frame), top, widht, height);
-	return x;
+	return x; //err
 }

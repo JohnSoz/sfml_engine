@@ -3,33 +3,40 @@
 #include "GUI.h"
 #include "timer.h"
 #include "AudioPlayer.h"
+#include "ApplicationState.h"
 #include <LuaBridge/LuaBridge.h>
-extern "C" 
+
+extern "C"
 {
-#include <Lua/lua.h>
-#include <Lua/lauxlib.h>
-#include <Lua/lualib.h>
+#include "lua.h"
+#include "lauxlib.h"
+#include "lualib.h"
 }
+
 #include "Camera.h"
 namespace Engine
 {
-	enum appState
-	{
-		Play = 0,
-		UI
-	};
 	class A
 	{
 	public:
 		std::string name;
-	    std::string text;
+		std::string text;
 		std::string oneFrameText;
+		ImVec2 size;
 	public:
 		A() = delete;
 		A(std::string n)
 		{
+			size = { 400,400 };
 			name = n;
-			text = "";
+			text.clear();
+		}
+		A(std::string n, float x, float y)
+		{
+			name = n;
+			size.x = x;
+			size.y = y;
+			text.clear();
 		}
 		void addText(std::string t)
 		{
@@ -43,9 +50,9 @@ namespace Engine
 		{
 			if (isOpen)
 			{
-				ImGui::SetNextWindowSize(ImVec2(400, 400), ImGuiCond_FirstUseEver);
-				if (ImGui::Begin(name.c_str(), &isOpen))
+				if (ImGui::Begin(name.c_str(), &isOpen, ImGuiWindowFlags_NoSavedSettings))
 				{
+					ImGui::SetWindowSize(size);
 					ImGui::Text(text.c_str());
 					ImGui::Separator();
 					ImGui::Text(oneFrameText.c_str());
@@ -55,6 +62,7 @@ namespace Engine
 			}
 		}
 	};
+
 	class Game
 	{
 	private:
@@ -64,7 +72,7 @@ namespace Engine
 		World*				world;
 		lua_State*          L;
 		A*                  testWindow;
-		Engine::Menu*		m;
+		Engine::MainMenu*		m;
 		sf::RenderWindow*   window;
 		AudioPlayer        musicPlayer;
 		sf::ContextSettings settings;
@@ -75,12 +83,14 @@ namespace Engine
 		timer			    time;
 		bool showConsole = false;
 		sf::Clock pressClock;
+		std::string path;
 	public:
 		Game(sf::RenderWindow& w);
 		~Game();
 		void startGame();
 		void update();
 		void draw();
+		void initMenu(sf::RenderWindow& w);
 		void handleEvent(sf::Event& e);
 	};
 }

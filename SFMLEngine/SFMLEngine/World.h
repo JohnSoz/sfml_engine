@@ -23,19 +23,19 @@ namespace Engine
 			ObjectsArray.clear();
 		}
 
+		void handelEvent(sf::Event& e); //TODO: переместить в update
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
 		void PushObject(Entity* obj);
 		void UpdateObjects(float time);
-		void RenderObjects(sf::RenderWindow &WINDOW);
-		void handelEvent(sf::Event& e) //Test
+		void CollisionUpdate()
 		{
-			for (auto& o : ObjectsArray)
+			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
 			{
-				if (o->type == OActor)
-					static_cast<Actor*>(o)->handleEvent(e);
+				(*iter)->CollisionUpdate(ObjectsArray);
 			}
 		}
+		void RenderObjects(sf::RenderWindow &WINDOW);
 		void refresh();
 	};
 
@@ -48,7 +48,6 @@ namespace Engine
 		ObjectHandler     objHandler;
 		Level             level;
 		sf::RenderTexture renderTexture;
-		sf::Clock gunClock;
 		DebuggingSystem debug;
 		bool ShowOverlay = true;
 
@@ -58,7 +57,8 @@ namespace Engine
 		void Init(sf::RenderWindow& window);
 
 	public:
-		World() {
+		World()
+		{
 			renderTexture.create(1920, 1080);
 		}
 		~World() = default;

@@ -380,3 +380,11 @@ std::ostream & Engine::operator<<(std::ostream & os, const Vector2D & dt)
 	os << "  X = " << dt.x << " Y = " << dt.y;
 	return os;
 }
+
+sf::Vector2f Engine::VectorAbs(sf::Vector2f vec)
+{
+	sf::Vector2f absVec;
+	absVec.x = std::abs(vec.x);
+	absVec.y = std::abs(vec.x);
+	return absVec;
+}

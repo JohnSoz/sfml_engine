@@ -3,12 +3,19 @@
 using namespace Engine;
 #include "LogConsole.h"
 #include "staticVariable.h"
+
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
+
 void DebuggingSystem::draw(sf::RenderTarget& target)
 {
 	if (showVertex)
 	{
 		int count = 0;
+		const float viewPortScale = 1.92;
+		sf::Vector2f offset = sf::Vector2f(500, 281.5) - window->getView().getCenter();
+		offset.x *= 1.92;
+		offset.y *= 1.92;
+
 		for (auto &i : entites)
 		{
 			//auto x = i.second->x - 90;
@@ -39,6 +46,7 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 			triangle[4].position = sf::Vector2f(x, y);
 			triangle[4].color = sf::Color::Red;
 
+			//500,281.5
 			ImGUI::SimpleText(sf::Vector2f(x * 1.92, y * 1.92), &overlay, "D_Window_" + std::to_string(count));
 			count++;
 			ImGUI::SimpleText(sf::Vector2f(w * 1.92, h * 1.92), &overlay, "D_Window_" + std::to_string(count));
@@ -68,19 +76,31 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 			triangle[4].position = sf::Vector2f(x, y);
 			triangle[4].color = sf::Color::Blue;
 
-			ImGUI::SimpleText(sf::Vector2f(x * 1.92, y * 1.92), &overlay, "D_Window_" + std::to_string(count));
-			count++;
-			ImGUI::SimpleText(sf::Vector2f((x + w) * 1.92, (y + h)  * 1.92), &overlay, "D_Window_" + std::to_string(count));
-			count++;
-			//if (z.first == "playerSpawn")
-			//{
-			ImGUI::Text(sf::Vector2f(x * 1.92 + w * 1.92 / 2 - 35, y * 1.92 + h * 1.92 / 2 - 20), &overlay, "D_Window_" + std::to_string(count), z.first);
-			count++;
-			//}
+
+			const float posX = x * 1.92;
+			const float posY = y * 1.92;
+			if ((posX >= abs(offset.x) && posX <= abs(offset.x + 1800)) &&
+				(posY >= abs(offset.y) && posY <= abs(offset.y + 930)))
+			{
+				ImGUI::SimpleText(sf::Vector2f(posX + offset.x, posY + offset.y), &overlay, "D_Window_" + std::to_string(count));
+				count++;
+			}
+			if (((x + w) * 1.92 >= abs(offset.x) && (x + w) * 1.92 <= abs(offset.x + 1800)) &&
+				((y + h)  * 1.92 >= abs(offset.y) && (y + h)  * 1.92 <= abs(offset.y + 930)))
+			{
+				ImGUI::SimpleText(sf::Vector2f((x + w) * 1.92 + offset.x, (y + h)  * 1.92 + offset.y), &overlay, "D_Window_" + std::to_string(count));
+				count++;
+			}
+			if ((posX + w * 1.92 / 2 - 35 >= abs(offset.x) && posX + w * 1.92 / 2 - 35 <= abs(offset.x + 1800)) &&
+				(posY + h * 1.92 / 2 - 20 >= abs(offset.y) && posY + h * 1.92 / 2 - 20 <= abs(offset.y + 930)))
+			{
+				ImGUI::Text(sf::Vector2f(posX + w * 1.92 / 2 - 35 + offset.x, posY + h * 1.92 / 2 - 20 + offset.y), &overlay, "D_Window_" + std::to_string(count), z.first);
+				count++;
+			}
 			target.draw(triangle);
 		}
 	}
-	drawDebugWindows(Engine::VStaticContainer::ShowDemoWindows);
+	drawDebugWindows(Engine::VStaticContainer::ShowDebugWindow);
 	Console::AppLog::Draw("LogConsole", &LogConsole);
 }
 
@@ -114,7 +134,7 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 	{
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
-			Engine::VStaticContainer::ShowDemoWindows = !Engine::VStaticContainer::ShowDemoWindows;
+			Engine::VStaticContainer::ShowDebugWindow = !Engine::VStaticContainer::ShowDebugWindow;
 			Pressclock.restart();
 		}
 	}
