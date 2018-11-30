@@ -15,31 +15,59 @@ namespace Engine {
 
 	struct ObjectLevel
 	{
-		int GetPropertyInt(std::string name);  //номер свойства объекта в нашем списке
+		int GetPropertyInt(std::string name); 
 		float GetPropertyFloat(std::string name);
 		std::string GetPropertyString(std::string name);
 
-		std::string name;  //объ€вили переменную name типа string
-		std::string type;  //а здесь переменную type типа string
-		sf::Rect<float> rect;  //тип Rect с нецелыми значени€ми
-		std::map<std::string, std::string> properties;  //создаЄм ассоциатиный массив. ключ - строковый тип, значение - строковый
-
-		sf::Sprite sprite;  //объ€вили спрайт
+		std::string name; 
+		std::string type;  
+		sf::Rect<float> rect; 
+		std::map<std::string, std::string> properties; 
 	};
 
 	struct Tileset
 	{
 	private:
 		sf::Sprite sprite;
-		sf::Texture tilesetImage;
+		sf::Image tilesetImage;
+		sf::Texture texture;
 		int TileCount;
 		int columns;
 		int rows;
 		int tileWidth;
 		int tileHeight;
-		std::vector<sf::Rect<int>> subRects;
-		void CalculateSubRects()
+	public:
+		int firstTileID;
+		Tileset(TiXmlElement* element)
 		{
+			firstTileID = atoi(element->Attribute("firstgid"));
+			TileCount = atoi(element->Attribute("tilecount"));
+			TiXmlElement *image;
+			image = element->FirstChildElement("image");
+			std::string imagepath = image->Attribute("source");
+			tilesetImage.loadFromFile(imagepath);
+			texture.loadFromImage(tilesetImage);
+			texture.setSmooth(true); //сглаживание
+			tileWidth = atoi(element->Attribute("tilewidth"));
+			tileHeight = atoi(element->Attribute("tileheight"));
+			columns = tilesetImage.getSize().x / tileWidth;
+			rows = tilesetImage.getSize().y / tileHeight;
+		}
+		~Tileset() = default;
+
+		sf::Texture& getTexture() 
+		{
+			return texture;
+		}
+		sf::Image getImage()
+		{
+			return tilesetImage;
+		}
+		int getMaxID() { return firstTileID + TileCount; }
+		int getFitrsTileId() { return firstTileID; }
+		std::vector<sf::Rect<int>> getSubRect() 
+		{
+			std::vector<sf::Rect<int>> subRects;
 			for (int y = 0; y < rows; y++)
 				for (int x = 0; x < columns; x++)
 				{
@@ -52,30 +80,8 @@ namespace Engine {
 
 					subRects.push_back(rect);
 				}
+			return subRects;
 		}
-	public:
-		int firstTileID;
-		Tileset(TiXmlElement* element)
-		{
-			firstTileID = atoi(element->Attribute("firstgid"));
-			TileCount = atoi(element->Attribute("tilecount"));
-			TiXmlElement *image;
-			image = element->FirstChildElement("image");
-			std::string imagepath = image->Attribute("source");
-			sf::Image img;
-			img.loadFromFile(imagepath);
-			img.createMaskFromColor(sf::Color(255, 255, 255));
-			tilesetImage.loadFromImage(img);
-			tilesetImage.setSmooth(true); //сглаживание
-			tileWidth = atoi(element->Attribute("tilewidth"));
-			tileHeight = atoi(element->Attribute("tileheight"));
-			columns = tilesetImage.getSize().x / tileWidth;
-			rows = tilesetImage.getSize().y / tileHeight;
-			CalculateSubRects();
-		}
-		~Tileset() = default;
-		int GetMaxID() { return firstTileID + TileCount; }
-		std::vector<sf::Rect<int>> GetSubRect() { return subRects; }
 
 	};
 
@@ -89,13 +95,9 @@ namespace Engine {
 	{
 	private:
 		int MapScale;
-		int posX = 0;
-		int posY = 0;
-		int Xc = 0;
 		void ParseLayer(TiXmlElement *layerElement);
 		sf::IntRect rect; 
 		int width, height, tileWidth, tileHeight;
-		int firstTileID;
 		sf::Rect<float> drawingBounds;
 		sf::Texture tilesetImage;
 		std::vector<ObjectLevel> objects;

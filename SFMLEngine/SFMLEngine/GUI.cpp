@@ -192,6 +192,7 @@ tgui::Picture::Ptr Engine::makePicture(sf::Texture& tex, sf::Vector2f pos, sf::V
 
 void Engine::MainMenu::makeMenu(std::string &p)
 {
+	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
 	sf::Texture t;
 	t.loadFromFile("Data/images/bg.png");
 	sf::Sprite spr(t);

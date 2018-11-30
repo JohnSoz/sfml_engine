@@ -148,7 +148,8 @@ namespace Engine
 			return (index > inv.size() - 1) ? nullptr : dynamic_cast<T*>(inv[index]);
 		}
 
-		Item* getCurrItem() const { return inv[Count]; }
+		template<class T>
+		T* getCurrItem() const { return dynamic_cast<T*>(inv[Count]); }
 
 		int getCurrCount() { return Count; }
 

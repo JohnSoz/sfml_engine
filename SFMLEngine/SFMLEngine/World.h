@@ -35,6 +35,14 @@ namespace Engine
 				(*iter)->CollisionUpdate(ObjectsArray);
 			}
 		}
+		void callStart() 
+		{
+			Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
+			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
+			{
+				(*iter)->start();
+			}
+		}
 		void RenderObjects(sf::RenderWindow &WINDOW);
 		void refresh();
 	};
@@ -68,6 +76,7 @@ namespace Engine
 			debug.pushRectangle(e->getDebugRect());
 			objHandler.PushObject(e);
 		}
+		void start();
 		Level* getLevel() { return &level; }
 		ObjectHandler& getObjHendler() { return objHandler; }
 		friend class Game;

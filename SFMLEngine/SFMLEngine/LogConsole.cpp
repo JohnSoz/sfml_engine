@@ -7,7 +7,6 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 {
 	if (*p_open)
 	{
-		//ImVec2 window_pos = ImVec2(0, 0);
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_Always, ImVec2(0, 0));
 		ImGui::SetNextWindowSize(ImVec2(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y * 0.3));
 		ImGui::SetNextWindowBgAlpha(0.8f);
@@ -18,7 +17,6 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		ImGui::SameLine();
 		static bool find = false;
 		ImGui::Checkbox("Find By Type", &find);
-
 		static std::string item_current = items[0];
 		ImGui::PushItemWidth(45);
 		if (ImGui::BeginCombo("", item_current.c_str(), ImGuiComboFlags_NoArrowButton))
@@ -44,7 +42,6 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		input = buff;
 		ImGui::Spacing();
 		ImGui::Separator();
-
 		ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 		if (copy) ImGui::LogToClipboard();
 
@@ -119,10 +116,9 @@ Console::Log::Log(std::string s, logType t)
 {
 	type = t;
 	double time = clock();
-	std::string ti = std::to_string(std::round(time / 1000 * 10) / 10);
-	ti.erase(ti.find_first_of('.') + 2, ti.size());
+	std::string ti = std::to_string(std::round(time / 10) / 100);
+	ti.erase(ti.find_first_of('.') + 3, ti.size());
 	std::string l = "[sec:" + ti;
-
 	switch (t)
 	{
 	case logType::error:

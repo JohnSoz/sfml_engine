@@ -25,6 +25,8 @@ Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 
 void Engine::ObjectHandler::PushObject(Entity* obj)
 {
+	string info = "Engine::ObjectHandler::PushObject(" + obj->getName() + ")";
+	Console::AppLog::addLog(info, Console::info);
 	ObjectsArray.shrink_to_fit();
 	ObjectsArray.push_back(obj);
 }
@@ -64,6 +66,7 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 
 void Engine::ObjectHandler::refresh()
 {
+	Console::AppLog::addLog("Engine::ObjectHandler::refresh()", Console::info);
 	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
 		[](const Entity *entity)->bool
 	{
@@ -90,9 +93,9 @@ void Engine::World::handleEvent(sf::Event & event)
 	debug.handleEvent(event);
 	//objHandler.handelEvent(event);
 	objHandler.GetObjects<Actor>("Test").invHandleEvent(event);
-	Console::AppLog::addLog("shoot", Console::logType::info);
 	if (auto z = objHandler.GetObjects<Actor>("Test").shotUpdate(level); z != nullptr)
 	{
+		Console::AppLog::addLog("shoot", Console::logType::info);
 		pushEntity(z);
 	}
 	/*
@@ -101,7 +104,6 @@ void Engine::World::handleEvent(sf::Event & event)
 	pushEntity(objHandler.GetObjects<Actor>("Test").shot(level));
 	gunClock.restart();
 	*/
-
 }
 
 void Engine::World::draw(sf::RenderWindow & window)
@@ -131,4 +133,9 @@ void Engine::World::Init(sf::RenderWindow & window)
 	sf::Image i2;
 	i2.loadFromFile("Data/OSprite/nandGunMove.png");
 	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));
+}
+
+void Engine::World::start()
+{
+	objHandler.callStart();
 }

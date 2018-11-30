@@ -73,6 +73,18 @@ namespace Engine
 							case Engine::FLOAT:
 								field = (std::string)member.getName() + ": %.4f";
 								ImGui::Text(field.c_str(), member.get(*ptr));
+								if (ImGui::BeginPopupContextItem(field.c_str())) // Test staff
+								{
+									float changedValue = meta::getMemberValue<float>(*ptr, member.getName());
+									if (ImGui::Selectable("Set to zero")) changedValue = 0.0f;
+									if (ImGui::Selectable("Set to default")) changedValue = 0.005;
+									ImGui::PushItemWidth(200);
+									std::string name = "#" + (std::string)member.getName();
+									ImGui::DragFloat(name.c_str(), &changedValue, 0.001f, 0.001f, 1.f);
+									meta::setMemberValue<float>(*ptr, member.getName(), changedValue);
+									ImGui::PopItemWidth();
+									ImGui::EndPopup();
+								}
 								break;
 							case Engine::STRING:
 								field = (std::string)member.getName() + ": " + meta::getMemberValue<std::string>(*ptr, member.getName());

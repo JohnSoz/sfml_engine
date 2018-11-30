@@ -67,6 +67,8 @@ namespace Engine
 		sf::RenderWindow* window;
 		sf::Transformable PointOfFire;
 
+		void updateSprite();
+
 	public:
 		float Radian;
 		~Actor() = default;
@@ -95,30 +97,29 @@ namespace Engine
 			inv.makeMenu(inventory);
 		}
 		sf::Vector2f getPointOfFire() { return PointOfFire.getPosition(); }
+
 		virtual void handleEvent(sf::Event& e);
+
 		void checkClashes(float time);
+
 		void RotateToMouse(float speed, sf::RenderWindow& window);
+
 		Engine::Bullet* shotUpdate(Level& lvl)
 		{
 			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 			{
-				if (!Engine::VStaticContainer::ShowDebugWindow)
+				if (!Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
 				{
-					if (gunClock.getElapsedTime().asMilliseconds() > 500)
+					if (gunClock.getElapsedTime().asMilliseconds() > 800)
 					{
+						animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
+						updateSprite();
+						gunClock.restart();
+
+						auto item = inventory.getCurrItem<Gun>();
 						sf::Image i;
 						i.loadFromFile("Data/images/bullet.png");
-						animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
-						auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
-						sprite.setTexture(currAnim->texture);
-						localRectangle = currAnim->rect;
-						originOffset = currAnim->origin;
-						scale = currAnim->scale;
-						sprite.setScale(scale, scale);
-						sprite.setOrigin(originOffset);
-						sprite.setTextureRect(localRectangle);
-						gunClock.restart();
-						return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, 12, lvl);
+						return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl);
 					}
 				}
 			}
@@ -126,8 +127,13 @@ namespace Engine
 		}
 
 		void draw() { inv.draw(); }
+
 		void invHandleEvent(sf::Event&);
+
 		void update(float time) override;
+
+		void start() override;
+
 		void getDamage(float dmg);
 
 		friend class DebugWindow;

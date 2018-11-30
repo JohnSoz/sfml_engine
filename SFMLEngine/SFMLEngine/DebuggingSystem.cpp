@@ -47,13 +47,13 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 			triangle[4].color = sf::Color::Red;
 
 			//500,281.5
-			ImGUI::SimpleText(sf::Vector2f(x * 1.92, y * 1.92), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f(x * 1.92 + offset.x, y * 1.92 + offset.y), &overlay, "D_Window_" + std::to_string(count));
 			count++;
-			ImGUI::SimpleText(sf::Vector2f(w * 1.92, h * 1.92), &overlay, "D_Window_" + std::to_string(count));
+			ImGUI::SimpleText(sf::Vector2f(w * 1.92 + offset.x, h * 1.92 + offset.y), &overlay, "D_Window_" + std::to_string(count));
 			count++;
 			target.draw(triangle);
 		}
-		for (auto& z : obj) //Оптимизировать
+		for (auto& z : obj)
 		{
 			auto x = z.second.left;
 			auto y = z.second.top;
@@ -86,7 +86,7 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 				count++;
 			}
 			if (((x + w) * 1.92 >= abs(offset.x) && (x + w) * 1.92 <= abs(offset.x + 1800)) &&
-				((y + h)  * 1.92 >= abs(offset.y) && (y + h)  * 1.92 <= abs(offset.y + 930)))
+			   ((y + h)  * 1.92 >= abs(offset.y) && (y + h)  * 1.92 <= abs(offset.y + 930)))
 			{
 				ImGUI::SimpleText(sf::Vector2f((x + w) * 1.92 + offset.x, (y + h)  * 1.92 + offset.y), &overlay, "D_Window_" + std::to_string(count));
 				count++;

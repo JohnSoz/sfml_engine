@@ -20,6 +20,7 @@ namespace Engine
 		virtual ~Entity();
 
 		virtual void update(float time) { dw_o.draw(name); }
+		virtual void start() {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
 
 		void CollisionUpdate(std::vector<Entity*> objarray)

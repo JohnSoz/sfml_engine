@@ -84,11 +84,13 @@ namespace Engine
 		bool showConsole = false;
 		sf::Clock pressClock;
 		std::string path;
+		bool isStateChange;
 	public:
 		Game(sf::RenderWindow& w);
 		~Game();
 		void startGame();
 		void update();
+		void stateChanged();
 		void draw();
 		void initMenu(sf::RenderWindow& w);
 		void handleEvent(sf::Event& e);

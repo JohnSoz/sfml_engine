@@ -11,6 +11,7 @@ Engine::Game::Game(sf::RenderWindow & w)
 	initMenu(w);
 	m->makeMenu(path);
 	testWindow = new A("TestLua");
+	isStateChange = false;
 }
 
 void Engine::Game::initMenu(sf::RenderWindow& w)
@@ -27,6 +28,7 @@ Engine::Game::~Game()
 
 void Engine::Game::startGame()
 {
+	Console::AppLog::addLog("Engine::Game::startGame()", Console::info);
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	luabridge::getGlobalNamespace(L)
@@ -46,6 +48,7 @@ void Engine::Game::update()
 {
 	while (window->isOpen())
 	{
+		auto lastState = state;
 		time.Tick();
 		sf::Event event;
 		handleEvent(event);
@@ -65,9 +68,21 @@ void Engine::Game::update()
 			state = (appState)m->update();
 			break;
 		}
-		camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(),*window);
+		if (lastState != state)
+			isStateChange = true;
+		else
+			isStateChange = false;
+		camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(), *window);
 		draw();
+		if (isStateChange)
+			stateChanged();
 	}
+}
+
+void Engine::Game::stateChanged()
+{
+	if (state == Play)
+		world->start();
 }
 
 void Engine::Game::draw()
@@ -91,15 +106,24 @@ void Engine::Game::draw()
 
 void Engine::Game::handleEvent(sf::Event & e)
 {
-	while (window->pollEvent(e))	
+	while (window->pollEvent(e))
 	{
 		if (e.type == sf::Event::Closed)
 		{
 			window->close();
 			break;
 		}
-		m->handleEvent(e);
+
+		switch (state)
+		{
+		case Engine::Play:
+			world->handleEvent(e);
+			break;
+		case Engine::UI:
+			m->handleEvent(e);
+			break;
+		}
+
 		ImGui::SFML::ProcessEvent(e);
-		world->handleEvent(e);
 	}
 }

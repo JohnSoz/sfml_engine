@@ -79,6 +79,18 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	}
 }
 
+void Engine::Actor::updateSprite()
+{
+	auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
+	localRectangle = currAnim->rect;
+	originOffset = currAnim->origin;
+	scale = currAnim->scale;
+	sprite.setTexture(currAnim->texture);
+	sprite.setScale(scale, scale);
+	sprite.setOrigin(originOffset);
+	sprite.setTextureRect(localRectangle);
+}
+
 void Engine::Actor::handleEvent(sf::Event & e)
 {
 	if (Keyboard::isKeyPressed(Keyboard::W))
@@ -180,14 +192,7 @@ void Engine::Actor::update(float time)
 			{
 				animManager.GetCurrAnimation<AnimationXml>()->state = APause;
 				animManager.SetCurrAnimation(animManager.GetAnimationByName("nandGunMove"));
-				auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
-				scale = currAnim->scale;
-				originOffset = currAnim->origin;
-				localRectangle = currAnim->rect;
-				sprite.setOrigin(originOffset);
-				sprite.setScale(scale, scale);
-				sprite.setTexture(currAnim->texture);
-				sprite.setTextureRect(localRectangle);
+				updateSprite();
 			}
 		}
 		else
@@ -201,6 +206,11 @@ void Engine::Actor::update(float time)
 	inventory.update();
 	dw_a.draw("Actor", true);
 	dw_o.draw("Object");
+}
+
+void Engine::Actor::start()
+{
+	//gunClock.restart();
 }
 
 void Engine::Actor::getDamage(float dmg)
