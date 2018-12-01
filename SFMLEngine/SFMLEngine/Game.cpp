@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
+#include "LogConsole.h"
 
 Engine::Game::Game(sf::RenderWindow & w)
 {
@@ -36,6 +37,7 @@ void Engine::Game::startGame()
 		.addConstructor<void(*) (std::string, float, float)>()
 		.addFunction("addWindow", &A::addWindow)
 		.addFunction("addText", &A::addText_l)
+		.addFunction("getText", &A::getText_l)
 		.endClass();
 	luabridge::push(L, testWindow);
 	lua_setglobal(L, "L_testWindow");
@@ -98,7 +100,7 @@ void Engine::Game::draw()
 		m->draw();
 		break;
 	}
-
+	Console::AppLog::Draw("LogConsole", &LogConsole, L);
 	ImGui::SFML::Render(*window);
 	window->setView(camera.getView());
 	window->display();
@@ -125,5 +127,13 @@ void Engine::Game::handleEvent(sf::Event & e)
 		}
 
 		ImGui::SFML::ProcessEvent(e);
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
+	{
+		if (pressClock.getElapsedTime().asMilliseconds() > 500)
+		{
+			LogConsole = !LogConsole;
+			pressClock.restart();
+		}
 	}
 }

@@ -12,3 +12,4 @@ for i = 1, 5 do
    L_testWindow:addText(str)
 end
 end
+

@@ -61,6 +61,7 @@ Engine:
       -Оптимизировать отрисовку rectangles' статических объектов
     -Вызывать отрисовку интерфейса в одном месте(Например DebuggingSystem::drawInterface(...)) 
   Game:
+    !-Заменить switch(state) в методах draw/update/handleEcent чем-нибудь другим. 
     +Вызов ImGui::Update/Render и т.д в независимости от текущего state(play или ui)
   World:
     +World::draw(sf::renderWindow&) - должен вызывать только window->draw()

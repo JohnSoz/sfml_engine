@@ -1,7 +1,6 @@
 #include "DebuggingSystem.h"
 #include <windows.h>
 using namespace Engine;
-#include "LogConsole.h"
 #include "staticVariable.h"
 
 sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
@@ -101,7 +100,6 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 		}
 	}
 	drawDebugWindows(Engine::VStaticContainer::ShowDebugWindow);
-	Console::AppLog::Draw("LogConsole", &LogConsole);
 }
 
 void Engine::DebuggingSystem::handleEvent(sf::Event& event)
@@ -119,14 +117,6 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
 			showVertex = !showVertex;
-			Pressclock.restart();
-		}
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
-	{
-		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
-		{
-			LogConsole = !LogConsole;
 			Pressclock.restart();
 		}
 	}

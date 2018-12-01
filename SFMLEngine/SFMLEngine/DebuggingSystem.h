@@ -36,7 +36,6 @@ namespace Engine
 		std::vector<std::pair<sf::FloatRect*, sf::FloatRect*>> entites;
 		std::vector<std::pair<std::string, sf::FloatRect>> obj;
 		bool overlay = false;
-		bool LogConsole = false;
 		bool showVertex = false;
 		sf::Clock Pressclock;
 		void drawDebugWindows(bool open)

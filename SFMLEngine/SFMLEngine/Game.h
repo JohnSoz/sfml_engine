@@ -40,11 +40,15 @@ namespace Engine
 		}
 		void addText(std::string t)
 		{
-			text += t;
+			text += t;	
 		}
 		void addText_l(std::string t)
 		{
 			oneFrameText += t;
+		}
+		std::string getText_l()
+		{
+			return oneFrameText + text;
 		}
 		void addWindow(bool isOpen)
 		{
@@ -82,6 +86,7 @@ namespace Engine
 		appState		    state;
 		timer			    time;
 		bool showConsole = false;
+		bool LogConsole = false;
 		sf::Clock pressClock;
 		std::string path;
 		bool isStateChange;

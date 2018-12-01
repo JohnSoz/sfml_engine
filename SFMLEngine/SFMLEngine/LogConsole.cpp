@@ -1,9 +1,14 @@
 #include "LogConsole.h"
 #include <cmath>
+#include <iostream>
+#include <LuaBridge/LuaBridge.h>
+
 vector<Console::Log> Console::AppLog::Buffer = {};
-std::string         Console::AppLog::items[5] = { "all", "error", "info", "fatal", "system" };
+std::string         Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
 bool                 Console::AppLog::ScrollToBottom = 0;
-void Console::AppLog::Draw(const char* title, bool *p_open)
+std::vector<std::string>   Console::AppLog::current_input = {};
+
+void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 {
 	if (*p_open)
 	{
@@ -21,7 +26,6 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		ImGui::PushItemWidth(45);
 		if (ImGui::BeginCombo("", item_current.c_str(), ImGuiComboFlags_NoArrowButton))
 		{
-
 			for (auto & item : items)
 			{
 				bool is_selected = (item_current == item);
@@ -34,19 +38,41 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		std::string input;
-		char buff[256] = { 0 };
-		ImGui::PushItemWidth(280);
-		bool value_changed = ImGui::InputText("Filter", buff, IM_ARRAYSIZE(buff));
+
+		char buff_search[256] = { 0 };
+		char buff_input[256] = { 0 };
+
+		ImGui::PushItemWidth(150);
+		bool value_changed = ImGui::InputText("Filter", buff_search, IM_ARRAYSIZE(buff_search));
 		ImGui::PopItemWidth();
-		input = buff;
+		ImGui::PushItemWidth(300);
+		bool input_change = ImGui::InputText("Input", buff_input, IM_ARRAYSIZE(buff_input), ImGuiInputTextFlags_EnterReturnsTrue);
+		if (input_change)
+		{
+			ScrollToBottom = true;
+			if (buff_input[0] == '/')
+			{
+				Buffer.emplace_back(buff_input, script);
+				buff_input[0] = ' ';
+				string do_string = (string)buff_input;
+				luaL_loadstring(state, do_string.c_str());
+				lua_pcall(state, 0, 0, 0);
+				luabridge::LuaRef a = luabridge::getGlobal(state, "lua_result");
+				if (!a.isNil())
+				{
+					std::string answer = a.cast<std::string>();
+					Buffer.emplace_back(answer, script_result);
+				}
+			}
+		}
+		ImGui::PopItemWidth();
 		ImGui::Spacing();
 		ImGui::Separator();
 		ImGui::BeginChild("scrolling", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 		if (copy) ImGui::LogToClipboard();
-
 		if (value_changed)
 		{
+			std::string input = buff_search;
 			for (auto item : Buffer)
 			{
 				std::string found = "";
@@ -67,7 +93,6 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 					ImGui::TextColored(item.color, item.text.c_str());
 				}
 			}
-
 		}
 		else if (find && item_current != "all")
 		{
@@ -93,16 +118,25 @@ void Console::AppLog::Draw(const char* title, bool *p_open)
 					if (item.type == logType::system)
 						ImGui::TextColored(item.color, item.text.c_str());
 				}
+				else if (item_current == "script")
+				{
+					if (item.type == logType::script)
+						ImGui::TextColored(item.color, item.text.c_str());
+				}
+				else if (item_current == "script_result")
+				{
+					if (item.type == logType::script_result)
+						ImGui::TextColored(item.color, item.text.c_str());
+				}
 			}
 		}
 		else
 		{
 			for (auto i : Buffer)
 			{
-				ImGui::TextColored(i.color, i.text.c_str()); //Test
+				ImGui::TextColored(i.color, i.text.c_str());
 			}
 		}
-
 		if (ScrollToBottom)
 			ImGui::SetScrollHere(1.0f);
 		ScrollToBottom = false;
@@ -136,6 +170,14 @@ Console::Log::Log(std::string s, logType t)
 	case logType::system:
 		color = ImVec4(1, 0, 0.8, 1);
 		l += " type:system]: ";
+		break;
+	case logType::script:
+		color = ImVec4(0.1, 0.5, 0.1, 1);
+		l += " type:script]: ";
+		break;
+	case logType::script_result:
+		color = ImVec4(0.1, 0.5, 0.1, 1);
+		l += " type:script_result]: ";
 		break;
 	}
 	l += s;
