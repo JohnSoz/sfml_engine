@@ -10,7 +10,7 @@ void Engine::Camera::moveToPoint(sf::Vector2f point, sf::RenderWindow& window, s
 		camera.move(sf::Vector2f(offset.x * (point.x - camera.getCenter().x) / distance, offset.y  * (point.y - camera.getCenter().y) / distance));
 	}
 	else
-		move = false;*/
-	//camera.setCenter(520, 291.5);
+		move = false;
+	camera.setCenter(560, 300);*/
 }
 

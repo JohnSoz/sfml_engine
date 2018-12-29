@@ -18,7 +18,7 @@ namespace Engine
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
 			sf::Texture t;
 			t.loadFromFile("Data/images/bgTest.png");
-			addWidjetToLayer(makePicture(t, { 0,0 }, { 1920,1080 }, 0.94), "", "BackGround");
+			addWidjetToLayer(makePicture(t, { 0.f,0.f }, { 1920,1080 }, 0.94f), "", "BackGround");
 
 			sf::Texture tex;
 			tex.loadFromFile("Data/images/invBG.png");
@@ -49,6 +49,7 @@ namespace Engine
 				auto toolTip = tgui::Label::create(inv_item->getName());
 				toolTip->setRenderer(theme.getRenderer("ToolTip"));
 				toolTip->setTextSize(22);
+				button->setUserData(inv_item->getName());
 				button->setToolTip(toolTip);
 				button->setImage(inv_item->getTexture());
 				button->setRenderer(theme.getRenderer("ButtonInv"));
@@ -62,7 +63,9 @@ namespace Engine
 				w->connect("pressed", [&]()
 				{
 					auto wid = w->cast<tgui::Button>();
-					std::string log = "Button '" + (std::string)wid->getText() + "' pressed";
+					auto gun_name = w->getUserData<std::string>();
+					inv.setItemByName(gun_name);
+					std::string log = "Button " + inv.getCurrItem<Gun>()->getName();
 					Console::AppLog::addLog(log, Console::logType::info);
 				});
 			}
@@ -81,6 +84,7 @@ namespace Engine
 		{
 			layers[0]->moveAllWidgets(offset);
 		}
+		
 		void activateOrDisabled()
 		{
 			if (layers[0]->IsEnable())

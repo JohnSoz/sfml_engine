@@ -55,11 +55,15 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 		{
 			auto z = static_cast<Actor*>(o);
 			sf::CircleShape shape(1);
-			//shape.setOrigin(2, 2);
+			sf::CircleShape shape2(2);
 			shape.setFillColor(sf::Color::Blue);
+			shape2.setFillColor(sf::Color::Red);
+			shape2.setOrigin(1, 1);
 			sf::Vector2f pos = z->getPointOfFire();
 			shape.setPosition(pos);
+			shape2.setPosition(z->sprite.getPosition());
 			WINDOW.draw(shape);
+			WINDOW.draw(shape2);
 		}
 	}
 }
@@ -77,7 +81,11 @@ void Engine::ObjectHandler::refresh()
 
 void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& event)
 {
-	objHandler.GetObjects<Actor>("Test").handleEvent(event);
+	objHandler.GetObjects<Actor>("Test").isKeyPressed();
+	if (auto z = objHandler.GetObjects<Actor>("Test").shotUpdate(level); z != nullptr)
+	{
+		pushEntity(z);
+	}
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();
 	if (ShowOverlay)
@@ -92,18 +100,7 @@ void Engine::World::handleEvent(sf::Event & event)
 {
 	debug.handleEvent(event);
 	//objHandler.handelEvent(event);
-	objHandler.GetObjects<Actor>("Test").invHandleEvent(event);
-	if (auto z = objHandler.GetObjects<Actor>("Test").shotUpdate(level); z != nullptr)
-	{
-		Console::AppLog::addLog("shoot", Console::logType::info);
-		pushEntity(z);
-	}
-	/*
-	sf::Image i;
-	i.loadFromFile("Data/images/bullet.png");
-	pushEntity(objHandler.GetObjects<Actor>("Test").shot(level));
-	gunClock.restart();
-	*/
+	objHandler.GetObjects<Actor>("Test").handleEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow & window)

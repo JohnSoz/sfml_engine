@@ -4,8 +4,36 @@
 #include <iostream>
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
-#include <SFML/Graphics/Rect.hpp>
-namespace Engine 
+#include <SFML/Graphics.hpp>
+#include <array>
+namespace collision
+{
+	struct rectangle 
+	{
+		sf::Vector2f vertex[4];
+	};
+
+	class SAT {
+	public:
+		bool collision(sf::Sprite* s1, sf::Sprite* s2);
+	private:
+		void  project(sf::Vector2f& axis, rectangle* _rectangle, float &min, float &max);
+		void normalize(sf::Vector2f& vector);
+		float dot(sf::Vector2f& vector1, sf::Vector2f& vector2);
+		float distance(float minA, float maxA, float minB, float maxB);
+	};
+}
+namespace Collision {
+
+	bool PixelPerfectTest(const sf::Sprite& Object1, const sf::Sprite& Object2, sf::Uint8 AlphaLimit = 0);
+
+	bool CreateTextureAndBitmask(sf::Texture &LoadInto, const std::string& Filename);
+
+	bool CircleTest(const sf::Sprite& Object1, const sf::Sprite& Object2);
+
+	bool BoundingBoxTest(const sf::Sprite& Object1, const sf::Sprite& Object2);
+}
+namespace Engine
 {
 	sf::Vector2f VectorAbs(sf::Vector2f vec);
 
@@ -51,12 +79,12 @@ namespace Engine
 	public:
 		float x, y;
 	};
-    //     rect1(left,top) |------------------------| rect2(left,top)
-    //                     |                        |
-    //                     |                        |
-    //                     |                        |
-    //                     |                        |
-    // rect2(widht,height) |------------------------| rect1(widgt,heigt)
+	//     rect1(left,top) |------------------------| rect2(left,top)
+	//                     |                        |
+	//                     |                        |
+	//                     |                        |
+	//                     |                        |
+	// rect2(widht,height) |------------------------| rect1(widgt,heigt)
 	class Quad
 	{
 	public:

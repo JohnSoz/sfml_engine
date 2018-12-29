@@ -15,7 +15,6 @@ namespace Engine
 		Item(std::string name) : Object(name) { type = ItemType::item; weight = 0; }
 		virtual ~Item() {};
 		float getWeight() { return weight; }
-		int getInt() { return 1; } //LoL?
 		ItemType getType() { return type; }
 		std::string getType_s();
 		void update() { dw_o.draw(name); };
@@ -29,12 +28,13 @@ namespace Engine
 	private:
 		float RateOfFire, damage;
 		int AmmoInGun;
+
 	public:
 		Gun() = default;
-		Gun(std::string Name, float dmg, float rate, float w) : RateOfFire(rate), damage(dmg)
+		Gun(std::string_view Name, float dmg, float rate, float w) : RateOfFire(rate), damage(dmg)
 		{
 			AmmoInGun = 0;
-			LoadSprite(Name);
+			LoadSprite(Name.data());
 			weight = w;
 			name = Name;
 			type = ItemType::gun;
@@ -48,7 +48,7 @@ namespace Engine
 
 		}
 
-		void LoadSprite(std::string name)  //Выглядит плохо, нужно заменить; Даже enum будет выглядеть лучше 
+		void LoadSprite(std::string_view name)  //Выглядит плохо, нужно заменить; Даже enum будет выглядеть лучше 
 		{
 			if (name == "pistol")
 			{
@@ -77,7 +77,7 @@ namespace Engine
 	private:
 		float HP;
 	public:
-		Heal(std::string Name, float hp) : HP(hp) { name = Name; type = ItemType::heal; weight = 0.2; }
+		Heal(std::string Name, float hp) : HP(hp) { name = Name; type = ItemType::heal; weight = 0.2f; }
 		Heal() = default;
 		int GetHP() { return (int)HP; }
 	};
@@ -85,15 +85,15 @@ namespace Engine
 	class Inventory
 	{
 	private:
-		int Count = 0;
 		std::vector<Item*> inv;
-		std::vector<Item*>::iterator iter;
+		std::vector<Item*>::iterator curr_item;
 		void baseIni()
 		{
-			inv.push_back(new Gun("pistol", 2, 5, 0.7));
-			inv.push_back(new Gun("rifle", 8, 2, 3.9));
-			inv.push_back(new Gun("rocketLauncher", 15, 10, 6.3));
-			inv.push_back(new Heal("HP", 20));
+			inv.push_back(new Gun("pistol", 2, 800, 0.7f));
+			inv.push_back(new Gun("rifle", 8, 300, 3.9f));
+			inv.push_back(new Gun("rocketLauncher", 15, 1500, 6.3f));
+			//inv.push_back(new Heal("HP", 20));
+			curr_item = inv.begin();
 		}
 	public:
 		Inventory() { baseIni(); }
@@ -108,13 +108,13 @@ namespace Engine
 
 		void delItem(std::string Name)
 		{
-			auto eraseIter = std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
+			inv.erase(
+				std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
 			{
-				if (item->getName() == Name)
-					return item;
-			});
-			delete *eraseIter;
-			inv.erase(eraseIter);
+				if (item->getName() == Name) { delete item;  return true; }
+			})
+			);
+			inv.shrink_to_fit();
 		}
 
 		Item* operator[](int n) { return inv[n]; }
@@ -137,23 +137,32 @@ namespace Engine
 			return dynamic_cast<T*>(*ret);
 		}
 
-		void nextItem() { (Count >= inv.size() - 1) ? Count = 0 : Count++; }
+		void nextItem() { (curr_item != inv.end()) ? curr_item = inv.begin() : curr_item++; }
 
 		std::string getItemName(int num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
 
 		template<class T>
 		T* getItem(int index)
 		{
-			//assert(index > inv.size(), "out of range");
-			return (index > inv.size() - 1) ? nullptr : dynamic_cast<T*>(inv[index]);
+			assert((index > inv.size()) == false, "out of range");
+			return dynamic_cast<T*>(inv[index]);
 		}
 
 		template<class T>
-		T* getCurrItem() const { return dynamic_cast<T*>(inv[Count]); }
+		T* getCurrItem() const { return dynamic_cast<T*>(*curr_item); }
 
-		int getCurrCount() { return Count; }
-
-		void setCount(int i) { Count = i; }
+		void setItemByName(std::string_view name)
+		{
+			auto item = std::find_if(inv.begin(), inv.end(), [name](Item* item) { return item->getName() == name; });
+			if((*item)->getType() != ItemType::heal)
+			{
+                curr_item = item;
+			}
+			else
+			{
+ 			    
+			}
+		}
 
 		float getWeight()
 		{

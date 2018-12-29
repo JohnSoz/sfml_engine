@@ -131,13 +131,13 @@ std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::strin
 		std::find_if(animationList.begin(), animationList.end(),
 			[=](Animation* anim)
 	{
-		return (anim->name == Name) ? true : false;
+		return (anim->name == Name);
 	});
 }
 
-const std::list<Engine::Animation*>& Engine::AnimationManager::getAnimationList()
+const std::list<Engine::Animation*>* Engine::AnimationManager::getAnimationList()
 {
-	return animationList;
+	return &animationList;
 }
 
 IntRect& AnimationJson::tick(float time)

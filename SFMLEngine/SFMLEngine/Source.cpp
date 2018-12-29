@@ -15,16 +15,16 @@ int main()
 	settings.antialiasingLevel = 16;
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
-	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.00001", sf::Style::Default, settings);
-	//window.setVerticalSyncEnabled(true);
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.2", sf::Style::Default, settings);
+
 	window.setFramerateLimit(400);
-#if _Debug_
+	window.setKeyRepeatEnabled(true);
+
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();
 	IO.Fonts->Clear();
 	IO.Fonts->AddFontFromFileTTF("Data\\Fonts\\ArialRegular.ttf", 16.f);
 	ImGui::SFML::UpdateFontTexture();
-#endif
 	Engine::DebuggingSystem::setWindow(window);
 	Engine::Game g(window);
 	try

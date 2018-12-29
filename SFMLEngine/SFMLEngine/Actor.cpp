@@ -14,8 +14,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	float v = posMouse.y - sprite.getPosition().y;
 
 	Radian = atan2f(v, a);
-	float rotation = (atan2f(v, a)) * 180 / PI;
-	CurrAngle = rotation; //?
+	CurrAngle = (atan2f(v, a)) * 180 / PI;
 	if (CurrAngle > 180) CurrAngle -= 360;
 	if (CurrAngle < -180) CurrAngle += 360;
 	posMouse.x = CurrAngle - LastAngle;
@@ -79,6 +78,29 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	}
 }
 
+Engine::Bullet * Engine::Actor::shotUpdate(Level & lvl)
+{
+	if (!inv.getShowGui())
+	{
+
+		if (isShoot && !Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
+		{
+			auto item = inventory.getCurrItem<Gun>();
+			if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())
+			{
+				animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
+				updateSprite();
+				gunClock.restart();
+
+				sf::Image i;
+				i.loadFromFile("Data/images/bullet.png");
+				return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl, name);
+			}
+		}
+	}
+	return nullptr;
+}
+
 void Engine::Actor::updateSprite()
 {
 	auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
@@ -89,9 +111,44 @@ void Engine::Actor::updateSprite()
 	sprite.setScale(scale, scale);
 	sprite.setOrigin(originOffset);
 	sprite.setTextureRect(localRectangle);
+	sprite.setPosition(position);
+}
+
+Engine::Actor::Actor(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow & w, Level & lvl) : Entity(IMAGE, POSITION, NAME), inv("Data/GUI/MyUI/MainMenu.txt", w)
+{
+	type = OActor;
+	dw_a.set(this);
+	animManager.LoadAnimation_x("MoveHandGun.xml");
+	animManager.LoadAnimation_x("ShootHandGun.xml");
+	auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
+	updateSprite();
+	lives = armor = 50;
+	speed = 0;
+	energy = 0.001; friction = 0.005; maxSpeed = 0.2;
+	globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
+	obj = lvl.GetAllObjects();
+	window = &w;
+	PointOfFire.setPosition(position);
+	inv.makeMenu(inventory);
 }
 
 void Engine::Actor::handleEvent(sf::Event & e)
+{
+	if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
+	{
+		std::cout << 1;
+		isShoot = true;
+	}
+	else if (e.type == sf::Event::MouseButtonReleased && e.mouseButton.button == sf::Mouse::Left)
+	{
+		std::cout << 2;
+		isShoot = false;
+	}
+	if (inv.getShowGui())
+		inv.handleEvent(e);
+}
+
+void Engine::Actor::isKeyPressed()
 {
 	if (Keyboard::isKeyPressed(Keyboard::W))
 	{
@@ -135,26 +192,25 @@ void Engine::Actor::handleEvent(sf::Event & e)
 		}
 }
 
-void Engine::Actor::invHandleEvent(sf::Event&e)
-{
-	if (inv.getShowGui())
-		inv.handleEvent(e);
-}
 
 void Engine::Actor::checkClashes(float time)
 {
+	collision::SAT sat;
 	for (auto & i : obj)
 	{
 		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
-		if (sprite.getGlobalBounds().intersects(i.rect))
+		if (i.name == "barrier")
 		{
-			if (i.name == "barrier")
+			sf::Sprite spr;
+			spr.setTextureRect(sf::IntRect(0, 0, i.rect.width, i.rect.height));
+			spr.setPosition(i.rect.left, i.rect.top);
+			if (sat.collision(&sprite, &spr))
 			{
 				isCollision = true;
 				if (abs(speed) > 0)
 				{
-					auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect); //in most cases, returns values in the range [-2;2]
+					auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect);
 					isWalk = false;
 					if (offset.x == 0)
 						offset.y *= time * 0.2;
@@ -167,8 +223,21 @@ void Engine::Actor::checkClashes(float time)
 	}
 }
 
+void Engine::Actor::CollisionUpdate(Entity* entity)
+{
+	auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
+	auto objectRect = Rectangle::fromSfmlRect(entity->getRect());
+	auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect);
+	//if (offset.x == 0)
+	//	offset.y *= time_actor * 0.2;
+	//else
+	//	offset.x *= time_actor * 0.2;
+	position = position + offset.GetSfmlVector();
+}
+
 void Engine::Actor::update(float time)
 {
+	time_actor = time;
 	if (inv.getShowGui() == false)
 	{
 		switch (direction)

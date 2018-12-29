@@ -40,7 +40,6 @@ namespace Engine
 		}
 	};
 
-
 	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
 	class Actor : public Entity
 	{
@@ -54,11 +53,13 @@ namespace Engine
 
 		bool isWalk;
 		bool isCollision;
+		bool isShoot;
 
 		float lives, armor;
 		float speed, energy, friction, maxSpeed;
 		float scale = 0.5;
 		float CurrAngle = sprite.getRotation(), LastAngle;
+		float time_actor;
 
 		sf::Clock Pressclock;
 		sf::Clock gunClock;
@@ -73,62 +74,23 @@ namespace Engine
 		float Radian;
 		~Actor() = default;
 		Actor() = delete;
-		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl) : Entity(IMAGE, POSITION, NAME), inv("Data/GUI/MyUI/MainMenu.txt", w)
-		{
-			type = OActor;
-			dw_a.set(this);
-			animManager.LoadAnimation_x("MoveHandGun.xml");
-			auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
-			animManager.LoadAnimation_x("ShootHandGun.xml");
-			lives = armor = 100;
-			speed = 0;
-			energy = 0.001; friction = 0.005;
-			maxSpeed = 0.2;
-			localRectangle = currAnim->rect;
-			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
-			obj = lvl.GetAllObjects();
-			originOffset = currAnim->origin;
-			sprite.setTexture(currAnim->texture);
-			sprite.setOrigin(originOffset);
-			sprite.setTextureRect(localRectangle);
-			sprite.setScale(scale, scale);
-			window = &w;
-			PointOfFire.setPosition(position);
-			inv.makeMenu(inventory);
-		}
+		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl);
+
 		sf::Vector2f getPointOfFire() { return PointOfFire.getPosition(); }
 
 		virtual void handleEvent(sf::Event& e);
 
+		void isKeyPressed();
+
 		void checkClashes(float time);
+
+		void CollisionUpdate(Entity* entity) override;
 
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 
-		Engine::Bullet* shotUpdate(Level& lvl)
-		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-			{
-				if (!Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
-				{
-					if (gunClock.getElapsedTime().asMilliseconds() > 800)
-					{
-						animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
-						updateSprite();
-						gunClock.restart();
-
-						auto item = inventory.getCurrItem<Gun>();
-						sf::Image i;
-						i.loadFromFile("Data/images/bullet.png");
-						return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl);
-					}
-				}
-			}
-			return nullptr;
-		}
+		Engine::Bullet* shotUpdate(Level& lvl);
 
 		void draw() { inv.draw(); }
-
-		void invHandleEvent(sf::Event&);
 
 		void update(float time) override;
 

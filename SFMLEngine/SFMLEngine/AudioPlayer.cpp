@@ -2,7 +2,7 @@
 using namespace sf;
 using namespace std;
 
-void Engine::AudioPlayer::GetMusic()
+void Engine::MusicPlayer::GetMusic()
 {
 	std::string path = "Music/";
 	for (auto & p : fs::directory_iterator(path))
@@ -14,18 +14,18 @@ void Engine::AudioPlayer::GetMusic()
 	}
 }
 
-Engine::AudioPlayer::AudioPlayer()
+Engine::MusicPlayer::MusicPlayer()
 {
 	GetMusic();
 	iter = musList.begin();
 }
 
-void Engine::AudioPlayer::Play()
+void Engine::MusicPlayer::Play()
 {
 	(*iter).second->play();
 }
 
-void Engine::AudioPlayer::NextSong()
+void Engine::MusicPlayer::NextSong()
 {
 	if (iter + 1 != musList.end())
 	{
@@ -43,56 +43,74 @@ void Engine::AudioPlayer::NextSong()
 	}
 }
 
-void Engine::AudioPlayer::PauseMus()
+void Engine::MusicPlayer::PauseMus()
 {
 	(*iter).second->pause();
 }
 
-void Engine::AudioPlayer::SetVolume(float v)
+void Engine::MusicPlayer::SetVolume(float v)
 {
 	volume = v;
 	(*iter).second->setVolume(volume);
 }
 
-void Engine::AudioPlayer::PlaySongByName(std::string name)
+void Engine::MusicPlayer::PlaySongByName(std::string_view name)
 {
 	(*iter).second->stop();
 	iter = musList.begin();
-	for (int i = 0; i < musList.size(); i++) {
-		if (musList[i].first == name) {
+	for (int i = 0; i < musList.size(); i++)
+	{
+		if (musList[i].first == name)
+		{
 			iter += i;
 			(*iter).second->play();
-			//std::cout << (*iter).first << endl;
 		}
 	}
 }
 
-void Engine::AudioPlayer::LoadMusic(std::string name, std::string patch)
+void Engine::MusicPlayer::LoadMusic(std::string_view name, std::string_view patch)
 {
 	auto Mus = new Music;
-	Mus->openFromFile(patch);
+	Mus->openFromFile(patch.data());
 	Mus->setVolume(volume);
-	Console::AppLog::addLog("Load music at path(" + patch + ")", Console::logType::system);
-	musList.push_back(std::pair(name, Mus));
+	Console::AppLog::addLog("Load music at path(" + (std::string)patch + ")", Console::logType::system);
+	musList.emplace_back(name, Mus);
 }
 
-void Engine::AudioPlayer::Update()
+void Engine::MusicPlayer::Update()
 {
-	if ((*iter).second->getStatus() == 0) {
+	if ((*iter).second->getStatus() == 0)
 		NextSong();
-	}
 }
 
-std::vector<std::string> Engine::AudioPlayer::GetMusList()
+std::vector<std::string> Engine::MusicPlayer::GetMusList()
 {
 	std::vector<std::string> vec;
-	for (auto mus : musList) {
+	for (const auto& mus : musList)
 		vec.push_back(mus.first);
-	}
 	return vec;
 }
 
-std::pair<std::string, sf::Music*> & Engine::AudioPlayer::GetCurrMus() const
+std::pair<std::string, sf::Music*> * Engine::MusicPlayer::GetCurrMus() const
 {
-	return (*iter);
+	return &(*iter);
+}
+
+
+void Engine::SongPlayer::addSound(std::pair<std::string, sf::Sound*> sound)
+{
+	Console::AppLog::addLog("New sound added to sound_array named: " + sound.first, Console::info);
+	arraySound.emplace_back(std::move(sound));
+}
+
+void Engine::SongPlayer::LoadSoundFromJson(std::string_view path)
+{
+	JsonLoader json;
+	json.LoadFromPath(path.data());
+}
+
+void Engine::SongPlayer::Play(std::string_view name)
+{
+	auto s = std::find_if(begin(arraySound), end(arraySound), [name](const auto& sound) { return (sound.first == name); });
+	(*s).second->play();
 }

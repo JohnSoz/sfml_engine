@@ -2,7 +2,6 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "LogConsole.h"
-
 Engine::Game::Game(sf::RenderWindow & w)
 {
 	state = appState::UI;
@@ -41,8 +40,14 @@ void Engine::Game::startGame()
 		.endClass();
 	luabridge::push(L, testWindow);
 	lua_setglobal(L, "L_testWindow");
+	luabridge::getGlobalNamespace(L)
+		.beginClass<Client>("Client")
+		.addConstructor<void(*) ()>()
+		.addFunction("sendPacket", &Client::sendMsg_l)
+		.endClass();
+	luabridge::push(L, &c);
+	lua_setglobal(L, "L_Client");
 	testWindow->addText("Text From C++");
-	world->Init(*window);
 	musicPlayer.Play();
 }
 
@@ -65,6 +70,7 @@ void Engine::Game::update()
 			break;
 		case Engine::Play:
 			world->update(*window, time.getTime(), event);
+			camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(), *window);
 			break;
 		case Engine::UI:
 			state = (appState)m->update();
@@ -74,17 +80,20 @@ void Engine::Game::update()
 			isStateChange = true;
 		else
 			isStateChange = false;
-		camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(), *window);
-		draw();
+
 		if (isStateChange)
 			stateChanged();
+		draw();
 	}
 }
 
 void Engine::Game::stateChanged()
 {
 	if (state == Play)
+	{
+		world->Init(*window);
 		world->start();
+	}
 }
 
 void Engine::Game::draw()
@@ -115,7 +124,6 @@ void Engine::Game::handleEvent(sf::Event & e)
 			window->close();
 			break;
 		}
-
 		switch (state)
 		{
 		case Engine::Play:

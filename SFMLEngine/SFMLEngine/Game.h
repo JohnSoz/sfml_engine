@@ -5,7 +5,7 @@
 #include "AudioPlayer.h"
 #include "ApplicationState.h"
 #include <LuaBridge/LuaBridge.h>
-
+#include "Client.h"
 extern "C"
 {
 #include "lua.h"
@@ -40,7 +40,7 @@ namespace Engine
 		}
 		void addText(std::string t)
 		{
-			text += t;	
+			text += t;
 		}
 		void addText_l(std::string t)
 		{
@@ -70,15 +70,12 @@ namespace Engine
 	class Game
 	{
 	private:
-		/**
-		 * \brief
-		 */
 		World*				world;
 		lua_State*          L;
 		A*                  testWindow;
 		Engine::MainMenu*		m;
 		sf::RenderWindow*   window;
-		AudioPlayer        musicPlayer;
+		MusicPlayer        musicPlayer;
 		sf::ContextSettings settings;
 		std::string		    appname;
 		sf::Clock           deltaClock;
@@ -89,6 +86,7 @@ namespace Engine
 		bool LogConsole = false;
 		sf::Clock pressClock;
 		std::string path;
+		Engine::Client c;
 		bool isStateChange;
 	public:
 		Game(sf::RenderWindow& w);

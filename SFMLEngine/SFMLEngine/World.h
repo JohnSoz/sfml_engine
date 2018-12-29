@@ -23,7 +23,7 @@ namespace Engine
 			ObjectsArray.clear();
 		}
 
-		void handelEvent(sf::Event& e); //TODO: переместить в update
+		void handelEvent(sf::Event& e); 
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
 		void PushObject(Entity* obj);
@@ -32,10 +32,16 @@ namespace Engine
 		{
 			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
 			{
-				(*iter)->CollisionUpdate(ObjectsArray);
+				for (auto iter2 = iter + 1; iter2 != ObjectsArray.end(); iter2++)
+				{
+					if ((*iter)->getRect().intersects((*iter2)->getRect()))
+					{
+						(*iter)->CollisionUpdate(*iter2);
+					}
+				}
 			}
 		}
-		void callStart() 
+		void callStart()
 		{
 			Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
 			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)

@@ -10,10 +10,10 @@ using namespace sf;
 namespace Engine
 {
 
-	enum Status {
+	/*enum Status {
 		Connect = 1,
 		Disconnect
-	};
+	};*/
 
 	enum PacketType {
 		message = 1,
@@ -26,7 +26,7 @@ namespace Engine
 	private:
 		TcpSocket socket;
 		std::string Name;
-		Status status;
+		sf::Socket::Status status;
 		IpAddress IP;
 		std::thread thread;
 	public:

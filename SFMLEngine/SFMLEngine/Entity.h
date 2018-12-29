@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "Level.h"
 #include <utility>
+
 namespace Engine
 {
 	class Entity : public Object
@@ -21,19 +22,11 @@ namespace Engine
 
 		virtual void update(float time) { dw_o.draw(name); }
 		virtual void start() {}
+		virtual void CollisionUpdate(Entity* objarray) {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
 
-		void CollisionUpdate(std::vector<Entity*> objarray)
-		{
-			/*for (auto &i : objarray)
-			{
-				if (i->getName() != name)
-					if (i->getSprite().getGlobalBounds().intersects(sprite.getGlobalBounds()))
-						i->getNa
-			}*/
-		}
 
-		sf::IntRect getRect() { return localRectangle; }
+		sf::FloatRect getRect() { return sprite.getGlobalBounds(); }
 		const sf::Vector2f& getPos() { return position; }
 		ObjectType getType() { return type; }
 
@@ -48,12 +41,14 @@ namespace Engine
 		Test(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name) : Entity(IMAGE, r, pos, name)
 		{
 			hp = 100;
-			sprite.setScale(0.5, 0.5);
+			sprite.setScale(0.5f, 0.5f);
 			scale = 0.5;
 			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width * scale, position.y + localRectangle.height * scale);
 			debugRectangle = sf::FloatRect(position.x + localRectangle.width * scale, position.y, position.x, position.y + localRectangle.height * scale);
 		}
 		void getDamage() { hp -= 1; }
+
+		void CollisionUpdate(Entity* entity) override;
 
 		float scale;
 		float hp;
@@ -62,7 +57,7 @@ namespace Engine
 	class Bullet final : public Entity
 	{
 	private:
-		float speed = 0.3;
+		float speed = 0.3f;
 		float angle;
 		float damage;
 		std::vector<ObjectLevel> obj;
@@ -80,10 +75,12 @@ namespace Engine
 		float scale = 0.2;
 		DebugWindows<Bullet> db;
 	public:
+		std::string shootersName;
 		Bullet() = default;
 		~Bullet() = default;
-		Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, float Angle, float Damage, Level lvl) : Entity(IMAGE, r, pos, name)
+		Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, float Angle, float Damage, Level lvl, std::string nameShooters) : Entity(IMAGE, r, pos, name)
 		{
+			shootersName = nameShooters;
 			angle = Angle;
 			db.set(this);
 			IsActive = true;
@@ -91,6 +88,10 @@ namespace Engine
 			damage = Damage;
 			sprite.setScale(scale, scale);
 			sprite.setOrigin(r.width * scale, r.height * scale);
+		}
+		void CollisionUpdate(Entity* entity) override
+		{
+			std::cout << name;
 		}
 		void update(float time) override
 		{

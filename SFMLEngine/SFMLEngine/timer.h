@@ -51,7 +51,7 @@ public:
 		output << "Time: " << t.t << "  ClockTimeAsSeconds: " << t.clock.getElapsedTime().asSeconds() << std::endl;
 		return output;
 	}
-	operator int()
+	operator float()
 	{
 		return t;
 	}

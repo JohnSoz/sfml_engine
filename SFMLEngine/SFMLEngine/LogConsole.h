@@ -49,7 +49,7 @@ namespace Console
 		static void Clear() { Buffer.clear(); Buffer.shrink_to_fit(); } ///< Clears the logs console \warning This method removes logs from the buffer
 
 		static void addLog(Log log) { Buffer.push_back(log); } ///< Adds a log to the Buffer
-		static void addLog(std::string s, logType t) { Buffer.emplace_back(Log(s, t)); }
+		static void addLog(std::string s, logType t) { Buffer.emplace_back(s, t); }
 		static void Draw(const char* title, bool *p_open, lua_State* state); ///< Draws the console logs \details ImGUI is used to draw the console
 	};
 }

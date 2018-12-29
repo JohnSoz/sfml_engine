@@ -11,6 +11,13 @@ Engine::Object::Object(sf::Vector2f pos, std::string n)
 	dw_o.set(this);
 }
 
+
+Engine::Object::Object()
+{
+	type = ObjectType::None;
+	dw_o.set(this);
+}
+
 Engine::Object::Object(std::string Name)
 {
 	name = Name;
@@ -27,4 +34,7 @@ Engine::Object::Object(sf::Vector2f pos, ObjectType t, std::string n)
 	dw_o.set(this);
 }
 
-
+bool Engine::operator==(const Object & obj, const Object & obj2)
+{
+	return obj.name == obj2.name;
+}

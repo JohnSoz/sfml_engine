@@ -143,6 +143,6 @@ namespace Engine
 		*/
 		std::list <Animation*>::iterator GetAnimationByName(std::string_view NAME);
 
-		const std::list<Animation*>&     getAnimationList();
+		const std::list<Animation*>*     getAnimationList();
 	};
 }

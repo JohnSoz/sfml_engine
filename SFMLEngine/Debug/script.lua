@@ -1,8 +1,8 @@
-local openWindow = false
-local openWindow2 = false
+openWindow = false
+openWindow2 = false
 
-a = A('TestLua#2',200,200)--
-a:addText('')
+a = A('TestLua#2',300,300)--
+a:addText('LuaWindow#2')
 a:addWindow(openWindow)
 
 if openWindow == true then

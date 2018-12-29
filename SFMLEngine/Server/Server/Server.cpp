@@ -5,8 +5,7 @@ using namespace std;
 Server::Server()
 {
 	cout << "Server Running" << endl;
-	listener.getLocalPort();
-	listener.listen(2000);
+	listener.listen(5005	);
 	selector.add(listener);
 }
 

@@ -1,5 +1,5 @@
 #include "Entity.h"
- 
+
 Engine::Entity::Entity(sf::Vector2f POSITION, std::string NAME) : Object(POSITION, NAME)
 {
 	type = ObjectType::OEntity;
@@ -30,4 +30,17 @@ Engine::Entity::Entity(sf::Image & i, sf::IntRect r, sf::Vector2f pos, std::stri
 Engine::Entity::~Entity()
 {
 }
-
+#include "LogConsole.h"
+void Engine::Test::CollisionUpdate(Entity * entity)
+{
+	if (entity->getName() == "Bullet")
+	{
+		auto b = (Bullet*)entity;
+		if (b->shootersName != this->name)
+		{
+			getDamage();
+			Console::AppLog::addLog("Entity Test2 getDamage, hp = " + std::to_string(hp), Console::info);
+			b->destroy();
+		}
+	}
+}

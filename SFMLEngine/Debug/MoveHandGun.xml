@@ -1,6 +1,6 @@
 <!DOCTYPE SpriteDecomposer>
 <sprites image="nandGunMove.png" transparentColor="">
- <settings>
+  <settings>
   <origin x="90" y="120"/>  
   <rect left="1" top="30" widht="190" height="140"/> 
   <loop value="1" />

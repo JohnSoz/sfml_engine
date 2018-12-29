@@ -11,12 +11,25 @@ namespace Engine
 	{
 	protected:
 		json j;
+		std::string current_json;
 	public:
 		JsonLoader() { j.clear(); }
-		std::string LoadFromPath(std::string path);
-		bool saveJson(std::string path, std::string json);
 		~JsonLoader() = default;
+
+		void LoadFromPath(std::string path);
+		bool saveJson(std::string path, std::string json);
+
+		template<class T>
+		auto getValueByKey(std::string key)
+		{
+			j.clear();
+			j = json::parse(current_json);
+			return j[key].get<T>();
+		}
+
+
 	};
+	
 	class GameSave : public JsonLoader
 	{
 	public:
@@ -29,6 +42,7 @@ namespace Engine
 			saveJson(path.data(), p.dump(4));
 			return true;
 		}
+
 		template<class T>
 		void save(T t)
 		{
@@ -39,11 +53,12 @@ namespace Engine
 			}
 			);
 		}
+
 		std::pair<float, float> loadPos(std::string_view path)
 		{
-			json p = json::parse(LoadFromPath(path.data()));
+			/*json p = json::parse(LoadFromPath(path.data()));
 
-			return std::pair(p["Player"]["Position"]["X"].get<float>(), p["Player"]["Position"]["Y"].get<float>());
+			return std::pair(p["Player"]["Position"]["X"].get<float>(), p["Player"]["Position"]["Y"].get<float>());*/
 		}
 	};
 }

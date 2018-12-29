@@ -21,7 +21,7 @@ bool Engine::JsonLoader::saveJson(std::string path, std::string json)
 	o.close();
 }
 
-std::string Engine::JsonLoader::LoadFromPath(std::string path)
+void Engine::JsonLoader::LoadFromPath(std::string path)
 {
 	assert(!path.empty());
 	std::ifstream i;
@@ -33,10 +33,9 @@ std::string Engine::JsonLoader::LoadFromPath(std::string path)
 	catch (std::fstream::failure & err)
 	{
 		Console::AppLog::addLog("Exception opening/reading file: " + std::string(err.what()), Console::logType::error);
-		return "";
 	}
 	j.clear();
 	i >> j;
 	i.close();
-	return j.dump();
+	current_json =  j.dump();
 }

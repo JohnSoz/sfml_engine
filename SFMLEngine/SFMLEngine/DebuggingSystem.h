@@ -22,13 +22,7 @@ namespace Engine
 		void SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text = "");
 		void Text(sf::Vector2f position, bool *open, std::string name, std::string text = "");
 	}
-	class ImGuiInterface
-	{
-	private:
-		static bool isSelected;
-	public:
 
-	};
 	class DebuggingSystem
 	{
 	public:
