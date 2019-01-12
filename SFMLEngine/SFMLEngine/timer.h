@@ -9,17 +9,30 @@ private:
 	sf::Clock clock;
 	float t;
 	float delta;
+	bool IsPause;
 public:
-	timer() { t = delta = 0; }
+	timer() { t = delta = 0; IsPause = false; }
 
 	float getTime() { return t; }
+
 	void setDelta(float x) { delta = x; };
+
 	void Tick()
 	{
-		t = clock.getElapsedTime().asMicroseconds();
-		clock.restart();
-		t = t / delta;
+		if (!IsPause)
+		{
+			t = clock.getElapsedTime().asMicroseconds();
+			clock.restart();
+			t = t / delta;
+		}
 	}
+
+	bool isPause() { return IsPause; }
+
+	void pause() { restart(); IsPause = true; }
+
+	void resume() { restart();  IsPause = false; }
+
 	void restart()
 	{
 		t = 0;

@@ -99,8 +99,8 @@ namespace Engine
 		Inventory() { baseIni(); }
 		~Inventory()
 		{
-			for (auto iter = inv.begin(); iter != inv.end(); ++iter)
-				delete *iter;
+			for (auto & iter : inv)
+				delete iter;
 			inv.clear();
 		}
 
@@ -154,14 +154,20 @@ namespace Engine
 		void setItemByName(std::string_view name)
 		{
 			auto item = std::find_if(inv.begin(), inv.end(), [name](Item* item) { return item->getName() == name; });
-			if((*item)->getType() != ItemType::heal)
+			if ((*item)->getType() != ItemType::heal)
 			{
-                curr_item = item;
+				curr_item = item;
 			}
 			else
 			{
- 			    
+
 			}
+		}
+
+		void setItemByIndex(size_t index)
+		{
+			assert((index > inv.size()) == false, "out of range");
+			curr_item = inv.begin() + index;
 		}
 
 		float getWeight()

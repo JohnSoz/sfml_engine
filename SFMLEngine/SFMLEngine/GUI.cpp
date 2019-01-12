@@ -24,7 +24,6 @@ void Engine::Layer::addWidjet(std::pair<tgui::Widget::Ptr, std::string> widget, 
 }
 
 void Engine::Layer::deleteWidjet(std::string w_name)
-
 {
 	gui.remove(gui.get(w_name));
 }
@@ -163,7 +162,7 @@ std::pair<tgui::ListBox::Ptr, std::string> Engine::makeListBox(std::vector<std::
 	listBox->setItemHeight(itemHeight);
 	listBox->setPosition(POS);
 	listBox->setTextSize(TextSize);
-	for (auto item : items)
+	for (const auto& item : items)
 		listBox->addItem(item);
 	if (f != nullptr)
 		listBox->connect("ItemSelected", f);
@@ -203,7 +202,7 @@ void Engine::MainMenu::makeMenu(std::string &p)
 		[&]()
 	{
 		showGui = false;
-		state = appState::Play;
+		state = appState::StartGame;
 	}
 	), "RunButton");
 
@@ -218,8 +217,9 @@ void Engine::MainMenu::makeMenu(std::string &p)
 	addWidjetToLayer(makeListBox({ }, sf::Vector2f(400, 600), sf::Vector2f(250, 150),
 		[&]()
 	{
-		p += "Data/Level/";
+		p = "Data/Level/";
 		p += getWidjet<tgui::ListBox>("TestListBox2")->getSelectedItem();
+		Console::AppLog::addLog(p, Console::info);
 	}), "TestListBox2");
 
 	tgui::ListBox::Ptr listBox = getWidjet<tgui::ListBox>("TestListBox2");

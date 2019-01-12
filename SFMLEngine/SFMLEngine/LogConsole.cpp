@@ -21,6 +21,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 		bool copy = ImGui::Button("Copy");
 		ImGui::SameLine();
 		static bool find = false;
+		static int itemCount = 0;
 		ImGui::Checkbox("Find By Type", &find);
 		static std::string item_current = items[0];
 		ImGui::PushItemWidth(45);
@@ -38,7 +39,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-
+		ImGui::ShowDemoWindow();
 		char buff_search[256] = { 0 };
 		char buff_input[256] = { 0 };
 
@@ -138,7 +139,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 			}
 		}
 		if (ScrollToBottom)
-			ImGui::SetScrollHere(1.0f);
+			ImGui::SetScrollHere(1.f);
 		ScrollToBottom = false;
 		ImGui::EndChild();
 		ImGui::End();

@@ -102,7 +102,6 @@ namespace Engine
 		friend auto meta::registerMembers<Engine::Actor>();
 	};
 }
-
 namespace meta
 {
 	template <>

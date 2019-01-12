@@ -3,6 +3,7 @@
 #include "imgui-SFML.h"
 #include <windows.h>
 #include <string>
+#include <iostream>
 #include <vector>
 using namespace std;
 extern "C"
@@ -14,7 +15,7 @@ extern "C"
 namespace Console
 {
 	///< log type
-	enum logType { error = 1, info, fatal, system, script , script_result};
+	enum logType { error = 1, info, fatal, system, script, script_result };
 	/*!
 	\brief Structure that stores the log data
 	\bug

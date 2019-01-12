@@ -99,10 +99,10 @@ namespace Engine
 		Rectangle(double x = 0, double y = 0, double w = 0, double h = 0);
 		~Rectangle(void) {};
 
-		inline double Left(void) const { return x; }
-		inline double Right(void) const { return x + w; }
-		inline double Top(void) const { return y; }
-		inline double Bottom(void) const { return y + h; }
+		inline double Left() const { return x; }
+		inline double Right() const { return x + w; }
+		inline double Top() const { return y; }
+		inline double Bottom() const { return y + h; }
 
 		bool Contains(Vector2D& vVec) const;
 		bool Contains(double x, double y) const;

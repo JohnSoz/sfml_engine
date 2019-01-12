@@ -18,8 +18,6 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 
 		for (auto &i : entites)
 		{
-			//auto x = i.second->x - 90;
-			//auto y = i.second->y - 120;
 			auto x = i.first->left;
 			auto y = i.first->top;
 			auto w = i.first->width;

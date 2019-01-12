@@ -154,7 +154,7 @@ namespace Engine
 		{
 			for (auto& layer : layers)
 			{
-				for (auto names : layer->gui.getWidgetNames())
+				for (const auto& names : layer->gui.getWidgetNames())
 				{
 					if (names == name)
 						return layer->gui.get<T>(name);

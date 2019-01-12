@@ -13,6 +13,7 @@ namespace Engine
 		InventoryMenu(sf::RenderWindow& window) : GUI(window) {}
 		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : GUI(pathToTheme, w) {  }
 		~InventoryMenu() = default;
+
 		void makeMenu(Inventory& inv)
 		{
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
@@ -58,6 +59,7 @@ namespace Engine
 				grid->addWidget(button, h, w, tgui::Padding(2));
 				w++;
 			}
+
 			for (auto &w : grid->getWidgets())
 			{
 				w->connect("pressed", [&]()
@@ -74,6 +76,8 @@ namespace Engine
 			activateOrDisabled();
 			showGui = false;
 		}
+
+
 
 		void updateInventory(Inventory& inv)
 		{

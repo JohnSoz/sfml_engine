@@ -95,14 +95,14 @@ namespace Engine
 		}
 		void update(float time) override
 		{
-			position.x += speed * std::cosf(angle) * time;
-			position.y += speed * std::sinf(angle) * time;
-			float posX = position.x + 1;
-			float posY = position.y + 1;
-			globalRectangle = sf::FloatRect(posX, posY, posX + localRectangle.width * scale, posY + localRectangle.height * scale);
-			debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
-			CheckClashes();
-			sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
+				position.x += speed * std::cosf(angle) * time;
+				position.y += speed * std::sinf(angle) * time;
+				float posX = position.x + 1;
+				float posY = position.y + 1;
+				globalRectangle = sf::FloatRect(posX, posY, posX + localRectangle.width * scale, posY + localRectangle.height * scale);
+				debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
+				CheckClashes();
+				sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
 			dw_o.draw("Object", true);
 			db.draw("Bullet");
 		}

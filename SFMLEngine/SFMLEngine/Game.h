@@ -71,23 +71,29 @@ namespace Engine
 	{
 	private:
 		World*				world;
-		lua_State*          L;
+		Engine::MainMenu*	m;
+		MusicPlayer         musicPlayer;
 		A*                  testWindow;
-		Engine::MainMenu*		m;
+		Engine::Client c;
+
+		lua_State*          L;
 		sf::RenderWindow*   window;
-		MusicPlayer        musicPlayer;
 		sf::ContextSettings settings;
 		std::string		    appname;
+		std::string path;
+
 		sf::Clock           deltaClock;
+		sf::Clock           pressClock;
+		timer			    time;
+
 		Camera              camera;
 		appState		    state;
-		timer			    time;
-		bool showConsole = false;
-		bool LogConsole = false;
-		sf::Clock pressClock;
-		std::string path;
-		Engine::Client c;
-		bool isStateChange;
+		appState            lastState;
+
+		bool                showConsole = false;
+		bool                LogConsole = false;
+		bool                isStateChange;
+
 	public:
 		Game(sf::RenderWindow& w);
 		~Game();

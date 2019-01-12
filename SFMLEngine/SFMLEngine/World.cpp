@@ -92,21 +92,17 @@ void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& eve
 	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
 	}
-	//draw(window);
 }
 
 
 void Engine::World::handleEvent(sf::Event & event)
 {
 	debug.handleEvent(event);
-	//objHandler.handelEvent(event);
 	objHandler.GetObjects<Actor>("Test").handleEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow & window)
 {
-	//level.DrawLevel(*window);
-	//sf::Sprite sprite(level.DrawLevel2());
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
 	debug.draw();

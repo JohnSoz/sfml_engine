@@ -55,7 +55,8 @@ void Engine::Game::update()
 {
 	while (window->isOpen())
 	{
-		auto lastState = state;
+		auto local_last_state = state;
+
 		time.Tick();
 		sf::Event event;
 		handleEvent(event);
@@ -75,31 +76,46 @@ void Engine::Game::update()
 		case Engine::UI:
 			state = (appState)m->update();
 			break;
+		case Engine::Pause:
+			break;
 		}
-		if (lastState != state)
-			isStateChange = true;
-		else
-			isStateChange = false;
 
-		if (isStateChange)
+		if (local_last_state != state)
+		{
+			isStateChange = !isStateChange;
 			stateChanged();
+		}
+
 		draw();
 	}
 }
 
 void Engine::Game::stateChanged()
 {
-	if (state == Play)
+
+	if (state == Engine::StartGame)
 	{
 		world->Init(*window);
 		world->start();
+		state = Engine::Play;
 	}
+
+	if (state == Engine::Pause)
+		time.pause();
+
+	if (state == Engine::Resume)
+	{
+		state = lastState;
+		time.resume();
+	}
+
+
+	isStateChange = false;
 }
 
 void Engine::Game::draw()
 {
 	window->clear();
-
 	switch (state)
 	{
 	case Engine::Play:
@@ -107,6 +123,8 @@ void Engine::Game::draw()
 		break;
 	case Engine::UI:
 		m->draw();
+		break;
+	case Engine::Pause:
 		break;
 	}
 	Console::AppLog::Draw("LogConsole", &LogConsole, L);
@@ -117,6 +135,17 @@ void Engine::Game::draw()
 
 void Engine::Game::handleEvent(sf::Event & e)
 {
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::N))
+	{
+		time.pause();
+	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
+	{
+		time.resume();
+	}
+
 	while (window->pollEvent(e))
 	{
 		if (e.type == sf::Event::Closed)
@@ -124,6 +153,20 @@ void Engine::Game::handleEvent(sf::Event & e)
 			window->close();
 			break;
 		}
+
+		if (e.type == sf::Event::LostFocus)
+		{
+			VStaticContainer::windowIsActive = false;
+			lastState = state;
+			state = Pause;
+		}
+
+		if (e.type == sf::Event::GainedFocus)
+		{
+			VStaticContainer::windowIsActive = true;
+			state = Resume;
+		}
+
 		switch (state)
 		{
 		case Engine::Play:
@@ -131,6 +174,8 @@ void Engine::Game::handleEvent(sf::Event & e)
 			break;
 		case Engine::UI:
 			m->handleEvent(e);
+			break;
+		case Engine::Pause:
 			break;
 		}
 

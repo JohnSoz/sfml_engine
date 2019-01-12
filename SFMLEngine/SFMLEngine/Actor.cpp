@@ -4,12 +4,9 @@ using sf::Keyboard;
 
 void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 {
-	float rotateSpeed = speed;
-	bool rot = false;
 	LastAngle = sprite.getRotation();
 
-	sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-	sf::Vector2f posMouse = window.mapPixelToCoords(pixelPos, window.getView());
+	sf::Vector2f posMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
 	float a = posMouse.x - sprite.getPosition().x;
 	float v = posMouse.y - sprite.getPosition().y;
 
@@ -24,16 +21,16 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 
 	if (CurrAngle != LastAngle)
 	{
-		if (abs(posMouse.x) < rotateSpeed)
+		if (abs(posMouse.x) < speed)
 		{
 			LastAngle = CurrAngle;
 		}
 		else
 		{
 			if (posMouse.x > 0)
-				LastAngle += rotateSpeed;
+				LastAngle += speed;
 			else
-				LastAngle -= rotateSpeed;
+				LastAngle -= speed;
 		}
 	}
 
@@ -62,27 +59,16 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	auto newW2 = centerX + (w - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //w,y
 	auto newY3 = centerY + (y - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //y,w
 
-	debugRectangle.left = newX2;   //x2
-	debugRectangle.top = newY2;    //y2
-	debugRectangle.width = newW2;  //w2
-	debugRectangle.height = newY3; //h2
+	debugRectangle = sf::FloatRect(newX2, newY2, newW2, newY3);
+	globalRectangle = sf::FloatRect(newX, newY, newW, newH);
 
-	globalRectangle.left = newX;
-	globalRectangle.top = newY;
-	globalRectangle.width = newW;
-	globalRectangle.height = newH;
-
-	if (window.hasFocus())
-	{
+	if (VStaticContainer::windowIsActive)
 		sprite.setRotation(LastAngle);
-	}
 }
 
 Engine::Bullet * Engine::Actor::shotUpdate(Level & lvl)
 {
 	if (!inv.getShowGui())
-	{
-
 		if (isShoot && !Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
 		{
 			auto item = inventory.getCurrItem<Gun>();
@@ -97,7 +83,6 @@ Engine::Bullet * Engine::Actor::shotUpdate(Level & lvl)
 				return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl, name);
 			}
 		}
-	}
 	return nullptr;
 }
 
@@ -120,7 +105,6 @@ Engine::Actor::Actor(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME,
 	dw_a.set(this);
 	animManager.LoadAnimation_x("MoveHandGun.xml");
 	animManager.LoadAnimation_x("ShootHandGun.xml");
-	auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
 	updateSprite();
 	lives = armor = 50;
 	speed = 0;
@@ -136,12 +120,10 @@ void Engine::Actor::handleEvent(sf::Event & e)
 {
 	if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
 	{
-		std::cout << 1;
 		isShoot = true;
 	}
 	else if (e.type == sf::Event::MouseButtonReleased && e.mouseButton.button == sf::Mouse::Left)
 	{
-		std::cout << 2;
 		isShoot = false;
 	}
 	if (inv.getShowGui())
@@ -190,6 +172,13 @@ void Engine::Actor::isKeyPressed()
 			inv.activateOrDisabled();
 			Pressclock.restart();
 		}
+
+	if (Keyboard::isKeyPressed(Keyboard::Num1))
+		inventory.setItemByIndex(0);
+
+	if (Keyboard::isKeyPressed(Keyboard::Num2))
+		inventory.setItemByIndex(1);
+
 }
 
 
@@ -228,16 +217,11 @@ void Engine::Actor::CollisionUpdate(Entity* entity)
 	auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
 	auto objectRect = Rectangle::fromSfmlRect(entity->getRect());
 	auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect);
-	//if (offset.x == 0)
-	//	offset.y *= time_actor * 0.2;
-	//else
-	//	offset.x *= time_actor * 0.2;
 	position = position + offset.GetSfmlVector();
 }
 
 void Engine::Actor::update(float time)
 {
-	time_actor = time;
 	if (inv.getShowGui() == false)
 	{
 		switch (direction)
@@ -265,10 +249,8 @@ void Engine::Actor::update(float time)
 			}
 		}
 		else
-		{
 			if (isWalk)
 				sprite.setTextureRect(animManager.AnimUpdate(time));
-		}
 
 		sprite.setPosition(position);
 	}
@@ -279,7 +261,7 @@ void Engine::Actor::update(float time)
 
 void Engine::Actor::start()
 {
-	//gunClock.restart();
+	//starts when Game::state == Engine::StartGame
 }
 
 void Engine::Actor::getDamage(float dmg)

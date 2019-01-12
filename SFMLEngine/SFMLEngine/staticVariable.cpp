@@ -2,3 +2,4 @@
 using namespace Engine;
 bool VStaticContainer::ShowDebugWindow = false;
 bool VStaticContainer::anyImGuiWindowOpen = false;
+bool VStaticContainer::windowIsActive = false;
