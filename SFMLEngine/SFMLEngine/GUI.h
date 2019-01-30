@@ -9,7 +9,8 @@
 #include "ApplicationState.h"
 #include "LogConsole.h"
 #include <boost/type_index.hpp>
-#include  <boost/assert.hpp>
+#include "EngineEvents.h"
+#include <entityx/entityx.h>
 using namespace tgui;
 using namespace sf;
 using boost::typeindex::type_id_with_cvr;

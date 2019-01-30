@@ -3,9 +3,9 @@
 using namespace Engine;
 #include "staticVariable.h"
 
-sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
+sf::RenderWindow *Engine::DebuggingSystem::window = nullptr;
 
-void DebuggingSystem::draw(sf::RenderTarget& target)
+void DebuggingSystem::draw(sf::RenderTarget &target)
 {
 	if (showVertex)
 	{
@@ -52,29 +52,36 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 			}
 			target.draw(triangle);
 		}
-		for (auto& z : obj)
+		for (auto &z : obj)
 		{
-			auto x = z.second.left;
-			auto y = z.second.top;
-			auto w = z.second.width;
-			auto h = z.second.height;
+			auto x = z.second.left;   //z.second.rect2.left;
+			auto y = z.second.top;	//z.second.rect2.top;
+			auto w = z.second.width;  //z.second.rect1.left;
+			auto h = z.second.height; //z.second.rect1.top;
+
+			// auto x2 = z.second.rect2.width;
+			// auto y2 = z.second.rect2.height;
+			// auto w2 = z.second.rect1.width;
+			// auto h2 = z.second.rect1.height;
 
 			sf::VertexArray triangle(sf::LinesStrip, 5);
 			triangle[0] = sf::Vector2f(x, y);
-			triangle[0].color = sf::Color::Blue;
+			triangle[0].color = sf::Color::Red;
 
+			//triangle[1].position = sf::Vector2f(w, h);
 			triangle[1].position = sf::Vector2f(x + w, y);
 			triangle[1].color = sf::Color::Blue;
 
+			//triangle[2].position = sf::Vector2f(x2, y2);
 			triangle[2].position = sf::Vector2f(x + w, y + h);
-			triangle[2].color = sf::Color::Blue;
+			triangle[2].color = sf::Color::Red;
 
+			//triangle[3].position = sf::Vector2f(w2, h2);
 			triangle[3].position = sf::Vector2f(x, y + h);
 			triangle[3].color = sf::Color::Blue;
 
 			triangle[4].position = sf::Vector2f(x, y);
-			triangle[4].color = sf::Color::Blue;
-
+			triangle[4].color = sf::Color::Red;
 
 			const float posX = x * viewPortScale;
 			const float posY = y * viewPortScale;
@@ -91,9 +98,9 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 					count++;
 				}
 				if (((x + w) * viewPortScale >= abs(offset.x) && (x + w) * viewPortScale <= abs(offset.x + maxWidht)) &&
-					((y + h)  * viewPortScale >= abs(offset.y) && (y + h)  * viewPortScale <= abs(offset.y + maxHeidht)))
+					((y + h) * viewPortScale >= abs(offset.y) && (y + h) * viewPortScale <= abs(offset.y + maxHeidht)))
 				{
-					ImGUI::SimpleText(sf::Vector2f((x + w) * viewPortScale + offset.x, (y + h)  * viewPortScale + offset.y), &overlay, "D_Window_" + std::to_string(count));
+					ImGUI::SimpleText(sf::Vector2f((x + w) * viewPortScale + offset.x, (y + h) * viewPortScale + offset.y), &overlay, "D_Window_" + std::to_string(count));
 					count++;
 				}
 				if ((posX + w * viewPortScale / 2 - 35 >= abs(offset.x) && posX + w * viewPortScale / 2 - 35 <= abs(offset.x + maxWidht)) &&
@@ -109,7 +116,7 @@ void DebuggingSystem::draw(sf::RenderTarget& target)
 	drawDebugWindows(Engine::VStaticContainer::ShowDebugWindow);
 }
 
-void Engine::DebuggingSystem::handleEvent(sf::Event& event)
+void Engine::DebuggingSystem::handleEvent(sf::Event &event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
 	{
@@ -137,7 +144,7 @@ void Engine::DebuggingSystem::handleEvent(sf::Event& event)
 	}
 }
 
-void Engine::ImGUI::ShowHelpMarker(const char * desc)
+void Engine::ImGUI::ShowHelpMarker(const char *desc)
 {
 	ImGui::TextDisabled("(?)");
 	if (ImGui::IsItemHovered())
@@ -150,7 +157,7 @@ void Engine::ImGUI::ShowHelpMarker(const char * desc)
 	}
 }
 
-void Engine::ImGUI::SimpleOverlay(bool * open)
+void Engine::ImGUI::SimpleOverlay(bool *open)
 {
 	if (*open)
 	{
@@ -171,7 +178,7 @@ void Engine::ImGUI::SimpleOverlay(bool * open)
 			{
 				ImGui::Text("Window size: (%.1f,%.1f)", ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 				ImGui::Text("Mouse Position: (%.1f,%.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-				static float values[100] = { 0 };
+				static float values[100] = {0};
 				static int values_offset = 0;
 				static float refresh_time = 0.0f;
 				static float middle = 0;
@@ -196,12 +203,18 @@ void Engine::ImGUI::SimpleOverlay(bool * open)
 				ImGui::Text("Player Position: <invalid>");
 			if (ImGui::BeginPopupContextWindow())
 			{
-				if (ImGui::MenuItem("Custom", nullptr, corner == -1)) corner = -1;
-				if (ImGui::MenuItem("Top-left", nullptr, corner == 0)) corner = 0;
-				if (ImGui::MenuItem("Top-right", nullptr, corner == 1)) corner = 1;
-				if (ImGui::MenuItem("Bottom-left", nullptr, corner == 2)) corner = 2;
-				if (ImGui::MenuItem("Bottom-right", nullptr, corner == 3)) corner = 3;
-				if (*open && ImGui::MenuItem("Close")) *open = false;
+				if (ImGui::MenuItem("Custom", nullptr, corner == -1))
+					corner = -1;
+				if (ImGui::MenuItem("Top-left", nullptr, corner == 0))
+					corner = 0;
+				if (ImGui::MenuItem("Top-right", nullptr, corner == 1))
+					corner = 1;
+				if (ImGui::MenuItem("Bottom-left", nullptr, corner == 2))
+					corner = 2;
+				if (ImGui::MenuItem("Bottom-right", nullptr, corner == 3))
+					corner = 3;
+				if (*open && ImGui::MenuItem("Close"))
+					*open = false;
 				ImGui::EndPopup();
 			}
 			ImGui::End();
@@ -209,7 +222,7 @@ void Engine::ImGUI::SimpleOverlay(bool * open)
 	}
 }
 
-void Engine::ImGUI::SimpleText(sf::Vector2f position, bool * open, std::string name, std::string text)
+void Engine::ImGUI::SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text)
 {
 	ImVec2 window_pos = ImVec2(position.x, position.y);
 	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(0, 0));

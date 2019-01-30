@@ -39,10 +39,9 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 		}
 		ImGui::PopItemWidth();
 		ImGui::SameLine();
-		ImGui::ShowDemoWindow();
 		char buff_search[256] = { 0 };
 		char buff_input[256] = { 0 };
-
+		
 		ImGui::PushItemWidth(150);
 		bool value_changed = ImGui::InputText("Filter", buff_search, IM_ARRAYSIZE(buff_search));
 		ImGui::PopItemWidth();

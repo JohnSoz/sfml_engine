@@ -24,7 +24,7 @@ namespace Engine
 	class DebugWindows
 	{
 	public:
-		DebugWindows() =default;
+		DebugWindows() = default;
 		~DebugWindows() = default;
 		void set(T* p)
 		{
@@ -71,18 +71,20 @@ namespace Engine
 	template<class Type>
 	inline valueType DebugWindows<T>::checkType()
 	{
-		if (typeid(Type) == typeid(std::string))
+		if (std::is_same<Type, std::string>::value)
 			return STRING;
-		else if (typeid(Type) == typeid(int))
+		else if (std::is_same<Type, int>::value)
 			return INT;
-		else if (typeid(Type) == typeid(bool))
+		else if (std::is_same<Type, bool>::value)
 			return BOOL;
-		else if (typeid(Type) == typeid(float))
+		else if (std::is_same<Type, float>::value)
 			return FLOAT;
-		else if (typeid(Type) == typeid(sf::Vector2f))
+		else if (std::is_same<Type, sf::Vector2f>::value)
 			return VECTOR2F;
-		else if (typeid(Type) == typeid(sf::Sprite))
+		else if (std::is_same<Type, sf::Sprite>::value)
 			return SPRITE;
+		else if (std::is_enum<Type>::value)
+			return INT;
 		else
 			Console::AppLog::addLog("UB", Console::logType::error);
 	}
@@ -103,60 +105,60 @@ namespace Engine
 				{
 					meta::doForAllMembers<T>(
 						[&](const auto& member)
-					{
-						std::string field = "";
-						switch (checkType<decltype(member.getCopy(*ptr))>())
 						{
-						case Engine::SPRITE:
-							if (ImGui::TreeNode("Object Sprite"))
+							std::string field = "";
+							switch (checkType<decltype(member.getCopy(*ptr))>())
 							{
-								auto spr = (Object*)ptr;
-								int size_x = spr->getSprite().getTextureRect().width;
-								int size_y = spr->getSprite().getTextureRect().height;
-								ImGui::Text("%.0fx%.0f", size_x, size_y);
-								ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->getSprite().getTextureRect());
-								ImGui::TreePop();
+							case Engine::SPRITE:
+								if (ImGui::TreeNode("Object Sprite"))
+								{
+									auto spr = (Object*)ptr;
+									int size_x = spr->getSprite().getTextureRect().width;
+									int size_y = spr->getSprite().getTextureRect().height;
+									ImGui::Text("%.0fx%.0f", size_x, size_y);
+									ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->getSprite().getTextureRect());
+									ImGui::TreePop();
+								}
+								break;
+							case Engine::INT:
+								field = (std::string)member.getName() + ": %.i";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								break;
+							case Engine::BOOL:
+								field = (std::string)member.getName() + ": %.i";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								break;
+							case Engine::FLOAT:
+								field = (std::string)member.getName() + ": %.4f";
+								ImGui::Text(field.c_str(), member.get(*ptr));
+								if (ImGui::BeginPopupContextItem(field.c_str()))
+								{
+									float changedValue = meta::getMemberValue<float>(*ptr, member.getName());
+									if (ImGui::Selectable("Set to zero")) changedValue = 0.0f;
+									if (ImGui::Selectable("Set to default")) changedValue = 0.005f;
+									ImGui::PushItemWidth(200);
+									std::string name = "#" + (std::string)member.getName();
+									ImGui::DragFloat(name.c_str(), &changedValue, 0.001f, 0.001f, 1.f);
+									meta::setMemberValue<float>(*ptr, member.getName(), changedValue);
+									ImGui::PopItemWidth();
+									ImGui::EndPopup();
+								}
+								break;
+							case Engine::STRING:
+								field = (std::string)member.getName() + ": " + meta::getMemberValue<std::string>(*ptr, member.getName());
+								ImGui::Text(field.c_str());
+								break;
+							case Engine::VECTOR2F:
+							{
+								field = (std::string)member.getName() + ": (%.2f %.2f)";
+								auto vec = meta::getMemberValue<sf::Vector2f>(*ptr, member.getName());
+								ImGui::Text(field.c_str(), vec.x, vec.y);
 							}
 							break;
-						case Engine::INT:
-							field = (std::string)member.getName() + ": %.i";
-							ImGui::Text(field.c_str(), member.get(*ptr));
-							break;
-						case Engine::BOOL:
-							field = (std::string)member.getName() + ": %.i";
-							ImGui::Text(field.c_str(), member.get(*ptr));
-							break;
-						case Engine::FLOAT:
-							field = (std::string)member.getName() + ": %.4f";
-							ImGui::Text(field.c_str(), member.get(*ptr));
-							if (ImGui::BeginPopupContextItem(field.c_str()))
-							{
-								float changedValue = meta::getMemberValue<float>(*ptr, member.getName());
-								if (ImGui::Selectable("Set to zero")) changedValue = 0.0f;
-								if (ImGui::Selectable("Set to default")) changedValue = 0.005f;
-								ImGui::PushItemWidth(200);
-								std::string name = "#" + (std::string)member.getName();
-								ImGui::DragFloat(name.c_str(), &changedValue, 0.001f, 0.001f, 1.f);
-								meta::setMemberValue<float>(*ptr, member.getName(), changedValue);
-								ImGui::PopItemWidth();
-								ImGui::EndPopup();
+							default:
+								break;
 							}
-							break;
-						case Engine::STRING:
-							field = (std::string)member.getName() + ": " + meta::getMemberValue<std::string>(*ptr, member.getName());
-							ImGui::Text(field.c_str());
-							break;
-						case Engine::VECTOR2F:
-						{
-							field = (std::string)member.getName() + ": (%.2f %.2f)";
-							auto vec = meta::getMemberValue<sf::Vector2f>(*ptr, member.getName());
-							ImGui::Text(field.c_str(), vec.x, vec.y);
 						}
-						break;
-						default:
-							break;
-						}
-					}
 					);
 					ImGui::TreePop();
 				}
@@ -181,7 +183,7 @@ namespace meta
 	{
 		return members(
 			member("name", &Engine::Object::getName),
-			member("type", &Engine::Object::type),
+			//member("type", &Engine::Object::type),
 			member("sprite", &Engine::Object::sprite),
 			member("position", &Engine::Object::position),
 			member("IsActive", &Engine::Object::IsActive)

@@ -22,7 +22,7 @@ namespace Engine
 		ItemType type;
 		float weight;
 	};
-
+	
 	class Gun : public Item
 	{
 	private:
@@ -48,7 +48,7 @@ namespace Engine
 
 		}
 
-		void LoadSprite(std::string_view name)  //Выглядит плохо, нужно заменить; Даже enum будет выглядеть лучше 
+		void LoadSprite(std::string_view name)  //пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ; пїЅпїЅпїЅпїЅ enum пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 
 		{
 			if (name == "pistol")
 			{
@@ -67,7 +67,7 @@ namespace Engine
 			}
 			else
 			{
-				texture.loadFromFile("Inventor: image/ТАКОГО ФАЙЛА НЕТ"); //ERR
+				texture.loadFromFile("Inventor: image/пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ"); //ERR
 			}
 		}
 	};

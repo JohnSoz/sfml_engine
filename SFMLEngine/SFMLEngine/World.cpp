@@ -115,6 +115,7 @@ void Engine::World::Init(sf::RenderWindow & window)
 	level.LoadFromFile("Data/Level/map5.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
+	debug.levelIsoObjects(level.GetAllObjects());
 	debug.levelObjects(level.GetAllObjects());
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));

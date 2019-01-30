@@ -6,13 +6,15 @@
 #include "ApplicationState.h"
 #include <LuaBridge/LuaBridge.h>
 #include "Client.h"
+#include "LuaEngine.h"
+#include <entityx/entityx.h>
 extern "C"
 {
 #include "lua.h"
 #include "lauxlib.h"
 #include "lualib.h"
 }
-
+#include "EngineEvents.h"
 #include "Camera.h"
 namespace Engine
 {
@@ -67,7 +69,7 @@ namespace Engine
 		}
 	};
 
-	class Game
+	class Game : public entityx::Receiver<Game>
 	{
 	private:
 		World*				world;
@@ -77,6 +79,7 @@ namespace Engine
 		Engine::Client c;
 
 		lua_State*          L;
+		LuaEngine           lua_eng;
 		sf::RenderWindow*   window;
 		sf::ContextSettings settings;
 		std::string		    appname;
@@ -101,6 +104,11 @@ namespace Engine
 		void update();
 		void stateChanged();
 		void draw();
+		void receive(const Events::Event_UI& ui_event);
+		void receive(const Events::EvSomeEvent& SomeEvent)
+		{
+			std::cout << "Game: " << SomeEvent.some_data << std::endl;
+		}
 		void initMenu(sf::RenderWindow& w);
 		void handleEvent(sf::Event& e);
 	};

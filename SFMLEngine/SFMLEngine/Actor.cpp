@@ -32,7 +32,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 			else
 				LastAngle -= speed;
 		}
-	}
+	}	
 
 	float lastradian = LastAngle * PI / 180;
 	if (lastradian <= 1 && lastradian >= -2.5)
@@ -62,7 +62,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 	debugRectangle = sf::FloatRect(newX2, newY2, newW2, newY3);
 	globalRectangle = sf::FloatRect(newX, newY, newW, newH);
 
-	if (VStaticContainer::windowIsActive)
+	if (window.hasFocus())
 		sprite.setRotation(LastAngle);
 }
 

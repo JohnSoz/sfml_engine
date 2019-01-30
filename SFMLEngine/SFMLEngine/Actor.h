@@ -10,7 +10,7 @@ namespace Engine
 {
 	class Actor;
 
-	class DebugWindow
+	class DebugWindow 
 	{
 	private:
 		void ShowHelpMarker(const char* desc);

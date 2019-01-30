@@ -2,13 +2,18 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "LogConsole.h"
-Engine::Game::Game(sf::RenderWindow & w)
+
+Engine::Game::Game(sf::RenderWindow& w)
 {
 	state = appState::UI;
 	window = &w;
 	world = new World();
 	time.setDelta(500);
 	initMenu(w);
+
+	EventManager::eventManager.subscribe<Events::EvSomeEvent>(*this);
+	EventManager::eventManager.subscribe<Events::Event_UI>(*this);
+
 	m->makeMenu(path);
 	testWindow = new A("TestLua");
 	isStateChange = false;
@@ -28,6 +33,7 @@ Engine::Game::~Game()
 
 void Engine::Game::startGame()
 {
+
 	Console::AppLog::addLog("Engine::Game::startGame()", Console::info);
 	L = luaL_newstate();
 	luaL_openlibs(L);
@@ -133,7 +139,12 @@ void Engine::Game::draw()
 	window->display();
 }
 
-void Engine::Game::handleEvent(sf::Event & e)
+void Engine::Game::receive(const Events::Event_UI& ui_event)
+{
+	std::cout << ui_event.msg;
+}
+
+void Engine::Game::handleEvent(sf::Event& e)
 {
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::N))
@@ -156,15 +167,15 @@ void Engine::Game::handleEvent(sf::Event & e)
 
 		if (e.type == sf::Event::LostFocus)
 		{
-			VStaticContainer::windowIsActive = false;
-			lastState = state;
-			state = Pause;
+			//VStaticContainer::windowIsActive = false;
+			//lastState = state;
+			//state = Pause;
 		}
 
 		if (e.type == sf::Event::GainedFocus)
 		{
-			VStaticContainer::windowIsActive = true;
-			state = Resume;
+			//VStaticContainer::windowIsActive = true;
+			//state = Resume;
 		}
 
 		switch (state)

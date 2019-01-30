@@ -188,9 +188,10 @@ tgui::Picture::Ptr Engine::makePicture(sf::Texture& tex, sf::Vector2f pos, sf::V
 	picture->setInheritedOpacity(opacity);
 	return picture;
 }
-
+#include "EngineEvents.h"
 void Engine::MainMenu::makeMenu(std::string &p)
 {
+
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
 	sf::Texture t;
 	t.loadFromFile("Data/images/bg.png");
@@ -203,6 +204,7 @@ void Engine::MainMenu::makeMenu(std::string &p)
 	{
 		showGui = false;
 		state = appState::StartGame;
+		EventManager::eventManager.emit<Events::Event_UI>("RunButton");
 	}
 	), "RunButton");
 
@@ -213,7 +215,7 @@ void Engine::MainMenu::makeMenu(std::string &p)
 		state = appState::Exits;
 	}
 	), "ExitButton");
-
+	
 	addWidjetToLayer(makeListBox({ }, sf::Vector2f(400, 600), sf::Vector2f(250, 150),
 		[&]()
 	{
@@ -234,5 +236,6 @@ void Engine::MainMenu::makeMenu(std::string &p)
 			listBox->addItem(fileName);
 		}
 	}
+
 	addWidjetToLayer(makeTextBox("TestMenu", sf::Vector2f(120, 60), sf::Vector2f(960, 40)), "RandomBox");
 }

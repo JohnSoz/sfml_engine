@@ -10,109 +10,100 @@
 #include "TinyXML/tinyxml.h"
 #include <Windows.h>
 #include <stdlib.h>
+#include "Math.h"
 
-namespace Engine {
+namespace Engine
+{
 
-	struct ObjectLevel
+struct ObjectLevel
+{
+	int GetPropertyInt(std::string name);
+	float GetPropertyFloat(std::string name);
+	std::string GetPropertyString(std::string name);
+
+	std::string name;
+	std::string type;
+	sf::Rect<float> rect;
+	Quad quad;
+	std::map<std::string, std::string> properties;
+};
+
+struct Tileset
+{
+  private:
+	sf::Sprite sprite;
+	sf::Image tilesetImage;
+	sf::Texture texture;
+	int TileCount;
+	int columns;
+	int rows;
+	int tileWidth;
+	int tileHeight;
+
+  public:
+	int firstTileID;
+	Tileset(TiXmlElement *element)
 	{
-		int GetPropertyInt(std::string name); 
-		float GetPropertyFloat(std::string name);
-		std::string GetPropertyString(std::string name);
+		firstTileID = atoi(element->Attribute("firstgid"));
+		TileCount = atoi(element->Attribute("tilecount"));
+		TiXmlElement *image;
+		image = element->FirstChildElement("image");
+		std::string imagepath = image->Attribute("source");
+		tilesetImage.loadFromFile(imagepath);
+		texture.loadFromImage(tilesetImage);
+		texture.setSmooth(true);
+		tileWidth = atoi(element->Attribute("tilewidth"));
+		tileHeight = atoi(element->Attribute("tileheight"));
+		columns = tilesetImage.getSize().x / tileWidth;
+		rows = tilesetImage.getSize().y / tileHeight;
+	}
+	~Tileset() = default;
 
-		std::string name; 
-		std::string type;  
-		sf::Rect<float> rect; 
-		std::map<std::string, std::string> properties; 
-	};
-
-	struct Tileset
+	sf::Texture &getTexture()
 	{
-	private:
-		sf::Sprite sprite;
-		sf::Image tilesetImage;
-		sf::Texture texture;
-		int TileCount;
-		int columns;
-		int rows;
-		int tileWidth;
-		int tileHeight;
-	public:
-		int firstTileID;
-		Tileset(TiXmlElement* element)
-		{
-			firstTileID = atoi(element->Attribute("firstgid"));
-			TileCount = atoi(element->Attribute("tilecount"));
-			TiXmlElement *image;
-			image = element->FirstChildElement("image");
-			std::string imagepath = image->Attribute("source");
-			tilesetImage.loadFromFile(imagepath);
-			texture.loadFromImage(tilesetImage);
-			texture.setSmooth(true); //сглаживание
-			tileWidth = atoi(element->Attribute("tilewidth"));
-			tileHeight = atoi(element->Attribute("tileheight"));
-			columns = tilesetImage.getSize().x / tileWidth;
-			rows = tilesetImage.getSize().y / tileHeight;
-		}
-		~Tileset() = default;
+		return texture;
+	}
+	sf::Image getImage();
+	int getMaxID() { return firstTileID + TileCount; }
+	int getFitrsTileId() { return firstTileID; }
+	std::vector<sf::Rect<int>> getSubRect();
+};
 
-		sf::Texture& getTexture() 
-		{
-			return texture;
-		}
-		sf::Image getImage()
-		{
-			return tilesetImage;
-		}
-		int getMaxID() { return firstTileID + TileCount; }
-		int getFitrsTileId() { return firstTileID; }
-		std::vector<sf::Rect<int>> getSubRect() 
-		{
-			std::vector<sf::Rect<int>> subRects;
-			for (int y = 0; y < rows; y++)
-				for (int x = 0; x < columns; x++)
-				{
-					sf::Rect<int> rect;
+struct MapLayer
+{
+	float opacity;
+	std::vector<sf::Sprite> tiles;
+};
 
-					rect.top = y * tileHeight;
-					rect.height = tileHeight;
-					rect.left = x * tileWidth;
-					rect.width = tileWidth;
+class Level
+{
+  private:
+	int MapScale;
+	void ParseLayer(TiXmlElement *layerElement);
+	void ParseIsoLayer(TiXmlElement *layerElement);
+	void ParseObject(TiXmlElement *layerElement);
+	void ParseIsoObject(TiXmlElement *layerElement);
 
-					subRects.push_back(rect);
-				}
-			return subRects;
-		}
 
-	};
+	sf::IntRect rect;
+	int width, height, tileWidth, tileHeight;
+	sf::Rect<float> drawingBounds;
+	sf::Texture tilesetImage;
+	std::vector<ObjectLevel> objects;
+	std::vector<MapLayer> layers;
+	std::string orientation;
 
-	struct MapLayer 
-	{
-		float opacity; 
-		std::vector<sf::Sprite> tiles;  
-	};
+  public:
+	bool LoadFromFile(std::string filename, int MapScale = 1);
+	ObjectLevel GetObjectByName(std::string name);
+	std::vector<Tileset> tilesets;
+	std::vector<ObjectLevel> GetObjects(std::string name);
+	std::vector<ObjectLevel> GetAllObjects();
+	void DrawLevel(sf::RenderWindow &window);
+	sf::Image DrawLevel2();
+	sf::Vector2i GetTileSize();
+	sf::IntRect GetRect() const;
+};
 
-	class Level  
-	{
-	private:
-		int MapScale;
-		void ParseLayer(TiXmlElement *layerElement);
-		sf::IntRect rect; 
-		int width, height, tileWidth, tileHeight;
-		sf::Rect<float> drawingBounds;
-		sf::Texture tilesetImage;
-		std::vector<ObjectLevel> objects;
-		std::vector<MapLayer>    layers;
-	public:
-		bool LoadFromFile(std::string filename, int MapScale = 1);
-		ObjectLevel GetObjectByName(std::string name);
-		std::vector<Tileset> tilesets;
-		std::vector<ObjectLevel> GetObjects(std::string name);
-		std::vector<ObjectLevel> GetAllObjects();
-		void DrawLevel(sf::RenderWindow &window);
-		sf::Image DrawLevel2();
-		sf::Vector2i GetTileSize();
-		sf::IntRect GetRect() const;
-	};
-
-}
+} // namespace Engine
 #endif
