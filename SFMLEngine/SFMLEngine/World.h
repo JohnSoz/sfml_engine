@@ -30,7 +30,7 @@ namespace Engine
 		void UpdateObjects(float time);
 		void CollisionUpdate()
 		{
-			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
+			/*for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
 			{
 				for (auto iter2 = iter + 1; iter2 != ObjectsArray.end(); iter2++)
 				{
@@ -39,7 +39,7 @@ namespace Engine
 						(*iter)->CollisionUpdate(*iter2);
 					}
 				}
-			}
+			}*/
 		}
 		void callStart()
 		{

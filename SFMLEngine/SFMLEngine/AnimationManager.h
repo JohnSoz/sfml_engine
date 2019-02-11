@@ -11,7 +11,6 @@ Contains the necessary classes to work with animations
 #include <fstream>
 #include <iostream>
 #include <math.h>
-#include <boost\align.hpp>
 #include "TinyXML/tinyxml.h"
 using json = nlohmann::json;
 
@@ -36,7 +35,7 @@ namespace Engine
 		bool looped;
 
 		std::string  name;
-        float        scale;
+		float        scale;
 		sf::Texture  texture;
 		sf::IntRect  rect;
 		sf::Vector2f origin;
@@ -49,14 +48,14 @@ namespace Engine
 	class AnimationXml final : public Animation
 	{
 	public:
-		std::vector<sf::IntRect> frames;			
+		std::vector<sf::IntRect> frames;
 
 		AnimationXml() { looped = false; state = APause; }
 
 		sf::IntRect& tick(float time) override
 		{
 			state = APlay;
-			frame += 0.009 * time;
+			frame += 0.003 * time;
 			if (frame > frameCount) { frame = 0; state = AEnd; }
 			return frames[frame];
 		}
@@ -75,7 +74,7 @@ namespace Engine
 		/*!
 		Updates the current animation frame, angle-rotation angle of the sprite
 		*/
-	    sf::IntRect& tick(float time) override;
+		sf::IntRect& tick(float time) override;
 	};
 
 	/*!
@@ -96,7 +95,7 @@ namespace Engine
 		AnimationManager() = default; ///< Standard constructor
 		~AnimationManager()///< Standard destructor
 		{
-			for (auto & iter : animationList)
+			for (auto& iter : animationList)
 			{
 				delete iter;
 			}
@@ -143,6 +142,6 @@ namespace Engine
 		*/
 		std::list <Animation*>::iterator GetAnimationByName(std::string_view NAME);
 
-		const std::list<Animation*>*     getAnimationList();
+		std::list<Animation*>* const getAnimationList();
 	};
 }

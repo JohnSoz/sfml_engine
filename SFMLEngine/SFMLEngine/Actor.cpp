@@ -4,87 +4,87 @@ using sf::Keyboard;
 
 void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 {
-	LastAngle = sprite.getRotation();
+	//LastAngle = sprite.getRotation();
 
-	sf::Vector2f posMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
-	float a = posMouse.x - sprite.getPosition().x;
-	float v = posMouse.y - sprite.getPosition().y;
+	//sf::Vector2f posMouse = window.mapPixelToCoords(sf::Mouse::getPosition(window), window.getView());
+	//float a = posMouse.x - sprite.getPosition().x;
+	//float v = posMouse.y - sprite.getPosition().y;
 
-	Radian = atan2f(v, a);
-	CurrAngle = (atan2f(v, a)) * 180 / PI;
-	if (CurrAngle > 180) CurrAngle -= 360;
-	if (CurrAngle < -180) CurrAngle += 360;
-	posMouse.x = CurrAngle - LastAngle;
-	posMouse.y = 360 + posMouse.x;
-	if (posMouse.y > 360) posMouse.y -= 720;
-	if (abs(posMouse.x) > abs(posMouse.y)) posMouse.x = posMouse.y;
+	//Radian = atan2f(v, a);
+	//CurrAngle = (atan2f(v, a)) * 180 / PI;
+	//if (CurrAngle > 180) CurrAngle -= 360;
+	//if (CurrAngle < -180) CurrAngle += 360;
+	//posMouse.x = CurrAngle - LastAngle;
+	//posMouse.y = 360 + posMouse.x;
+	//if (posMouse.y > 360) posMouse.y -= 720;
+	//if (abs(posMouse.x) > abs(posMouse.y)) posMouse.x = posMouse.y;
 
-	if (CurrAngle != LastAngle)
-	{
-		if (abs(posMouse.x) < speed)
-		{
-			LastAngle = CurrAngle;
-		}
-		else
-		{
-			if (posMouse.x > 0)
-				LastAngle += speed;
-			else
-				LastAngle -= speed;
-		}
-	}	
+	//if (CurrAngle != LastAngle)
+	//{
+	//	if (abs(posMouse.x) < speed)
+	//	{
+	//		LastAngle = CurrAngle;
+	//	}
+	//	else
+	//	{
+	//		if (posMouse.x > 0)
+	//			LastAngle += speed;
+	//		else
+	//			LastAngle -= speed;
+	//	}
+	//}
 
-	float lastradian = LastAngle * PI / 180;
-	if (lastradian <= 1 && lastradian >= -2.5)
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.1) * 46, position.y + sinf(lastradian - 0.1) * 46));
-	else
-		PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.05) * 46, position.y + sinf(lastradian - 0.05) * 46));
+	//float lastradian = LastAngle * PI / 180;
+	//if (lastradian <= 1 && lastradian >= -2.5)
+	//	PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.1) * 46, position.y + sinf(lastradian - 0.1) * 46));
+	//else
+	//	PointOfFire.setPosition(sf::Vector2f(position.x + cosf(lastradian - 0.05) * 46, position.y + sinf(lastradian - 0.05) * 46));
 
-	//////////////////////////////////////////////rotate debug rectangle////////////////////////
-	auto x = globalRectangle.left;
-	auto y = globalRectangle.top;
-	auto w = globalRectangle.width;
-	auto h = globalRectangle.height;
+	////////////////////////////////////////////////rotate debug rectangle////////////////////////
+	//auto x = globalRectangle.left;
+	//auto y = globalRectangle.top;
+	//auto w = globalRectangle.width;
+	//auto h = globalRectangle.height;
 
-	float centerX = position.x;
-	float centerY = position.y;
+	//float centerX = position.x;
+	//float centerY = position.y;
 
-	auto newX = centerX + (x - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //x,y
-	auto newY = centerY + (y - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //y,x
-	auto newW = centerX + (w - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //w,h
-	auto newH = centerY + (h - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //h,w
+	//auto newX = centerX + (x - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //x,y
+	//auto newY = centerY + (y - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //y,x
+	//auto newW = centerX + (w - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //w,h
+	//auto newH = centerY + (h - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //h,w
 
-	auto newX2 = centerX + (x - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //x,h
-	auto newY2 = centerY + (h - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //h,x
-	auto newW2 = centerX + (w - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //w,y
-	auto newY3 = centerY + (y - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //y,w
+	//auto newX2 = centerX + (x - centerX) * cos(lastradian) - (h - centerY) * sin(lastradian); //x,h
+	//auto newY2 = centerY + (h - centerY) * cos(lastradian) + (x - centerX) * sin(lastradian); //h,x
+	//auto newW2 = centerX + (w - centerX) * cos(lastradian) - (y - centerY) * sin(lastradian); //w,y
+	//auto newY3 = centerY + (y - centerY) * cos(lastradian) + (w - centerX) * sin(lastradian); //y,w
 
-	debugRectangle = sf::FloatRect(newX2, newY2, newW2, newY3);
-	globalRectangle = sf::FloatRect(newX, newY, newW, newH);
+	//debugRectangle = sf::FloatRect(newX2, newY2, newW2, newY3);
+	//globalRectangle = sf::FloatRect(newX, newY, newW, newH);
 
-	if (window.hasFocus())
-		sprite.setRotation(LastAngle);
+	//if (window.hasFocus())
+	//	sprite.setRotation(LastAngle);
 }
 
-Engine::Bullet * Engine::Actor::shotUpdate(Level & lvl)
-{
-	if (!inv.getShowGui())
-		if (isShoot && !Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
-		{
-			auto item = inventory.getCurrItem<Gun>();
-			if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())
-			{
-				animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
-				updateSprite();
-				gunClock.restart();
-
-				sf::Image i;
-				i.loadFromFile("Data/images/bullet.png");
-				return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl, name);
-			}
-		}
-	return nullptr;
-}
+//Engine::Bullet * Engine::Actor::shotUpdate(Level & lvl)
+//{
+//	//if (!inv.getShowGui())
+//	//	if (isShoot && !Engine::VStaticContainer::ShowDebugWindow&& ImGui::GetIO().MetricsRenderWindows < 2)
+//	//	{
+//	//		auto item = inventory.getCurrItem<Gun>();
+//	//		if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())
+//	//		{
+//	//			animManager.SetCurrAnimation(animManager.GetAnimationByName("handGunShoot"));
+//	//			updateSprite();
+//	//			gunClock.restart();
+//
+//	//			sf::Image i;
+//	//			i.loadFromFile("Data/images/bullet.png");
+//	//			return new Engine::Bullet(i, sf::IntRect(0, 0, 16, 16), getPointOfFire(), "Bullet", Radian, item->getDamage(), lvl, name);
+//	//		}
+//	//	}
+//	return nullptr;
+//}
 
 void Engine::Actor::updateSprite()
 {
@@ -99,40 +99,37 @@ void Engine::Actor::updateSprite()
 	sprite.setPosition(position);
 }
 
-Engine::Actor::Actor(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow & w, Level & lvl) : Entity(IMAGE, POSITION, NAME), inv("Data/GUI/MyUI/MainMenu.txt", w)
+Engine::Actor::Actor(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow & w, Level & lvl) : Entity(IMAGE, POSITION, NAME)
 {
 	type = OActor;
 	dw_a.set(this);
-	animManager.LoadAnimation_x("MoveHandGun.xml");
-	animManager.LoadAnimation_x("ShootHandGun.xml");
-	updateSprite();
-	lives = armor = 50;
-	speed = 0;
-	energy = 0.001; friction = 0.005; maxSpeed = 0.2;
 	globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;
-	PointOfFire.setPosition(position);
-	inv.makeMenu(inventory);
+	//PointOfFire.setPosition(position);
+	animManager.LoadAnimation_x("TestAnimation.xml");
+	auto object_level = *std::find_if(obj.begin(), obj.end(), [](auto Obj) { return (Obj.name == "PlayerSpawn"); });
+	position = sf::Vector2f(object_level.rect.left + object_level.rect.width / 2, object_level.rect.top + object_level.rect.height);
+	updateSprite();
 }
 
 void Engine::Actor::handleEvent(sf::Event & e)
 {
-	if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
+	/*if (e.type == sf::Event::MouseButtonPressed && e.mouseButton.button == sf::Mouse::Left)
 	{
 		isShoot = true;
 	}
 	else if (e.type == sf::Event::MouseButtonReleased && e.mouseButton.button == sf::Mouse::Left)
 	{
 		isShoot = false;
-	}
-	if (inv.getShowGui())
-		inv.handleEvent(e);
+	}*/
+	/*if (inv.getShowGui())
+		inv.handleEvent(e);*/
 }
 
 void Engine::Actor::isKeyPressed()
 {
-	if (Keyboard::isKeyPressed(Keyboard::W))
+	/*if (Keyboard::isKeyPressed(Keyboard::W))
 	{
 		isWalk = true;
 		if (direction != Up) speed -= speed * 0.8;
@@ -164,8 +161,8 @@ void Engine::Actor::isKeyPressed()
 	{
 		isWalk = false;
 		(speed > 0) ? speed -= friction : speed = 0;
-	}
-	if (Keyboard::isKeyPressed(Keyboard::I))
+	}*/
+	/*if (Keyboard::isKeyPressed(Keyboard::I))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
 			inv.getShowGui() = (inv.getShowGui() == true) ? false : true;
@@ -177,42 +174,42 @@ void Engine::Actor::isKeyPressed()
 		inventory.setItemByIndex(0);
 
 	if (Keyboard::isKeyPressed(Keyboard::Num2))
-		inventory.setItemByIndex(1);
+		inventory.setItemByIndex(1);*/
 
 }
 
 
 void Engine::Actor::checkClashes(float time)
 {
-	collision::SAT sat;
-	for (auto & i : obj)
-	{
-		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
-		auto objectRect = Rectangle::fromSfmlRect(i.rect);
-		if (i.name == "barrier")
-		{
-			sf::Sprite spr;
-			spr.setTextureRect(sf::IntRect(0, 0, i.rect.width, i.rect.height));
-			spr.setPosition(i.rect.left, i.rect.top);
-			if (sat.collision(&sprite, &spr))
-			{
-				isCollision = true;
-				if (abs(speed) > 0)
-				{
-					auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect);
-					isWalk = false;
-					if (offset.x == 0)
-						offset.y *= time * 0.2;
-					else
-						offset.x *= time * 0.2;
-					position = position + offset.GetSfmlVector();
-				}
-			}
-		}
-	}
+	//collision::SAT sat;
+	//for (auto& i : obj)
+	//{
+	//	auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
+	//	auto objectRect = Rectangle::fromSfmlRect(i.rect);
+	//	if (i.name == "barrier")
+	//	{
+	//		sf::Sprite spr;
+	//		spr.setTextureRect(sf::IntRect(0, 0, i.rect.width, i.rect.height));
+	//		spr.setPosition(i.rect.left, i.rect.top);
+	//		if (sat.collision(&sprite, &spr))
+	//		{
+	//			isCollision = true;
+	//			if (abs(speed) > 0)
+	//			{
+	//				auto offset = Rectangle::GetIntersectionDepth(playerRect, objectRect);
+	//				isWalk = false;
+	//				if (offset.x == 0)
+	//					offset.y *= time * 0.2;
+	//				else
+	//					offset.x *= time * 0.2;
+	//				position = position + offset.GetSfmlVector();
+	//			}
+	//		}
+	//	}
+	//}
 }
 
-void Engine::Actor::CollisionUpdate(Entity* entity)
+void Engine::Actor::CollisionUpdate(Entity * entity)
 {
 	auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
 	auto objectRect = Rectangle::fromSfmlRect(entity->getRect());
@@ -222,41 +219,41 @@ void Engine::Actor::CollisionUpdate(Entity* entity)
 
 void Engine::Actor::update(float time)
 {
-	if (inv.getShowGui() == false)
-	{
-		switch (direction)
-		{
-		case Up:    velocity.y = -speed; velocity.x = 0;  break;
-		case Down:  velocity.y = speed; velocity.x = 0;  break;
-		case Left:  velocity.x = -speed; velocity.y = 0;  break;
-		case Right: velocity.x = speed; velocity.y = 0;  break;
-		}
-
-		localRectangle = sprite.getTextureRect();
-		sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
-		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
-		RotateToMouse(0.2 * time, *window);
-		position += velocity * time;
-		checkClashes(time);
-		if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot")
-		{
-			sprite.setTextureRect(animManager.AnimUpdate(time));
-			if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot" && animManager.GetCurrAnimation<AnimationXml>()->state == AEnd)
-			{
-				animManager.GetCurrAnimation<AnimationXml>()->state = APause;
-				animManager.SetCurrAnimation(animManager.GetAnimationByName("nandGunMove"));
-				updateSprite();
-			}
-		}
-		else
-			if (isWalk)
-				sprite.setTextureRect(animManager.AnimUpdate(time));
-
-		sprite.setPosition(position);
-	}
-	inventory.update();
-	dw_a.draw("Actor", true);
-	dw_o.draw("Object");
+//	if (inv.getShowGui() == false)
+//	{
+//		/*switch (direction)
+//		{
+//		case Up:    velocity.y = -speed; velocity.x = 0;  break;
+//		case Down:  velocity.y = speed; velocity.x = 0;  break;
+//		case Left:  velocity.x = -speed; velocity.y = 0;  break;
+//		case Right: velocity.x = speed; velocity.y = 0;  break;
+//		}
+//*/
+//		localRectangle = sprite.getTextureRect();
+//		sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
+//		globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
+//		RotateToMouse(0.2 * time, *window);
+//		position += velocity * time;
+//		checkClashes(time);
+//		if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot")
+//		{
+//			sprite.setTextureRect(animManager.AnimUpdate(time));
+//			if (animManager.GetCurrAnimation<AnimationXml>()->name == "handGunShoot" && animManager.GetCurrAnimation<AnimationXml>()->state == AEnd)
+//			{
+//				animManager.GetCurrAnimation<AnimationXml>()->state = APause;
+//				animManager.SetCurrAnimation(animManager.GetAnimationByName("nandGunMove"));
+//				updateSprite();
+//			}
+//		}
+//		else
+//			if (isWalk)
+//				sprite.setTextureRect(animManager.AnimUpdate(time));
+//
+//		sprite.setPosition(position);
+//	}
+//	inventory.update();
+//	dw_a.draw("Actor", true);
+//	dw_o.draw("Object");
 }
 
 void Engine::Actor::start()
@@ -264,29 +261,24 @@ void Engine::Actor::start()
 	//starts when Game::state == Engine::StartGame
 }
 
-void Engine::Actor::getDamage(float dmg)
-{
-	lives -= dmg * ((100 - armor) / 100);
-}
 
-
-void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
+void Engine::DebugWindow::actorInfo(bool* open, Actor & a)
 {
 	if (*open)
 	{
 		if (ImGui::Begin(a.getName().c_str(), open, ImGuiWindowFlags_NoSavedSettings))
 		{
-			if (ImGui::BeginChild(a.getName().c_str()))
+			/*if (ImGui::BeginChild(a.getName().c_str()))
 			{
 				ImGui::Spacing();
 				ImGui::Spacing();
-				ImGui::SetWindowSize(size);
-				float *energy = &a.energy;
-				float *friction = &a.friction;
-				float *maxSpeed = &a.maxSpeed;
+				ImGui::SetWindowSize(size);*/
+				/*float* energy = &a.energy;
+				float* friction = &a.friction;
+				float* maxSpeed = &a.maxSpeed;
 				float CurrAngle = a.CurrAngle;
 				bool Walk = a.isWalk;
-				sf::Vector2f *position = &a.position;
+				sf::Vector2f* position = &a.position;
 				sf::Vector2f velocity = a.velocity;
 
 				ImGui::NextColumn();
@@ -296,8 +288,8 @@ void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 					ImGui::Text("energy: %.3f", *energy);
 					if (ImGui::BeginPopupContextItem("itemEnergy"))
 					{
-						if (ImGui::Selectable("Set to zero")) *energy = 0.0f;
-						if (ImGui::Selectable("Set to default")) *energy = 0.005;
+						if (ImGui::Selectable("Set to zero")) * energy = 0.0f;
+						if (ImGui::Selectable("Set to default")) * energy = 0.005;
 						ImGui::PushItemWidth(200);
 						ImGui::DragFloat("#energy", energy, 0.001f, 0.001f, 0.09f);
 						ImGui::PopItemWidth();
@@ -307,8 +299,8 @@ void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 					ImGui::Text("friction: %.3f", *friction);
 					if (ImGui::BeginPopupContextItem("itemFriction"))
 					{
-						if (ImGui::Selectable("Set to zero")) *friction = 0.0f;
-						if (ImGui::Selectable("Set to default")) *friction = 0.005;
+						if (ImGui::Selectable("Set to zero")) * friction = 0.0f;
+						if (ImGui::Selectable("Set to default")) * friction = 0.005;
 						ImGui::PushItemWidth(200);
 						ImGui::DragFloat("#energy", friction, 0.001f, 0.001f, 0.09f);
 						ImGui::PopItemWidth();
@@ -332,8 +324,8 @@ void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 					ImGui::Text("maxSpeed: %.2f", *maxSpeed);
 					if (ImGui::BeginPopupContextItem("itemMaxSpeed"))
 					{
-						if (ImGui::Selectable("Set to zero")) *maxSpeed = 0.0f;
-						if (ImGui::Selectable("Set to default")) *maxSpeed = 0.3;
+						if (ImGui::Selectable("Set to zero")) * maxSpeed = 0.0f;
+						if (ImGui::Selectable("Set to default")) * maxSpeed = 0.3;
 						ImGui::PushItemWidth(200);
 						ImGui::DragFloat("#maxSpeed", maxSpeed, 0.01f, 0.01f, 1.5f);
 						ImGui::PopItemWidth();
@@ -373,7 +365,7 @@ void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 					ImGui::TreePop();
 				}
 			}
-			ImGui::EndChild();
+			ImGui::EndChild();*/
 		}
 		ImGui::End();
 
@@ -382,7 +374,7 @@ void Engine::DebugWindow::actorInfo(bool *open, Actor& a)
 		return;
 }
 
-void Engine::DebugWindow::ShowHelpMarker(const char * desc)
+void Engine::DebugWindow::ShowHelpMarker(const char* desc)
 {
 	if (ImGui::IsItemHovered())
 	{
@@ -394,7 +386,7 @@ void Engine::DebugWindow::ShowHelpMarker(const char * desc)
 	}
 }
 
-void Engine::DebugWindow::objectInfo(bool *open, Object& a)
+void Engine::DebugWindow::objectInfo(bool* open, Object & a)
 {
 	//isSelected = *open;
 	if (*open)
@@ -406,7 +398,7 @@ void Engine::DebugWindow::objectInfo(bool *open, Object& a)
 			ImGui::Spacing();
 			ImGui::SetWindowSize(size);
 			bool Active = a.IsActive;
-			sf::Vector2f *position = &a.position;
+			sf::Vector2f * position = &a.position;
 			auto ObjectType = a.type;
 			if (ImGui::TreeNode("Object info"))
 			{
@@ -442,7 +434,7 @@ void Engine::DebugWindow::objectInfo(bool *open, Object& a)
 
 
 
-sf::Vector2f Engine::operator+(const sf::Vector2f& rect, float scale)
+sf::Vector2f Engine::operator+(const sf::Vector2f & rect, float scale)
 {
 	return sf::Vector2f(rect.x + scale, rect.y + scale);
 }

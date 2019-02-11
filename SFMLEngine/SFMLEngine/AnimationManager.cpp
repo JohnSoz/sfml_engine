@@ -1,5 +1,4 @@
 #include "AnimationManager.h"
-#include <boost/lexical_cast.hpp>
 
 using namespace Engine;
 using std::string;
@@ -42,7 +41,7 @@ void AnimationManager::LoadAnimation_j(std::string_view path)
 
 IntRect& AnimationManager::AnimUpdate(float t)
 {
-	return (*currAnim)->tick(t);	
+	return (*currAnim)->tick(t);
 }
 
 void AnimationManager::LoadAnimation_x(std::string_view fileName)
@@ -51,14 +50,14 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 
 	animFile.LoadFile();
 
-	TiXmlElement *head;
+	TiXmlElement* head;
 	head = animFile.FirstChildElement("sprites");
 	string img = head->Attribute("image");
 
-	TiXmlElement *settings;
+	TiXmlElement* settings;
 	settings = head->FirstChildElement("settings");
 
-	TiXmlElement *animElement;
+	TiXmlElement* animElement;
 	animElement = head->FirstChildElement("animation");
 
 	string Name = animElement->Attribute("title");
@@ -66,7 +65,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 
 	vector<IntRect> frames;
 	bool isXMLAnimation = true;
-	AnimationXml *anim = new AnimationXml;
+	AnimationXml* anim = new AnimationXml;
 
 	auto xml_origin = settings->FirstChildElement("origin");
 	anim->origin.x = atoi(xml_origin->Attribute("x"));
@@ -79,8 +78,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 	anim->rect.height = atoi(xml_rect->Attribute("height"));
 
 	auto xml_loop = settings->FirstChildElement("loop");
-	using boost::lexical_cast;
-	anim->looped = lexical_cast<bool>(xml_loop->Attribute("value"));
+	anim->looped = xml_loop->Attribute("value") == "1";
 
 	auto xml_scale = settings->FirstChildElement("scale");
 	anim->scale = atof(xml_scale->Attribute("value"));
@@ -91,7 +89,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 	anim->texture.setSmooth(true);
 	while (animElement)
 	{
-		TiXmlElement *cut;
+		TiXmlElement* cut;
 		cut = animElement->FirstChildElement("cut");
 		while (cut)
 		{
@@ -129,13 +127,13 @@ std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::strin
 {
 	return
 		std::find_if(animationList.begin(), animationList.end(),
-			[=](Animation* anim)
+			[=](Animation * anim)
 	{
 		return (anim->name == Name);
 	});
 }
 
-const std::list<Engine::Animation*>* Engine::AnimationManager::getAnimationList()
+std::list<Engine::Animation*>* const Engine::AnimationManager::getAnimationList()
 {
 	return &animationList;
 }

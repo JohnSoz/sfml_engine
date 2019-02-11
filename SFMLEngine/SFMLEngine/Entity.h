@@ -11,6 +11,8 @@ namespace Engine
 		sf::IntRect      localRectangle;
 		sf::FloatRect    globalRectangle;
 		sf::FloatRect    debugRectangle;
+		typedef std::pair<const sf::FloatRect*, const sf::FloatRect*> Quad;
+
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
@@ -25,12 +27,11 @@ namespace Engine
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
 
+		sf::FloatRect getRect() const { return sprite.getGlobalBounds(); }
+		sf::Vector2f  getPos()  const { return position; }
+		ObjectType    getType() const { return type; }
 
-		sf::FloatRect getRect() { return sprite.getGlobalBounds(); }
-		const sf::Vector2f& getPos() { return position; }
-		ObjectType getType() { return type; }
-
-		std::pair<sf::FloatRect*, sf::FloatRect*> getDebugRect() { return std::make_pair(&globalRectangle, &debugRectangle); }
+		const Quad& getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); }
 
 		friend class ObjectHandler;
 	};
@@ -48,7 +49,7 @@ namespace Engine
 		}
 		void getDamage() { hp -= 1; }
 
-		void CollisionUpdate(Entity* entity) override;
+		void CollisionUpdate(Entity * entity) override;
 
 		float scale;
 		float hp;
@@ -58,7 +59,7 @@ namespace Engine
 	{
 	private:
 		float speed = 0.3f;
-		float angle;
+		DirectionX dir;
 		float damage;
 		std::vector<ObjectLevel> obj;
 		void CheckClashes()
@@ -78,10 +79,10 @@ namespace Engine
 		std::string shootersName;
 		Bullet() = default;
 		~Bullet() = default;
-		Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, float Angle, float Damage, Level lvl, std::string nameShooters) : Entity(IMAGE, r, pos, name)
+		Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, DirectionX d, float Damage, Level lvl, std::string nameShooters) : Entity(IMAGE, r, pos, name)
 		{
 			shootersName = nameShooters;
-			angle = Angle;
+			dir = d;
 			db.set(this);
 			IsActive = true;
 			obj = lvl.GetObjects("barrier");
@@ -95,14 +96,19 @@ namespace Engine
 		}
 		void update(float time) override
 		{
-				position.x += speed * std::cosf(angle) * time;
-				position.y += speed * std::sinf(angle) * time;
-				float posX = position.x + 1;
-				float posY = position.y + 1;
-				globalRectangle = sf::FloatRect(posX, posY, posX + localRectangle.width * scale, posY + localRectangle.height * scale);
-				debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
-				CheckClashes();
-				sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
+			if (dir == Left)
+			{
+				position.x -= speed * time;
+			}
+			else
+				position.x += speed * time;
+
+			float posX = position.x + 1;
+			float posY = position.y + 1;
+			globalRectangle = sf::FloatRect(posX, posY, posX + localRectangle.width * scale, posY + localRectangle.height * scale);
+			debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
+			CheckClashes();
+			sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
 			dw_o.draw("Object", true);
 			db.draw("Bullet");
 		}
@@ -118,7 +124,7 @@ namespace meta
 	{
 		return members(
 			member("speed", &Engine::Bullet::speed),
-			member("angle", &Engine::Bullet::angle),
+			member("direction", &Engine::Bullet::dir),
 			member("damage", &Engine::Bullet::damage)
 		);
 	}

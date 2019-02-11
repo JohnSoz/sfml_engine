@@ -1,0 +1,14 @@
+<!DOCTYPE SpriteDecomposer>
+<sprites image="Shpiga.png" transparentColor="">
+ <settings>
+  <origin x="8" y="12"/>	
+  <rect left="1" top="1" widht="15" height="20"/>	
+  <loop value="0" />	
+  <scale value="1	"/>
+ </settings>
+ <animation title="Shpiga" delay="150">
+  <cut w="15" x="1" y="1" h="20" row="1" col="1"/>
+  <cut w="17" x="96" y="0" h="20" row="1" col="1"/>
+  <cut w="15" x="1" y="1" h="20" row="1" col="1"/>
+ </animation>
+</sprites>

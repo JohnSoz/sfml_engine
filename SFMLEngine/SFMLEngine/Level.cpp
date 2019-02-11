@@ -138,8 +138,8 @@ void Level::ParseObject(TiXmlElement *layerElement)
 			}
 
 			ObjectLevel object;
-			object.name = std::move(objectName);
-			object.type = std::move(objectType);
+			object.name =objectName;
+			object.type = objectType;
 
 			sf::Rect<float> objectRect;
 			objectRect.top = y * MapScale;

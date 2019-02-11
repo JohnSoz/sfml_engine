@@ -1,6 +1,7 @@
 #include "World.h"
 #include "LogConsole.h"
 #include <algorithm>
+#include "Player.h"
 using namespace Engine;
 
 void Engine::ObjectHandler::handelEvent(sf::Event& e)
@@ -54,13 +55,13 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 		if (o->getType() == OActor)
 		{
 			auto z = static_cast<Actor*>(o);
-			sf::CircleShape shape(1);
+			sf::CircleShape shape(20);
 			sf::CircleShape shape2(2);
 			shape.setFillColor(sf::Color::Blue);
 			shape2.setFillColor(sf::Color::Red);
 			shape2.setOrigin(1, 1);
-			sf::Vector2f pos = z->getPointOfFire();
-			shape.setPosition(pos);
+			shape.setOrigin(10, 10);
+			shape.setPosition(z->sprite.getOrigin());
 			shape2.setPosition(z->sprite.getPosition());
 			WINDOW.draw(shape);
 			WINDOW.draw(shape2);
@@ -81,8 +82,8 @@ void Engine::ObjectHandler::refresh()
 
 void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& event)
 {
-	objHandler.GetObjects<Actor>("Test").isKeyPressed();
-	if (auto z = objHandler.GetObjects<Actor>("Test").shotUpdate(level); z != nullptr)
+	objHandler.GetObjects<Player>("Test").isKeyPressed();
+	if (auto z = objHandler.GetObjects<Player>("Test").ShootUpdate(level); z != nullptr)
 	{
 		pushEntity(z);
 	}
@@ -98,7 +99,7 @@ void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& eve
 void Engine::World::handleEvent(sf::Event & event)
 {
 	debug.handleEvent(event);
-	objHandler.GetObjects<Actor>("Test").handleEvent(event);
+	objHandler.GetObjects<Player>("Test").handleEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow & window)
@@ -106,13 +107,13 @@ void Engine::World::draw(sf::RenderWindow & window)
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
 	debug.draw();
-	objHandler.GetObjects<Actor>("Test").draw();
+	objHandler.GetObjects<Player>("Test").draw();
 }
 
 
 void Engine::World::Init(sf::RenderWindow & window)
 {
-	level.LoadFromFile("Data/Level/map5.tmx");
+	level.LoadFromFile("Data/Level/shpiga_test_level.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
 	debug.levelIsoObjects(level.GetAllObjects());
@@ -120,13 +121,17 @@ void Engine::World::Init(sf::RenderWindow & window)
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 
-	sf::Image i;
+	/*sf::Image i;
 	i.loadFromFile("Data/OSprite/nandGunMove.png");
 	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), "Test", window, level));
 
 	sf::Image i2;
 	i2.loadFromFile("Data/OSprite/nandGunMove.png");
-	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));
+	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));*/
+
+	sf::Image i;
+	i.loadFromFile("Data/OSprite/Player.png");
+	pushEntity(new Engine::Player(i, sf::Vector2f(120, 120), "Test", window, level));
 }
 
 void Engine::World::start()

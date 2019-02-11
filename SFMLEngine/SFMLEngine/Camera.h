@@ -15,7 +15,8 @@ namespace Engine
 	public:
 		Camera()
 		{
-			camera.reset(sf::FloatRect(0, 0, 1000, 563));
+			camera.reset(sf::FloatRect(0, 0, 1000, 563));//1000//563
+			camera.setCenter(300, 600); 
 			defaultCenter = camera.getCenter();
 		}
 		Camera(sf::Vector2f pos, sf::IntRect s)

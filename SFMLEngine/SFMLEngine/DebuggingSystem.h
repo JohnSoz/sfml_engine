@@ -28,7 +28,7 @@ class DebuggingSystem
 {
   public:
 	static sf::RenderWindow *window;
-	std::vector<std::pair<sf::FloatRect *, sf::FloatRect *>> entites;
+	std::vector<std::pair<const sf::FloatRect *, const sf::FloatRect *>> entites;
 	std::vector<std::pair<std::string, sf::FloatRect>> obj;
 	std::vector<std::pair<std::string, Quad>> iso_obj;
 	bool overlay = false;
@@ -51,7 +51,7 @@ class DebuggingSystem
 
 	static void setWindow(sf::RenderWindow &w) { window = &w; }
 	void draw(sf::RenderTarget &target = *window);
-	void pushRectangle(std::pair<sf::FloatRect *, sf::FloatRect *> e)
+	void pushRectangle(const std::pair<const sf::FloatRect *, const sf::FloatRect *> e)
 	{
 		entites.push_back(e);
 	}

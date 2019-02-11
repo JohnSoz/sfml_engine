@@ -618,18 +618,18 @@ Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle
 	if (abs(depthX) > abs(depthY))
 	{
 		depthX = 0;
-		if (depthY > 0 && depthY > 2)
+		/*if (depthY > 0 && depthY > 2)
 			depthY = 1.5;
 		else if(depthY < 0 && depthY < -2)
-			depthY = -1.5;
+			depthY = -1.5;*/
 	}
 	else
 	{
 		depthY = 0;
-		if (depthX > 0 && depthX > 2)
+	/*	if (depthX > 0 && depthX > 2)
 			depthX = 1.5;
 		else if (depthX < 0 && depthX < -2)
-			depthX = -1.5;
+			depthX = -1.5;*/
 	}
 
 	return Vector2D(depthX, depthY);

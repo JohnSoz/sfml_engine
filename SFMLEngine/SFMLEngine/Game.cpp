@@ -77,7 +77,7 @@ void Engine::Game::update()
 			break;
 		case Engine::Play:
 			world->update(*window, time.getTime(), event);
-			camera.moveToPoint(world->getObjHendler().GetObjects<Actor>("Test").getPos(), *window);
+		//	camera.moveToPoint(world->getObjHendler().GetObjects<Player>("Test").getPos(), *window);
 			break;
 		case Engine::UI:
 			state = (appState)m->update();

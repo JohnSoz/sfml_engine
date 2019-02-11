@@ -29,3 +29,4 @@
   <cut w="190" x="4205" y="30" h="140" row="1" col="1"/>
  </animation>
 </sprites>
+bjam --toolset=msvc-12.0 debug release link=static runtime-link=shared install

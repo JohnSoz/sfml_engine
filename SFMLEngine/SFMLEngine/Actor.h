@@ -45,28 +45,29 @@ namespace Engine
 	{
 	protected:
 		std::vector<ObjectLevel> obj;
-		sf::Vector2f velocity;
-		Inventory inventory;
+		//sf::Vector2f velocity;
+		//Inventory inventory;
+		//AnimationManager animManager;
 		AnimationManager animManager;
+		//InventoryMenu inv;
 		DebugWindows<Actor> dw_a;
-		InventoryMenu inv;
 
 		bool isWalk;
 		bool isCollision;
 		bool isShoot;
 
-		float lives, armor;
-		float speed, energy, friction, maxSpeed;
+		//float lives, armor;
+		//float speed, energy, friction, maxSpeed;
 		float scale = 0.5;
 		float CurrAngle = sprite.getRotation(), LastAngle;
 		float time_actor;
-
 		sf::Clock Pressclock;
 		sf::Clock gunClock;
 		sf::Vector2f originOffset = {};
-		Direction direction = Direction::State;
+		DirectionX direction;
+		DirectionY directionY;
 		sf::RenderWindow* window;
-		sf::Transformable PointOfFire;
+		//sf::Transformable PointOfFire;
 
 		void updateSprite();
 
@@ -75,8 +76,6 @@ namespace Engine
 		~Actor() = default;
 		Actor() = delete;
 		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl);
-
-		sf::Vector2f getPointOfFire() { return PointOfFire.getPosition(); }
 
 		virtual void handleEvent(sf::Event& e);
 
@@ -88,15 +87,11 @@ namespace Engine
 
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 
-		Engine::Bullet* shotUpdate(Level& lvl);
-
-		void draw() { inv.draw(); }
+		//Engine::Bullet* shotUpdate(Level& lvl);
 
 		void update(float time) override;
 
 		void start() override;
-
-		void getDamage(float dmg);
 
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Engine::Actor>();
@@ -109,11 +104,8 @@ namespace meta
 	{
 		return members(
 			member("direction", &Engine::Actor::direction),
-			member("velocity", &Engine::Actor::velocity),
-			member("friction", &Engine::Actor::friction),
-			member("CurrAngle", &Engine::Actor::CurrAngle),
-			member("maxSpeed", &Engine::Actor::maxSpeed),
-			member("energy", &Engine::Actor::energy)
+			member("isWalk", &Engine::Actor::isWalk),
+			member("CurrAngle", &Engine::Actor::CurrAngle)
 		);
 	}
 }
