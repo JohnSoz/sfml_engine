@@ -4,8 +4,8 @@
 #include "DebuggingSystem.h"
 #include <cmath>
 #include "LogConsole.h"
-
 using namespace std;
+#include <sfeMovie/Movie.hpp>
 //#main
 int main()
 {

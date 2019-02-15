@@ -17,7 +17,7 @@ namespace Engine
 		float getWeight() { return weight; }
 		ItemType getType() { return type; }
 		std::string getType_s();
-		void update() { dw_o.draw(name); };
+		void update() { dw_o.draw("Item",true); };
 	protected:
 		ItemType type;
 		float weight;

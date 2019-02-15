@@ -20,10 +20,6 @@ namespace Engine
 {
 	/*!
 	\brief Class for storing animation information
-	\bug
-	\warning
-	\example
-	\todo
 	*/
 	enum AnimationState { APlay, APause, AEnd };
 	class Animation

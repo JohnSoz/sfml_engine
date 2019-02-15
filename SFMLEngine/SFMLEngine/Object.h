@@ -15,9 +15,16 @@
 using namespace meta;
 namespace Engine
 {
+	/// Enumeration of possible types for objects
 	enum ObjectType { None = 0, OEntity, OPawn, OActor };
+	/// Enumeration of the possible directions along the x-axis
 	enum DirectionX { Left = 1, Right };
+	/// Enumeration of the possible directions along the y-axis
 	enum DirectionY { Up = 1, Down };
+	/*! 
+	\brief This is an enum class
+	\details 
+	*/
 	enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE, ANIMATIONMANAGER, RECT_i };
 
 	class Object;
@@ -40,15 +47,18 @@ namespace Engine
 		sf::Vector2f size = { 400,400 };
 	};
 
+	/*!
+	\brief The basic essence of the game world
+	*/
 	class Object
 	{
 	protected:
-		ObjectType type;
-		sf::Vector2f position;
-		sf::Texture texture;
-		sf::Sprite sprite;
-		std::string name;
-		bool IsActive;
+		ObjectType type; 
+		sf::Vector2f position; //<Object position in game coordinates
+		sf::Texture texture; //<The texture of the current object
+		sf::Sprite sprite; //<Sprite of the current object
+		std::string name; //<Current object name /warning Must be unique
+		bool IsActive; //<The flag indicates whether the current object is alive /warning If the value is false, the object is removed from the game world
 		DebugWindows<Object> dw_o;
 	public:
 		Object();
