@@ -22,7 +22,7 @@ namespace Engine
 		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
 		virtual ~Entity();
 
-		virtual void update(float time) { dw_o.draw(name); }
+		virtual void update(float time) { /*dw_o.draw(name); */}
 		virtual void start() {}
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
@@ -74,7 +74,7 @@ namespace Engine
 			}
 		}
 		float scale = 0.2;
-		DebugWindows<Bullet> db;
+		//DebugWindows<Bullet> db;
 	public:
 		std::string shootersName;
 		Bullet() = default;
@@ -83,7 +83,7 @@ namespace Engine
 		{
 			shootersName = nameShooters;
 			dir = d;
-			db.set(this);
+			//db.set(this);
 			IsActive = true;
 			obj = lvl.GetObjects("barrier");
 			damage = Damage;
@@ -109,8 +109,8 @@ namespace Engine
 			debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
 			CheckClashes();
 			sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
-			dw_o.draw("Object", true);
-			db.draw("Bullet");
+			//dw_o.draw("Object", true);
+			//db.draw("Bullet");
 		}
 		friend auto meta::registerMembers<Bullet>();
 	};

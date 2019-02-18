@@ -1,6 +1,6 @@
 #pragma once
 #include "Actor.h"
-#include <MetaStuff/Meta.h>
+#include "DebugInteface.h"
 namespace Engine
 {
 	class Player : public Actor
@@ -33,7 +33,7 @@ namespace Engine
 
 		/*Direction state = Direction::State;
 			sf::Transformable PointOfFire;*/
-		DebugWindows<Player> dp;
+			//DebugWindows<Player> dp;
 
 	public:
 		Player(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl)
@@ -48,7 +48,7 @@ namespace Engine
 			energy = 0.001;
 			friction = 0.005;
 			maxSpeed = 0.2;
-			dp.set(this);
+			//dp.set(this);
 			onGround = true;
 		}
 		void isKeyPressed();

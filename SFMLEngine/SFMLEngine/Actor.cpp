@@ -102,7 +102,7 @@ void Engine::Actor::updateSprite()
 Engine::Actor::Actor(sf::Image & IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow & w, Level & lvl) : Entity(IMAGE, POSITION, NAME)
 {
 	type = OActor;
-	dw_a.set(this);
+	direction = Left;
 	globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;

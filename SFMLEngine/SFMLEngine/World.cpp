@@ -17,14 +17,14 @@ template<class Obj>
 Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 {
 	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
-		[NAME](const Entity* e1)->bool
+		[NAME](const Entity * e1)->bool
 	{
 		return (e1->name == NAME) ? true : false;
 	});
 	return *static_cast<Obj*>(*retObj);
 }
 
-void Engine::ObjectHandler::PushObject(Entity* obj)
+void Engine::ObjectHandler::PushObject(Entity * obj)
 {
 	string info = "Engine::ObjectHandler::PushObject(" + obj->getName() + ")";
 	Console::AppLog::addLog(info, Console::info);
@@ -73,14 +73,14 @@ void Engine::ObjectHandler::refresh()
 {
 	Console::AppLog::addLog("Engine::ObjectHandler::refresh()", Console::info);
 	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
-		[](const Entity *entity)->bool
+		[](const Entity * entity)->bool
 	{
 		return !entity->isActive();
 	}), ObjectsArray.end());
 }
 
 
-void Engine::World::update(sf::RenderWindow & window, float time, sf::Event& event)
+void Engine::World::update(sf::RenderWindow & window, float time, sf::Event & event)
 {
 	objHandler.GetObjects<Player>("Test").isKeyPressed();
 	if (auto z = objHandler.GetObjects<Player>("Test").ShootUpdate(level); z != nullptr)
@@ -128,6 +128,7 @@ void Engine::World::Init(sf::RenderWindow & window)
 	sf::Image i2;
 	i2.loadFromFile("Data/OSprite/nandGunMove.png");
 	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));*/
+	//sf::Image img, sf::Vector2f pos, ObjectType t, std::string name
 
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/Player.png");

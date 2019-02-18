@@ -50,7 +50,7 @@ namespace Engine
 		//AnimationManager animManager;
 		AnimationManager animManager;
 		//InventoryMenu inv;
-		DebugWindows<Actor> dw_a;
+		//DebugWindows<Actor> dw_a;
 
 		bool isWalk;
 		bool isCollision;

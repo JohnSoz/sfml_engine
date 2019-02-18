@@ -105,8 +105,9 @@ void Engine::Player::update(float time)
 	checkClashes(time);
 	sprite.setPosition(position);
 	inventory.update();
-	dp.draw("Player", true);
-	dw_a.draw("Actor", false, true);
+	debug::debugDraw<Player, Object, Actor, Player>(this, "Debug For Class Player");
+	//dp.draw("Player", true);
+	//dw_a.draw("Actor", false, true);
 }
 
 void Engine::Player::checkClashes(float time)
