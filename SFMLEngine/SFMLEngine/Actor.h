@@ -104,8 +104,9 @@ namespace meta
 	{
 		return members(
 			member("direction", &Engine::Actor::direction),
+			member("isCollision", &Engine::Actor::isCollision),
 			member("isWalk", &Engine::Actor::isWalk),
-			member("CurrAngle", &Engine::Actor::CurrAngle)
+			member("originOffset", &Engine::Actor::originOffset)
 		);
 	}
 }

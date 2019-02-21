@@ -256,3 +256,36 @@ void Engine::ImGUI::Text(sf::Vector2f position, bool *open, std::string name, st
 	}
 	ImGui::PopStyleColor();
 }
+
+void Engine::ImGUI::windowTest(bool* p_open)
+{
+	ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Example: Layout", p_open, ImGuiWindowFlags_MenuBar))
+	{
+		// left
+		static std::string selected = "null";
+		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
+		std::vector<std::string> name = {"null","one" , "two", "three"};
+		for (const auto& i : name)
+		{
+			std::string label = "MyObject" + i;
+			if (ImGui::Selectable(label.c_str(), selected == i))
+				selected = i;
+		}
+		ImGui::EndChild();
+		ImGui::SameLine();
+
+		// right
+		ImGui::BeginGroup();
+		ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
+		ImGui::Text(std::string("MyObject: " + selected).c_str());
+ 		ImGui::Separator();
+		ImGui::TextWrapped("asd");
+		ImGui::EndChild();
+		if (ImGui::Button("Revert")) {}
+		ImGui::SameLine();
+		if (ImGui::Button("Save")) {}
+		ImGui::EndGroup();
+	}
+	ImGui::End();
+}

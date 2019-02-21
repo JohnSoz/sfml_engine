@@ -57,7 +57,7 @@ namespace meta
 	{
 		return members(
 			member("name", &Engine::Object::name),
-			//member("type", &Engine::Object::type),
+			member("type", &Engine::Object::type),
 			member("sprite", &Engine::Object::sprite),
 			member("IsActive", &Engine::Object::IsActive),
 			member("position", &Engine::Object::position)

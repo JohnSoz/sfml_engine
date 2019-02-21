@@ -32,8 +32,9 @@ namespace Engine
 		//float CurrAngle = sprite.getRotation(), LastAngle;
 
 		/*Direction state = Direction::State;
-			sf::Transformable PointOfFire;*/
-			//DebugWindows<Player> dp;
+			sf::Transformable PointOfFire;
+		*/
+		//DebugWindows<Player> dp;
 
 	public:
 		Player(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl)
@@ -93,6 +94,7 @@ namespace meta
 			member("onGround", &Engine::Player::onGround),
 			member("friction", &Engine::Player::friction),
 			member("localrect", &Engine::Player::localRectangle),
+			member("debugRectangle", &Engine::Player::debugRectangle),
 			member("energy", &Engine::Player::energy),
 			member("speedX", &Engine::Player::speedX),
 			member("speedY", &Engine::Player::speedY));

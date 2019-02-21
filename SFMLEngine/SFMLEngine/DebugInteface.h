@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace debug
 	{
-		enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE, ANIMATIONMANAGER, RECT_i };
+		enum valueType { INT, BOOL, FLOAT, STRING, VECTOR2F, SPRITE, ANIMATIONMANAGER, RECT_i, RECT_F };
 		template<class Type>
 		valueType checkType()
 		{
@@ -18,6 +18,8 @@ namespace Engine
 				return VECTOR2F;
 			else if (std::is_same<Type, sf::IntRect>::value)
 				return RECT_i;
+			else if (std::is_same<Type, sf::FloatRect>::value)
+				return RECT_F;
 			else if (std::is_same<Type, sf::Sprite>::value)
 				return SPRITE;
 			else if (is_integral<Type>::value)
@@ -32,15 +34,32 @@ namespace Engine
 
 		namespace utility
 		{
-			template<class Ptr, class type>
-			void draw(Ptr* ptr)
+			template<class type>
+			void helper(std::string& selected)
 			{
 				std::string field;
-				if (ImGui::TreeNode(typeid(type).name()))
+				std::string name = typeid(type).name();
+				std::string label = "MyObject: " + name;
+				ImGui::BeginGroup();
+				if (ImGui::Selectable(name.c_str(), selected == name))
 				{
+					selected = name;
+				}
+				ImGui::SameLine();
+				ImGui::EndGroup();
+			}
+			template<class Ptr, class type>
+			void draw(Ptr* ptr, std::string& selected, std::string name_S)
+			{
+				std::string field;
+				if (typeid(type).name() == selected)
+				{
+					ImGui::Text(std::string(selected).c_str());
+					ImGui::Separator();
 					meta::doForAllMembers<type>(
 						[&](const auto & member)
 					{
+
 						switch (checkType<decltype(member.getCopy(*ptr))>())
 						{
 						case Engine::debug::INT:
@@ -59,10 +78,9 @@ namespace Engine
 							{
 								float changedValue = meta::getMemberValue<float>(*ptr, member.getName());
 								if (ImGui::Selectable("Set to zero")) changedValue = 0.0f;
-								if (ImGui::Selectable("Set to default")) changedValue = 0.005f;
 								ImGui::PushItemWidth(200);
 								std::string name = "#" + (std::string)member.getName();
-								ImGui::DragFloat(name.c_str(), &changedValue, 0.001f, 0.001f, 1.f);
+								ImGui::DragFloat(name.c_str(), &changedValue, 0.001f, -1.f, 1.f);
 								meta::setMemberValue<float>(*ptr, member.getName(), changedValue);
 								ImGui::PopItemWidth();
 								ImGui::EndPopup();
@@ -99,31 +117,48 @@ namespace Engine
 							ImGui::Text(field.c_str(), rect.left, rect.top, rect.width, rect.height);
 						}
 						break;
+						case Engine::debug::RECT_F:
+						{
+							field = (std::string)member.getName() + ": (%.2f, %.2f, %.2f, %.2f)";
+							auto rect_f = meta::getMemberValue<sf::FloatRect>(*ptr, member.getName());
+							ImGui::Text(field.c_str(), rect_f.left, rect_f.top, rect_f.width, rect_f.height);
+						}
+						break;
 						default:
 							break;
 						}});
-					ImGui::TreePop();
+
 				}
 			}
 		}
 
-		
+
 		template<class PtrType, class... Types>
 		void debugDraw(PtrType* ptr, std::string nameTree)
 		{
 			if (Engine::VStaticContainer::ShowDebugWindow)
 			{
-				if (ImGui::Begin("DebugWindows", NULL))
+				ImGui::SetNextWindowSize(ImVec2(550, 440), ImGuiCond_FirstUseEver);
+				if (ImGui::Begin("Debug Window", NULL))
 				{
-					ImGui::SetWindowSize({ 400,400 });
+					static std::string selected = "";
+
+					ImGui::BeginChild("Objects", ImVec2(250, 0), true);
 					if (ImGui::TreeNode(nameTree.c_str()))
 					{
-						(utility::draw<PtrType, Types>(ptr), ...);
+						(utility::helper<Types>(selected), ...);
 						ImGui::TreePop();
 					}
-					ImGui::Spacing();
-					ImGui::Separator();
-					ImGui::Spacing();
+					ImGui::EndChild();
+					ImGui::SameLine();
+
+					ImGui::BeginGroup();
+					ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
+					(utility::draw<PtrType, Types>(ptr, selected, nameTree), ...);
+					ImGui::EndChild();
+					ImGui::SameLine();
+					ImGui::EndGroup();
+
 				}
 				ImGui::End();
 			}
