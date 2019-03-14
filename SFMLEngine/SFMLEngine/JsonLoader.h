@@ -1,8 +1,10 @@
 #pragma once
 #include <nlohmann/json.hpp>
 #include <fstream>
+#include <iomanip>
 #include "LogConsole.h"
 #include <MetaStuff/Meta.h>
+
 using json = nlohmann::json;
 using namespace std;
 namespace Engine
@@ -29,36 +31,23 @@ namespace Engine
 
 
 	};
-	
-	class GameSave : public JsonLoader
+	template<class Obj>
+	void saveObject(Obj* pObj)
 	{
-	public:
-		bool savePos(std::string_view path, float x, float y)
-		{
-			json p;
-			p.clear();
-			p["Player"]["Position"]["X"] = x;
-			p["Player"]["Position"]["Y"] = y;
-			saveJson(path.data(), p.dump(4));
-			return true;
-		}
+		assert(meta::isRegistered<Obj>(), "object is not registered");
+		json j;
 
-		template<class T>
-		void save(T t)
+		meta::doForAllMembers<Obj>([&pObj, &j](const auto & member)
 		{
-			meta::doForAllMembers<T>(
-				[&](auto& member)
+			if (std::is_same<decltype(member.getCopy(*pObj)), float>())
 			{
-				auto z = member.get(t);
+				float x = meta::getMemberValue<float>(*pObj, member.getName());
+				j["Player"][member.getName()] = x;
 			}
-			);
-		}
+		});
+		std::ofstream o("Data/save.json");
+		o << std::setw(3) << j << std::endl;
+		o.close();
+	}
 
-		std::pair<float, float> loadPos(std::string_view path)
-		{
-			/*json p = json::parse(LoadFromPath(path.data()));
-
-			return std::pair(p["Player"]["Position"]["X"].get<float>(), p["Player"]["Position"]["Y"].get<float>());*/
-		}
-	};
 }

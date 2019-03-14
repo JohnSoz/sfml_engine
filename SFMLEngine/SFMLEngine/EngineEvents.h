@@ -10,16 +10,18 @@ namespace Engine
 	};
 	namespace Events
 	{
-		struct Event_UI : public entityx::Event<Event_UI>
+		struct Event_Inventory_UI : public entityx::Event<Event_Inventory_UI>
 		{
-			Event_UI(std::string z) : msg(z) {}
-			std::string msg;
+			Event_Inventory_UI() {}
 		};
-		struct EvSomeEvent : public entityx::Event<EvSomeEvent>
+
+		struct Main_Menu_Event
 		{
-			EvSomeEvent(int data) :some_data(data) {}
-			int some_data;
+			int state;
+			Main_Menu_Event() {}
+			Main_Menu_Event(int state) : state(state) {}
 		};
+
 	}
 }
 

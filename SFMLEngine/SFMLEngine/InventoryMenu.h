@@ -2,28 +2,43 @@
 #include "GUI.h"
 #include "Inventory.h"
 #include "LogConsole.h"
+#include <entityx/entityx.h>
+#include "EngineEvents.h"
+using namespace entityx;
+
 namespace Engine
 {
-	class InventoryMenu : public GUI
+	class InventoryMenu : public BaseGui, public entityx::Receiver<InventoryMenu>
 	{
 	private:
-
+		Gui gui;
 	public:
 		InventoryMenu() = delete;
-		InventoryMenu(sf::RenderWindow& window) : GUI(window) {}
-		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : GUI(pathToTheme, w) {  }
+		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme)
+		{
+			gui.setTarget(w);
+			sf::Font font;
+			font.loadFromFile("Data/Fonts/Bricks.otf");
+			gui.setFont(font);
+			gui.add(groupArray[0]);
+		}
 		~InventoryMenu() = default;
+
+		void receive(const Events::Event_Inventory_UI& ui_event)
+		{
+			activateOrDisable();
+		}
 
 		void makeMenu(Inventory& inv)
 		{
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
 			sf::Texture t;
 			t.loadFromFile("Data/images/bgTest.png");
-			addWidjetToLayer(makePicture(t, { 0.f,0.f }, { 1920,1080 }, 0.94f), "", "BackGround");
+			groupArray.addWidget(makePicture(t, { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
 
 			sf::Texture tex;
 			tex.loadFromFile("Data/images/invBG.png");
-			addWidjetToLayer(makePicture(tex, { 300,300 }, { 1092,548 }), "", "InvBG");
+			groupArray.addWidget(makePicture(tex, { 300,300 }, { 1092,548 }), "InvBG");
 
 			int w = 0;
 			int h = 0;
@@ -60,7 +75,7 @@ namespace Engine
 				w++;
 			}
 
-			for (auto &w : grid->getWidgets())
+			for (auto& w : grid->getWidgets())
 			{
 				w->connect("pressed", [&]()
 				{
@@ -72,29 +87,31 @@ namespace Engine
 				});
 			}
 			panel->add(grid);
-			addWidjetToLayer(panel, "", "InventoryContainer");
-			activateOrDisabled();
-			showGui = false;
+			groupArray.addWidget(panel, "InventoryContainer");
+			activateOrDisable();
 		}
-
-
 
 		void updateInventory(Inventory& inv)
 		{
-			auto panel = getWidjet<ScrollablePanel>("InventoryContainer");
+			auto panel = groupArray.get("Default")->get<tgui::Panel>("InventoryContainer");
 		}
 
 		void moveAll(sf::Vector2f offset)
 		{
-			layers[0]->moveAllWidgets(offset);
+			for (auto& w : groupArray[0]->getWidgets())
+				w->setPosition(w->getPosition() + offset);
 		}
-		
-		void activateOrDisabled()
+
+		void draw() override
 		{
-			if (layers[0]->IsEnable())
-				layers[0]->disableAllWidgets();
-			else
-				layers[0]->enableAllWidgets();
+			gui.draw();
+		}
+
+		void update() {}
+
+		void handleEvent(sf::Event & e) override
+		{
+			gui.handleEvent(e);
 		}
 	};
 }

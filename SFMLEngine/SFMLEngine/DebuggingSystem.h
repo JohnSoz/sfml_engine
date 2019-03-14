@@ -4,6 +4,7 @@
 \brief Header file.
 \warning Dependency on Object.h
 */
+
 #include "Object.h"
 #include "imgui.h"
 #include "imgui-sfml.h"
@@ -22,7 +23,7 @@ void ShowHelpMarker(const char *desc);
 void SimpleOverlay(bool *open);
 void SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text = "");
 void Text(sf::Vector2f position, bool *open, std::string name, std::string text = "");
-void windowTest(bool* p_open);
+//void windowTest(bool* p_open);
 } // namespace ImGUI
 
 class DebuggingSystem
@@ -39,7 +40,7 @@ class DebuggingSystem
 	{
 		if (open)
 		{
-			if (ImGui::Begin("DebugWindow", NULL))
+			if (ImGui::Begin("Debug Window", NULL))
 			{
 			}
 			ImGui::End();

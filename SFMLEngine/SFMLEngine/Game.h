@@ -1,6 +1,6 @@
 #pragma once
 #include "World.h"
-#include "GUI.h"
+#include "MainMenu.h"
 #include "timer.h"
 #include "AudioPlayer.h"
 #include "ApplicationState.h"
@@ -83,7 +83,7 @@ namespace Engine
 		sf::RenderWindow*   window;
 		sf::ContextSettings settings;
 		std::string		    appname;
-		std::string path;
+		std::string         path;
 
 		sf::Clock           deltaClock;
 		sf::Clock           pressClock;
@@ -104,12 +104,8 @@ namespace Engine
 		void update();
 		void stateChanged();
 		void draw();
-		void receive(const Events::Event_UI& ui_event);
-		void receive(const Events::EvSomeEvent& SomeEvent)
-		{
-			std::cout << "Game: " << SomeEvent.some_data << std::endl;
-		}
 		void initMenu(sf::RenderWindow& w);
+		void receive(const Events::Main_Menu_Event& event);
 		void handleEvent(sf::Event& e);
 	};
 }

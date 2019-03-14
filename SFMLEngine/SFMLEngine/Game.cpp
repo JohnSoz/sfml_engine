@@ -8,20 +8,25 @@ Engine::Game::Game(sf::RenderWindow& w)
 	state = appState::UI;
 	window = &w;
 	world = new World();
-	time.setDelta(500);
+	time.setDelta(600);
 	initMenu(w);
-
-	EventManager::eventManager.subscribe<Events::EvSomeEvent>(*this);
-	EventManager::eventManager.subscribe<Events::Event_UI>(*this);
-
 	m->makeMenu(path);
 	testWindow = new A("TestLua");
 	isStateChange = false;
+
+	EventManager::eventManager.subscribe<Events::Main_Menu_Event>(*this);
 }
 
 void Engine::Game::initMenu(sf::RenderWindow& w)
 {
 	m = new Engine::MainMenu("Data/GUI/MyUI/MainMenu.txt", w);
+}
+
+void Engine::Game::receive(const Events::Main_Menu_Event& event)
+{
+	std::string log = "receive Main_Menu_Event, state = " + std::to_string(event.state);
+	Console::AppLog::addLog(log, Console::info);
+	state = static_cast<appState>(event.state);
 }
 
 Engine::Game::~Game()
@@ -38,6 +43,17 @@ void Engine::Game::startGame()
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	luabridge::getGlobalNamespace(L)
+		.beginClass<Camera>("Camera")
+		.addConstructor<void(*) ()>()
+		.addConstructor<void(*) (sf::Vector2f, sf::IntRect)>()
+		.addFunction("setPos", &Camera::setPosition)
+		.addFunction("test", &Camera::test)
+		.addFunction("setView", &Camera::setViewPort)
+		.endClass();
+	luabridge::push(L, &camera);
+	lua_setglobal(L, "cam");
+
+	luabridge::getGlobalNamespace(L)
 		.beginClass<A>("A")
 		.addConstructor<void(*) (std::string, float, float)>()
 		.addFunction("addWindow", &A::addWindow)
@@ -46,6 +62,7 @@ void Engine::Game::startGame()
 		.endClass();
 	luabridge::push(L, testWindow);
 	lua_setglobal(L, "L_testWindow");
+
 	luabridge::getGlobalNamespace(L)
 		.beginClass<Client>("Client")
 		.addConstructor<void(*) ()>()
@@ -53,6 +70,7 @@ void Engine::Game::startGame()
 		.endClass();
 	luabridge::push(L, &c);
 	lua_setglobal(L, "L_Client");
+
 	testWindow->addText("Text From C++");
 	musicPlayer.Play();
 }
@@ -62,7 +80,6 @@ void Engine::Game::update()
 	while (window->isOpen())
 	{
 		auto local_last_state = state;
-
 		time.Tick();
 		sf::Event event;
 		handleEvent(event);
@@ -77,10 +94,9 @@ void Engine::Game::update()
 			break;
 		case Engine::Play:
 			world->update(*window, time.getTime(), event);
-		//	camera.moveToPoint(world->getObjHendler().GetObjects<Player>("Test").getPos(), *window);
 			break;
 		case Engine::UI:
-			state = (appState)m->update();
+			m->update();
 			break;
 		case Engine::Pause:
 			break;
@@ -91,7 +107,6 @@ void Engine::Game::update()
 			isStateChange = !isStateChange;
 			stateChanged();
 		}
-
 		draw();
 	}
 }
@@ -137,11 +152,6 @@ void Engine::Game::draw()
 	ImGui::SFML::Render(*window);
 	window->setView(camera.getView());
 	window->display();
-}
-
-void Engine::Game::receive(const Events::Event_UI& ui_event)
-{
-	std::cout << ui_event.msg;
 }
 
 void Engine::Game::handleEvent(sf::Event& e)

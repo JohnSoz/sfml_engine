@@ -25,6 +25,11 @@ public:
 			clock.restart();
 			t = t / delta;
 		}
+		else
+		{
+			clock.restart();
+			t = 0;
+		}
 	}
 
 	bool isPause() { return IsPause; }
@@ -59,7 +64,7 @@ public:
 	{
 		return !(*this >= x);
 	}
-	friend std::ostream& operator<<(std::ostream &output, const timer &t)
+	friend std::ostream& operator<<(std::ostream & output, const timer & t)
 	{
 		output << "Time: " << t.t << "  ClockTimeAsSeconds: " << t.clock.getElapsedTime().asSeconds() << std::endl;
 		return output;

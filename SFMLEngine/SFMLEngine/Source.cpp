@@ -4,9 +4,9 @@
 #include "DebuggingSystem.h"
 #include <cmath>
 #include "LogConsole.h"
-using namespace std;
-#include <sfeMovie/Movie.hpp>
-//#main
+#include "ApplicationState.h"
+using namespace Engine;
+
 int main()
 {
 	sf::ContextSettings settings;
@@ -16,8 +16,7 @@ int main()
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Game V0.2", sf::Style::Default, settings);
-
-	window.setKeyRepeatEnabled(true);
+	window.setFramerateLimit(350);
 
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();

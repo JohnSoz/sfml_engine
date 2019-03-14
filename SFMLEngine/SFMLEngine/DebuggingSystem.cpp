@@ -3,20 +3,19 @@
 using namespace Engine;
 #include "staticVariable.h"
 
-sf::RenderWindow *Engine::DebuggingSystem::window = nullptr;
+sf::RenderWindow* Engine::DebuggingSystem::window = nullptr;
 
-void DebuggingSystem::draw(sf::RenderTarget &target)
+void DebuggingSystem::draw(sf::RenderTarget& target)
 {
 	if (showVertex)
 	{
 		int count = 0;
-
-		const float viewPortScale = 1.92;
-		sf::Vector2f offset = sf::Vector2f(500, 281.5) - window->getView().getCenter();
+		const float viewPortScale = std::round((1920 / window->getView().getSize().x) * 100) / 100;
+		sf::Vector2f offset = sf::Vector2f(window->getView().getSize().x / 2, window->getView().getSize().y / 2) - window->getView().getCenter();
 		offset.x *= viewPortScale;
 		offset.y *= viewPortScale;
 
-		for (auto &i : entites)
+		for (auto& i : entites)
 		{
 			auto x = i.first->left;
 			auto y = i.first->top;
@@ -27,7 +26,6 @@ void DebuggingSystem::draw(sf::RenderTarget &target)
 			auto y2 = i.second->top;
 			auto w2 = i.second->width;
 			auto h2 = i.second->height;
-
 			sf::VertexArray triangle(sf::LinesStrip, 5);
 			triangle[0] = sf::Vector2f(x, y);
 			triangle[0].color = sf::Color::Red;
@@ -52,7 +50,7 @@ void DebuggingSystem::draw(sf::RenderTarget &target)
 			}
 			target.draw(triangle);
 		}
-		for (auto &z : obj)
+		for (auto& z : obj)
 		{
 			auto x = z.second.left;   //z.second.rect2.left;
 			auto y = z.second.top;	//z.second.rect2.top;
@@ -86,27 +84,27 @@ void DebuggingSystem::draw(sf::RenderTarget &target)
 			const float posX = x * viewPortScale;
 			const float posY = y * viewPortScale;
 
-			const float maxWidht = 1900;
-			const float maxHeidht = 960;
+			const float maxWidht = 1920;
+			const float maxHeidht = 1080;
 
 			if (overlay)
 			{
-				if ((posX >= abs(offset.x) && posX <= abs(offset.x + maxWidht)) &&
-					(posY >= abs(offset.y) && posY <= abs(offset.y + maxHeidht)))
+				auto viewCoord = window->mapCoordsToPixel({ x, y });
+				if ((viewCoord.x != 0 && viewCoord.x <= maxWidht) && (viewCoord.y != 0 && viewCoord.y <= maxHeidht))
 				{
 					ImGUI::SimpleText(sf::Vector2f(posX + offset.x, posY + offset.y), &overlay, "D_Window_" + std::to_string(count));
 					count++;
 				}
-				if (((x + w) * viewPortScale >= abs(offset.x) && (x + w) * viewPortScale <= abs(offset.x + maxWidht)) &&
-					((y + h) * viewPortScale >= abs(offset.y) && (y + h) * viewPortScale <= abs(offset.y + maxHeidht)))
+				auto viewCoord2 = window->mapCoordsToPixel({ (x + w), (y + h) });
+				if ((viewCoord2.x != 0 && viewCoord2.x <= maxWidht) && (viewCoord2.y != 0 && viewCoord2.y <= maxHeidht))
 				{
 					ImGUI::SimpleText(sf::Vector2f((x + w) * viewPortScale + offset.x, (y + h) * viewPortScale + offset.y), &overlay, "D_Window_" + std::to_string(count));
 					count++;
 				}
-				if ((posX + w * viewPortScale / 2 - 35 >= abs(offset.x) && posX + w * viewPortScale / 2 - 35 <= abs(offset.x + maxWidht)) &&
-					(posY + h * viewPortScale / 2 - 20 >= abs(offset.y) && posY + h * viewPortScale / 2 - 20 <= abs(offset.y + maxHeidht)))
+				auto viewCoord3 = window->mapCoordsToPixel({ x + w / 2 - 35, y + h / 2 - 20 });
+				if ((viewCoord3.x != 0 && viewCoord3.x <= maxWidht) && (viewCoord3.y != 0 && viewCoord3.y <= maxHeidht))
 				{
-					ImGUI::Text(sf::Vector2f(posX + w * 1.92 / 2 - 35 + offset.x, posY + h * 1.92 / 2 - 20 + offset.y), &overlay, "D_Window_" + std::to_string(count), z.first);
+					ImGUI::Text(sf::Vector2f(posX + w * viewPortScale / 2 - 35 + offset.x, posY + h * viewPortScale / 2 - 20 + offset.y), &overlay, "D_Window_" + std::to_string(count), z.first);
 					count++;
 				}
 			}
@@ -116,7 +114,7 @@ void DebuggingSystem::draw(sf::RenderTarget &target)
 	drawDebugWindows(Engine::VStaticContainer::ShowDebugWindow);
 }
 
-void Engine::DebuggingSystem::handleEvent(sf::Event &event)
+void Engine::DebuggingSystem::handleEvent(sf::Event & event)
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::T))
 	{
@@ -144,7 +142,7 @@ void Engine::DebuggingSystem::handleEvent(sf::Event &event)
 	}
 }
 
-void Engine::ImGUI::ShowHelpMarker(const char *desc)
+void Engine::ImGUI::ShowHelpMarker(const char* desc)
 {
 	ImGui::TextDisabled("(?)");
 	if (ImGui::IsItemHovered())
@@ -157,7 +155,7 @@ void Engine::ImGUI::ShowHelpMarker(const char *desc)
 	}
 }
 
-void Engine::ImGUI::SimpleOverlay(bool *open)
+void Engine::ImGUI::SimpleOverlay(bool* open)
 {
 	if (*open)
 	{
@@ -178,7 +176,7 @@ void Engine::ImGUI::SimpleOverlay(bool *open)
 			{
 				ImGui::Text("Window size: (%.1f,%.1f)", ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
 				ImGui::Text("Mouse Position: (%.1f,%.1f)", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y);
-				static float values[100] = {0};
+				static float values[100] = { 0 };
 				static int values_offset = 0;
 				static float refresh_time = 0.0f;
 				static float middle = 0;
@@ -213,8 +211,8 @@ void Engine::ImGUI::SimpleOverlay(bool *open)
 					corner = 2;
 				if (ImGui::MenuItem("Bottom-right", nullptr, corner == 3))
 					corner = 3;
-				if (*open && ImGui::MenuItem("Close"))
-					*open = false;
+				if (*open&& ImGui::MenuItem("Close"))
+					* open = false;
 				ImGui::EndPopup();
 			}
 			ImGui::End();
@@ -222,70 +220,29 @@ void Engine::ImGUI::SimpleOverlay(bool *open)
 	}
 }
 
-void Engine::ImGUI::SimpleText(sf::Vector2f position, bool *open, std::string name, std::string text)
+void Engine::ImGUI::SimpleText(sf::Vector2f position, bool* open, std::string name, std::string text)
 {
 	ImVec2 window_pos = ImVec2(position.x, position.y);
 	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(0, 0));
 	ImGui::SetNextWindowBgAlpha(0.6f);
 	if (ImGui::Begin(name.c_str(), open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		ImGui::SetWindowFontScale(1);
 		if (!text.empty())
 			ImGui::Text(text.c_str());
-		else
-			ImGui::Text("Info: ");
-		ImGui::Separator();
-		ImGui::Text("PosX: (%.1f)", position.x);
-		ImGui::Text("PosY: (%.1f)", position.y);
+		//ImGui::Separator();
+		ImGui::Text("(X,Y): (%.1f, %.1f)", position.x, position.y);
 		ImGui::End();
 	}
 }
 
-void Engine::ImGUI::Text(sf::Vector2f position, bool *open, std::string name, std::string text)
+void Engine::ImGUI::Text(sf::Vector2f position, bool* open, std::string name, std::string text)
 {
 	ImVec2 window_pos = ImVec2(position.x, position.y);
 	ImGui::SetNextWindowPos(window_pos, ImGuiCond_Always, ImVec2(0, 0));
-	ImGui::SetNextWindowBgAlpha(0.8f);
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.96, 0.6, 0.46, 1));
+	ImGui::SetNextWindowBgAlpha(0.6f);
 	if (ImGui::Begin(name.c_str(), open, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 	{
-		ImGui::Spacing();
 		ImGui::Text(text.c_str());
-		ImGui::Spacing();
 		ImGui::End();
 	}
-	ImGui::PopStyleColor();
-}
-
-void Engine::ImGUI::windowTest(bool* p_open)
-{
-	ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Example: Layout", p_open, ImGuiWindowFlags_MenuBar))
-	{
-		// left
-		static std::string selected = "null";
-		ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-		std::vector<std::string> name = {"null","one" , "two", "three"};
-		for (const auto& i : name)
-		{
-			std::string label = "MyObject" + i;
-			if (ImGui::Selectable(label.c_str(), selected == i))
-				selected = i;
-		}
-		ImGui::EndChild();
-		ImGui::SameLine();
-
-		// right
-		ImGui::BeginGroup();
-		ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing())); // Leave room for 1 line below us
-		ImGui::Text(std::string("MyObject: " + selected).c_str());
- 		ImGui::Separator();
-		ImGui::TextWrapped("asd");
-		ImGui::EndChild();
-		if (ImGui::Button("Revert")) {}
-		ImGui::SameLine();
-		if (ImGui::Button("Save")) {}
-		ImGui::EndGroup();
-	}
-	ImGui::End();
 }

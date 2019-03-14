@@ -1,6 +1,9 @@
 #pragma once
 #include "Actor.h"
-#include "DebugInteface.h"
+#include "EngineEvents.h"
+#include "JsonLoader.h"
+
+
 namespace Engine
 {
 	class Player : public Actor
@@ -41,12 +44,13 @@ namespace Engine
 			: Actor(IMAGE, POSITION, NAME, w, lvl),
 			inv("Data/GUI/MyUI/MainMenu.txt", w)
 		{
+			EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
 			isWalk = isCollision = isShoot = false;
 			onGround = true;
 			inv.makeMenu(inventory);
 			lives = armor = 50;
 			speedX = speedY = 0;
-			energy = 0.001;
+			energy = 0.003;
 			friction = 0.005;
 			maxSpeed = 0.2;
 			//dp.set(this);
@@ -62,7 +66,7 @@ namespace Engine
 		void handleEvent(sf::Event& e) override;
 		Bullet* ShootUpdate(Level& lvl)
 		{
-			if (isShoot && !Engine::VStaticContainer::ShowDebugWindow&& ImGui::GetIO().MetricsRenderWindows < 2)
+			if (isShoot && !Engine::VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
 			{
 				auto item = inventory.getCurrItem<Gun>();
 				if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())

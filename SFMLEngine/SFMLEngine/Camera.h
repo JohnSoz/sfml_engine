@@ -2,6 +2,7 @@
 #include <SFML/Graphics/View.hpp>
 #include <SFML/Graphics.hpp>
 #include "Math.h"
+
 namespace Engine
 {
 	class Camera
@@ -16,7 +17,7 @@ namespace Engine
 		Camera()
 		{
 			camera.reset(sf::FloatRect(0, 0, 1000, 563));//1000//563
-			camera.setCenter(300, 600); 
+			camera.setCenter(300, 600);
 			defaultCenter = camera.getCenter();
 		}
 		Camera(sf::Vector2f pos, sf::IntRect s)
@@ -27,12 +28,15 @@ namespace Engine
 		~Camera() {}
 
 		bool isMove() { return move; }
-		sf::Vector2f getPositionOffset() 
+		std::string test() { return "test"; }
+		sf::Vector2f getPositionOffset()
 		{
 			return VectorAbs(defaultCenter - camera.getCenter());
 		}
-		void moveToPoint(sf::Vector2f point, sf::RenderWindow& window, sf::Vector2f offset = { 0.4f, 0.4f });
-		const sf::View& getView() { return camera; }
+		void moveToPoint(sf::Vector2f point, sf::RenderWindow & window, sf::Vector2f offset = { 0.4f, 0.4f });
+		void setPosition(float x, float y);
+		void setViewPort(float w, float h);
+		const sf::View & getView() { return camera; }
 	};
 }
 

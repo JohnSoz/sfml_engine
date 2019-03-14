@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <entityx/entityx.h>
 using namespace Engine;
 
 void Engine::Player::isKeyPressed()
@@ -14,21 +15,21 @@ void Engine::Player::isKeyPressed()
 		{
 			isWalk = false;
 			directionY = DirectionY::Up;
-			speedY = energy * 400;
+			speedY = energy * 110;
 			onGround = false;
 		}
 	}
-	else if (Keyboard::isKeyPressed(Keyboard::A))
+	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		isWalk = true;
-		if (direction != Left) speedX -= speedX * 0.8;
+		if (direction != Left) speedX -= speedX * 0.85;
 		direction = DirectionX::Left;
 		speedX = (speedX < maxSpeed) ? speedX += energy : speedX = maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		isWalk = true;
-		if (direction != Right) speedX -= speedX * 0.8;
+		if (direction != Right) speedX -= speedX * 0.85;
 		direction = DirectionX::Right;
 		speedX = (speedX < maxSpeed) ? speedX += energy : speedX = maxSpeed;
 	}
@@ -36,7 +37,12 @@ void Engine::Player::isKeyPressed()
 	{
 		isWalk = false;
 	}
-
+	if (Keyboard::isKeyPressed(Keyboard::I))
+		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
+		{
+			EventManager::eventManager.emit<Events::Event_Inventory_UI>();
+			Pressclock.restart();
+		}
 }
 
 void Engine::Player::RotateToMouse(float speed, sf::RenderWindow & w)
@@ -88,26 +94,24 @@ void Engine::Player::update(float time)
 	}
 
 	if (!onGround)
-	{
 		speedY -= energy;
-	}
 	else
-		velocity.y = speedY = 0;
+		speedY = -0.1f;
+
 	if (!isWalk)
-	{
 		(speedX > 0) ? speedX -= friction : speedX = 0;
-	}
+
 	localRectangle = sprite.getTextureRect();
 	sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
 	globalRectangle = sf::FloatRect(pos.x, pos.y, pos.x + localRectangle.width * scale, pos.y + localRectangle.height * scale);
 	debugRectangle = sf::FloatRect(pos.x + localRectangle.width * scale, pos.y, pos.x, pos.y + localRectangle.height * scale);
+
 	position += velocity * time;
+
 	checkClashes(time);
 	sprite.setPosition(position);
 	inventory.update();
-	debug::debugDraw<Player, Object, Actor, Player>(this, "Debug For Class Player");
-	//dp.draw("Player", true);
-	//dw_a.draw("Actor", false, true);
+	debug::debugDraw<Player, Player, Object, Actor>(this, "Debug For Class Player");
 }
 
 void Engine::Player::checkClashes(float time)
@@ -126,20 +130,21 @@ void Engine::Player::checkClashes(float time)
 				isWalk = false;
 
 				if (offset.y != 0)
-				{
 					onGround = true;
-				}
+
 				if (offset.x != 0)
 					offset.x *= 0.2 * time;
 
 				position = position + offset.GetSfmlVector();
 			}
 		}
+		else
+			isCollision = false;
 	}
 }
 
 void Engine::Player::handleEvent(sf::Event & e)
 {
-	if (inv.getShowGui())
+	if (inv.IsEnable())
 		inv.handleEvent(e);
 }

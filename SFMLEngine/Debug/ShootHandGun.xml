@@ -1,10 +1,10 @@
 <!DOCTYPE SpriteDecomposer>
 <sprites image="nandGunShoot.png" transparentColor="">
  <settings>
-  <origin x="100" y="130"/>	
-  <rect left="1" top="33" widht="208" height="154"/>	
+  <origin x="102" y="132"/>	
+  <rect left="1" top="34" widht="208" height="156"/>	
   <loop value="0" />	
-  <scale value="0.455"/>
+  <scale value="0.4555"/>
  </settings>
  <animation title="handGunShoot" delay="60">
   <cut w="208" x="0" y="33" h="154" row="1" col="1"/>
