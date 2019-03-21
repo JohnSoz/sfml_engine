@@ -6,44 +6,26 @@
 
 namespace Engine
 {
+
 	class Player : public Actor
 	{
 	private:
 		sf::Sprite handSprite;
 		sf::Vector2f velocity;
 		Inventory inventory;
-
+		sf::Vector2f vec;
 		InventoryMenu inv;
-
 		float lives, armor;
 		float energy, friction, maxSpeed;
 		float speedX, speedY;
 		bool onGround;
-		//sf::Vector2f velocity;
-		//Inventory inventory;
-		//AnimationManager animManager;
-
-		//bool isWalk;
-		//bool isCollision;
-		//bool isShoot;
-
-		//bool onGround;
-
-		//float lives, armor;
-		//float speed, energy, friction, maxSpeed;
-		//float scale = 0.5;
-		//float CurrAngle = sprite.getRotation(), LastAngle;
-
-		/*Direction state = Direction::State;
-			sf::Transformable PointOfFire;
-		*/
-		//DebugWindows<Player> dp;
 
 	public:
 		Player(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl)
 			: Actor(IMAGE, POSITION, NAME, w, lvl),
 			inv("Data/GUI/MyUI/MainMenu.txt", w)
 		{
+			vec.x = 12;
 			EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
 			isWalk = isCollision = isShoot = false;
 			onGround = true;
@@ -84,7 +66,7 @@ namespace Engine
 			isShoot = false;
 			return nullptr;
 		}
-		~Player() = default;
+		~Player() { save<Player>(*this); }
 		friend auto meta::registerMembers<Engine::Player>();
 	};
 } // namespace Engine
@@ -94,11 +76,9 @@ namespace meta
 	inline auto registerMembers<Engine::Player>()
 	{
 		return members(
-			member("velocity", &Engine::Player::velocity),
 			member("onGround", &Engine::Player::onGround),
 			member("friction", &Engine::Player::friction),
-			member("localrect", &Engine::Player::localRectangle),
-			member("debugRectangle", &Engine::Player::debugRectangle),
+			member("pos", &Engine::Player::vec),
 			member("energy", &Engine::Player::energy),
 			member("speedX", &Engine::Player::speedX),
 			member("speedY", &Engine::Player::speedY));

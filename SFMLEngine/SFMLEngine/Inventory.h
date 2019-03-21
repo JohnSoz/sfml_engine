@@ -13,17 +13,23 @@ namespace Engine
 	public:
 		Item() = default;
 		Item(std::string name) : Object(name) { type = ItemType::item; weight = 0; }
-		virtual ~Item() {};
-		float getWeight() { return weight; }
-		ItemType getType() { return type; }
+		virtual ~Item() {}
+		float getWeight() const
+		{
+			return weight;
+		}
+		ItemType getType() const
+		{
+			return type;
+		}
 		std::string getType_s();
-		void update() {/* dw_o.draw("Item",true);*/ };
+		void update() {/* dw_o.draw("Item",true);*/ }
 	protected:
 		ItemType type;
 		float weight;
 	};
-	
-	class Gun : public Item
+
+	class Gun final : public Item
 	{
 	private:
 		float RateOfFire, damage;
@@ -72,14 +78,17 @@ namespace Engine
 		}
 	};
 
-	class Heal : public Item
+	class Heal final : public Item
 	{
 	private:
 		float HP;
 	public:
-		Heal(std::string Name, float hp) : HP(hp) { name = Name; type = ItemType::heal; weight = 0.2f; }
+		Heal(const std::string Name, const float hp) : HP(hp) { name = Name; type = ItemType::heal; weight = 0.2f; }
 		Heal() = default;
-		int GetHP() { return (int)HP; }
+		int GetHP() const
+		{
+			return static_cast<int>(HP);
+		}
 	};
 
 	class Inventory
@@ -99,17 +108,17 @@ namespace Engine
 		Inventory() { baseIni(); }
 		~Inventory()
 		{
-			for (auto & iter : inv)
+			for (auto& iter : inv)
 				delete iter;
 			inv.clear();
 		}
 
-		void AddItem(Item* i) { inv.push_back(i); }
+		void AddItem(Item * i) { inv.push_back(i); }
 
 		void delItem(std::string Name)
 		{
 			inv.erase(
-				std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
+				std::remove_if(inv.begin(), inv.end(), [Name](Item * item)
 			{
 				if (item->getName() == Name) { delete item;  return true; }
 			})
@@ -130,7 +139,7 @@ namespace Engine
 		template<class T>
 		T* getItemByName(std::string Name)
 		{
-			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item* item)
+			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item * item)
 			{
 				return (item->getName() == Name) ? true : false;
 			});
@@ -153,7 +162,7 @@ namespace Engine
 
 		void setItemByName(std::string_view name)
 		{
-			auto item = std::find_if(inv.begin(), inv.end(), [name](Item* item) { return item->getName() == name; });
+			auto item = std::find_if(inv.begin(), inv.end(), [name](Item * item) { return item->getName() == name; });
 			if ((*item)->getType() != ItemType::heal)
 			{
 				curr_item = item;
@@ -166,7 +175,7 @@ namespace Engine
 
 		void setItemByIndex(size_t index)
 		{
-			assert((index > inv.size()) == false, "out of range");
+			assert(index > inv.size() == false, "out of range");
 			curr_item = inv.begin() + index;
 		}
 

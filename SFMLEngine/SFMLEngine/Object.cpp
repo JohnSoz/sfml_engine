@@ -25,6 +25,7 @@ Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::strin
 	//dw_o.set(this);
 }
 
+
 Engine::Object::Object()
 {
 	type = ObjectType::None;

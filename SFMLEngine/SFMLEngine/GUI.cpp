@@ -1,10 +1,10 @@
 #include "GUI.h"
 using namespace Engine;
 
-void Engine::BaseGui::activateOrDisable(int n /*= -1*/)
+void Engine::BaseGui::activateOrDisable(const int n /*= -1*/)
 {
-	bool enabled = groupArray[0]->isEnabled();
-	if (n = -1)
+	const auto enabled = groupArray[0]->isEnabled();
+	if (n == -1)
 	{
 		if (enabled)
 		{

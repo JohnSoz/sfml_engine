@@ -151,6 +151,7 @@ namespace Engine
 				{
 					static std::string selected = "";
 					static bool is_prev_treeNode_open = false;
+
 					std::string curr_selected = "";
 					ImGui::BeginChild("Objects", ImVec2(250, 0), true);
 					if (ImGui::TreeNode((void*)ptr, nameTree.c_str()))

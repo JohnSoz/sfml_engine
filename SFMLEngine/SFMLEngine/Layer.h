@@ -24,9 +24,9 @@ namespace Engine
 		void addWidget(Widget::Ptr wPtr, std::string wName, std::string_view groupName = "Default");
 
 		Group::Ptr get(std::string_view groupName);
-		size_t size() { return groups.size(); }
-		auto begin()  { return groups.begin(); }
-		auto end()    { return groups.end(); }
-		Group::Ptr operator[](int n) { return groups[n].second; }
+		size_t size() const { return groups.size(); }
+		auto begin() { return groups.begin(); }
+		auto end() { return groups.end(); }
+		Group::Ptr operator[](const int n) { return groups[n].second; }
 	};
 }

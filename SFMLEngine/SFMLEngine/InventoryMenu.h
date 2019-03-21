@@ -8,9 +8,8 @@ using namespace entityx;
 
 namespace Engine
 {
-	class InventoryMenu : public BaseGui, public entityx::Receiver<InventoryMenu>
+	class InventoryMenu : public BaseGui, public Receiver<InventoryMenu>
 	{
-	private:
 		Gui gui;
 	public:
 		InventoryMenu() = delete;
@@ -24,7 +23,7 @@ namespace Engine
 		}
 		~InventoryMenu() = default;
 
-		void receive(const Events::Event_Inventory_UI& ui_event)
+		void receive(const Events::Event_Inventory_UI&)
 		{
 			activateOrDisable();
 		}

@@ -80,7 +80,7 @@ namespace Engine
 
 		lua_State*          L;
 		LuaEngine           lua_eng;
-		sf::RenderWindow*   window;
+		RenderWindow*   window;
 		sf::ContextSettings settings;
 		std::string		    appname;
 		std::string         path;

@@ -79,7 +79,7 @@ void Engine::Game::update()
 {
 	while (window->isOpen())
 	{
-		auto local_last_state = state;
+		const auto local_last_state = state;
 		time.Tick();
 		sf::Event event;
 		handleEvent(event);
@@ -139,14 +139,15 @@ void Engine::Game::draw()
 	window->clear();
 	switch (state)
 	{
-	case Engine::Play:
+	case Play:
 		world->draw(*window);
 		break;
-	case Engine::UI:
+	case UI:
 		m->draw();
 		break;
-	case Engine::Pause:
+	case Pause:
 		break;
+	default: ;
 	}
 	Console::AppLog::Draw("LogConsole", &LogConsole, L);
 	ImGui::SFML::Render(*window);
@@ -198,16 +199,18 @@ void Engine::Game::handleEvent(sf::Event& e)
 			break;
 		case Engine::Pause:
 			break;
+		case Exits: break;
+		case StartGame: break;
+		case Resume: break;
+		case Loading: break;
+		default: ;
 		}
 
 		ImGui::SFML::ProcessEvent(e);
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde))
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && pressClock.getElapsedTime().asMilliseconds() > 500)
 	{
-		if (pressClock.getElapsedTime().asMilliseconds() > 500)
-		{
-			LogConsole = !LogConsole;
-			pressClock.restart();
-		}
+		LogConsole = !LogConsole;
+		pressClock.restart();
 	}
 }

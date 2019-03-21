@@ -28,7 +28,7 @@ namespace Engine
 		virtual void draw() = 0;
 		virtual void handleEvent(sf::Event&) = 0;
 		bool IsEnable() const { return isEnable; }
-		void activateOrDisable(int n = -1);
+		void activateOrDisable(const int n = -1);
 	};
 }
 
