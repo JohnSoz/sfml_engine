@@ -37,5 +37,5 @@ void Engine::JsonLoader::LoadFromPath(std::string path)
 	j.clear();
 	i >> j;
 	i.close();
-	current_json =  j.dump();
+	current_json = j.dump();
 }
