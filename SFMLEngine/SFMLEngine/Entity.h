@@ -74,7 +74,7 @@ namespace Engine
 				}
 			}
 		}
-		float scale = 0.2;
+		float scale = 0.2f;
 		//DebugWindows<Bullet> db;
 	public:
 		std::string shootersName;
@@ -112,7 +112,7 @@ namespace Engine
 			sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
 			//dw_o.draw("Object", true);
 			//db.draw("Bullet");
-			debug::debugDraw<Bullet, Object, Bullet>(this, "Bullet");
+			debug::debugDraw<Bullet, Object, Bullet>(this, name);
 		}
 		friend auto meta::registerMembers<Bullet>();
 	};

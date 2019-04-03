@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "imgui.h"
-#include "imgui-sfml.h"
+#include "imgui-SFML.h"
 #include "LogConsole.h"
 
 Engine::Game::Game(sf::RenderWindow& w)

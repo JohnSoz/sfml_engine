@@ -53,7 +53,8 @@ namespace Engine
 				std::string field;
 				if (typeid(type).name() == selected)
 				{
-					ImGui::Text(std::string(selected).c_str());
+					ImGui::Spacing();
+					ImGui::TextColored(ImVec4(.60,.35,.50,1.),std::string(selected).c_str());
 					ImGui::Separator();
 					auto ptr_type = (type*)ptr;
 					meta::doForAllMembers<type>(
@@ -95,7 +96,7 @@ namespace Engine
 								int size_x = spr->getSprite().getTextureRect().width;
 								int size_y = spr->getSprite().getTextureRect().height;
 								ImGui::Text("%.0fx%.0f", size_x, size_y);
-								ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), (sf::FloatRect)spr->getSprite().getTextureRect());
+								ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), static_cast<sf::FloatRect>(spr->getSprite().getTextureRect()));
 								ImGui::TreePop();
 							}
 							break;
@@ -162,10 +163,9 @@ namespace Engine
 						ImGui::TreePop();
 					}
 					else
-					{
 						if (!is_prev_treeNode_open)
 							selected = "";
-					}
+
 					ImGui::EndChild();
 					ImGui::SameLine();
 

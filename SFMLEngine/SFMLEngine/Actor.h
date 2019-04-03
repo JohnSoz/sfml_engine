@@ -65,7 +65,7 @@ namespace Engine
 		sf::Clock gunClock;
 		sf::Vector2f originOffset = {};
 		DirectionX direction;
-		DirectionY directionY;
+		DirectionY directionY = DirectionY::Up;
 		sf::RenderWindow* window;
 		//sf::Transformable PointOfFire;
 

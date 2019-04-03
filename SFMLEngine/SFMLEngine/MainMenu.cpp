@@ -14,7 +14,7 @@ void Engine::MainMenu::makeMenu(std::string& p)
 
 	groupArray.addWidget(makeCanvas(spr),"Canvas");
 
-	groupArray.addWidget(makeButton("Run", sf::Vector2f(220, 250), sf::Vector2f(150, 60),
+	groupArray.addWidget(makeButton("Play", sf::Vector2f(220, 250), sf::Vector2f(150, 60),
 		[&]()
 	{
 		EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::StartGame);

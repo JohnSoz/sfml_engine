@@ -23,7 +23,7 @@ namespace Engine
 			ObjectsArray.clear();
 		}
 
-		void handelEvent(sf::Event& e); 
+		void handelEvent(sf::Event& e);
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
 		void PushObject(Entity* obj);
@@ -49,7 +49,7 @@ namespace Engine
 				(*iter)->start();
 			}
 		}
-		void RenderObjects(sf::RenderWindow &WINDOW);
+		void RenderObjects(sf::RenderWindow& WINDOW);
 		void refresh();
 	};
 
@@ -63,28 +63,37 @@ namespace Engine
 		Level             level;
 		sf::RenderTexture renderTexture;
 		DebuggingSystem debug;
-		bool ShowOverlay = true;
+		bool ShowOverlay;
 
-		void handleEvent(sf::Event& event);
-		void draw(sf::RenderWindow& window);
-		void update(sf::RenderWindow& window, float time, sf::Event& event);
+
 		void Init(sf::RenderWindow& window);
 
 	public:
 		World()
 		{
 			renderTexture.create(1920, 1080);
+			ShowOverlay = true;
 		}
 		~World() = default;
+
+		void handleEvent(sf::Event& event);
+
+		void draw(sf::RenderWindow& window);
+
+		void update(sf::RenderWindow& window, float time, sf::Event& event);
 
 		void pushEntity(Entity* e)
 		{
 			debug.pushRectangle(e->getDebugRect());
 			objHandler.PushObject(e);
 		}
+
 		void start();
+
 		Level* getLevel() { return &level; }
+
 		ObjectHandler& getObjHendler() { return objHandler; }
+
 		friend class Game;
 	};
 

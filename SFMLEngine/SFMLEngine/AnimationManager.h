@@ -7,7 +7,7 @@ Contains the necessary classes to work with animations
 
 #include <SFML\Graphics.hpp>
 #include <list>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <fstream>
 #include <iostream>
 #include <math.h>
@@ -48,12 +48,12 @@ namespace Engine
 
 		AnimationXml() { looped = false; state = APause; }
 
-		sf::IntRect& tick(float time) override
+		sf::IntRect& tick(const float time) override
 		{
 			state = APlay;
-			frame += 0.003 * time;
+			frame += 0.003f * time;
 			if (frame > frameCount) { frame = 0; state = AEnd; }
-			return frames[frame];
+			return frames[static_cast<int>(frame)];
 		}
 	};
 	class AnimationJson : public Animation

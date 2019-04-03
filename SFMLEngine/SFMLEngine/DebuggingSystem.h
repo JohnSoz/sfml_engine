@@ -57,15 +57,15 @@ class DebuggingSystem
 	{
 		entites.push_back(e);
 	}
-	void levelObjects(std::vector<ObjectLevel> objs)
+	void levelObjects(const std::vector<ObjectLevel>& objs)
 	{
-		for (auto &const i : objs)
-			obj.push_back(pair(i.name, i.rect));
+		for (auto const& i : objs)
+			obj.emplace_back(i.name, i.rect);
 	}
-	void levelIsoObjects(std::vector<ObjectLevel> objs)
+	void levelIsoObjects(const std::vector<ObjectLevel>& objs)
 	{
-		for (auto &const i : objs)
-			iso_obj.push_back(pair(i.name, i.quad));
+		for (auto const& i : objs)
+			iso_obj.emplace_back(i.name, i.quad);
 	}
 	void handleEvent(sf::Event &event);
 };

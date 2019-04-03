@@ -55,15 +55,10 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
 		if (o->getType() == OActor)
 		{
 			auto z = static_cast<Actor*>(o);
-			sf::CircleShape shape(20);
-			sf::CircleShape shape2(2);
-			shape.setFillColor(sf::Color::Blue);
+			sf::CircleShape shape2(4);
 			shape2.setFillColor(sf::Color::Red);
-			shape2.setOrigin(1, 1);
-			shape.setOrigin(10, 10);
-			shape.setPosition(z->sprite.getOrigin());
+			shape2.setOrigin(2, 2);
 			shape2.setPosition(z->sprite.getPosition());
-			WINDOW.draw(shape);
 			WINDOW.draw(shape2);
 		}
 	}

@@ -3,7 +3,6 @@
 #include "EngineEvents.h"
 #include "JsonLoader.h"
 
-
 namespace Engine
 {
 	class Player : public Actor
@@ -13,6 +12,7 @@ namespace Engine
 		sf::Vector2f velocity;
 		Inventory inventory;
 		sf::Vector2f vec;
+		sf::Vector2f offset;
 		InventoryMenu inv;
 		float lives, armor;
 		float energy, friction, maxSpeed;
@@ -31,10 +31,9 @@ namespace Engine
 			inv.makeMenu(inventory);
 			lives = armor = 50;
 			speedX = speedY = 0;
-			energy = 0.003;
-			friction = 0.005;
-			maxSpeed = 0.2;
-			//dp.set(this);
+			energy = 0.003f;
+			friction = 0.005f;
+			maxSpeed = 0.2f;
 			onGround = true;
 		}
 
@@ -55,7 +54,7 @@ namespace Engine
 		{
 		}
 
-		void checkClashes(float time);
+		void checkClashes(const float& time);
 		void handleEvent(sf::Event& e) override;
 
 		Bullet* ShootUpdate(Level& lvl)
@@ -72,17 +71,16 @@ namespace Engine
 					auto pos = sprite.getPosition();
 					pos.y -= 10;
 					pos.x += 5;
-					return new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet", direction, item->getDamage(), lvl, name);
+					static int id;
+					++id;
+					return new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), direction, item->getDamage(), lvl, name);
 				}
 			}
 			isShoot = false;
 			return nullptr;
 		}
 
-		~Player()
-		{
-			save<Player>(*this);
-		}
+		~Player();
 
 		friend auto meta::registerMembers<Player>();
 	};
@@ -95,9 +93,12 @@ namespace meta
 		return members(
 			member("onGround", &Engine::Player::onGround),
 			member("friction", &Engine::Player::friction),
-			member("pos", &Engine::Player::vec),
-			member("energy", &Engine::Player::energy),
-			member("speedX", &Engine::Player::speedX),
-			member("speedY", &Engine::Player::speedY));
+			member("pos",      &Engine::Player::position),
+			member("isWalk", &Engine::Player::isWalk),
+			member("isCollision", &Engine::Player::isCollision),
+			member("energy",   &Engine::Player::energy),
+			member("offset", &Engine::Player::offset),
+			member("speedX",   &Engine::Player::speedX),
+			member("speedY",   &Engine::Player::speedY));
 	}
 } // namespace meta

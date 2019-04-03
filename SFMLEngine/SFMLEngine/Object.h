@@ -17,7 +17,7 @@ namespace Engine
 	/// Enumeration of the possible directions along the x-axis
 	enum DirectionX { Left = 1, Right };
 	/// Enumeration of the possible directions along the y-axis
-	enum DirectionY { Up = 1, Down };
+	enum DirectionY { Up = 1, onGround };
 
 	class Object
 	{

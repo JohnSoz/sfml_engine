@@ -5,7 +5,7 @@ using namespace std;
 void Engine::MusicPlayer::GetMusic()
 {
 	std::string path = "Music/";
-	for (auto & p : fs::directory_iterator(path))
+	for (auto& p : fs::directory_iterator(path))
 	{
 		auto fileName = p.path().filename().generic_string();
 		const size_t pos = fileName.find_last_of(".");
@@ -22,6 +22,7 @@ Engine::MusicPlayer::MusicPlayer()
 
 void Engine::MusicPlayer::Play()
 {
+	Console::AppLog::addLog("Play music(" + (*iter).first + ")", Console::logType::system);
 	(*iter).second->play();
 }
 
@@ -32,14 +33,14 @@ void Engine::MusicPlayer::NextSong()
 		(*iter).second->stop();
 		iter++;
 		(*iter).second->setVolume(volume);
-		(*iter).second->play();
+		Play();
 	}
 	else
 	{
 		(*iter).second->stop();
 		iter = musList.begin();
 		(*iter).second->setVolume(volume);
-		(*iter).second->play();
+		Play();
 	}
 }
 
@@ -63,7 +64,7 @@ void Engine::MusicPlayer::PlaySongByName(std::string_view name)
 		if (musList[i].first == name)
 		{
 			iter += i;
-			(*iter).second->play();
+			Play();
 		}
 	}
 }
@@ -91,7 +92,7 @@ std::vector<std::string> Engine::MusicPlayer::GetMusList()
 	return vec;
 }
 
-std::pair<std::string, sf::Music*> * Engine::MusicPlayer::GetCurrMus() const
+std::pair<std::string, sf::Music*>* Engine::MusicPlayer::GetCurrMus() const
 {
 	return &(*iter);
 }
@@ -105,12 +106,12 @@ void Engine::SongPlayer::addSound(std::pair<std::string, sf::Sound*> sound)
 
 void Engine::SongPlayer::LoadSoundFromJson(std::string_view path)
 {
-	JsonLoader json;
-	json.LoadFromPath(path.data());
+	//JsonLoader json;
+	//json.LoadFromPath(path.data());
 }
 
 void Engine::SongPlayer::Play(std::string_view name)
 {
-	auto s = std::find_if(begin(arraySound), end(arraySound), [name](const auto& sound) { return (sound.first == name); });
+	auto s = std::find_if(begin(arraySound), end(arraySound), [name](const auto & sound) { return (sound.first == name); });
 	(*s).second->play();
 }

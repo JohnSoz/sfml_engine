@@ -1,9 +1,10 @@
 local openWindow = false
 local openWindow2 = false
 
+local x = 0; 
 
-a = A('TestLua#2',200,200)--
-a:addText('asd')
+a = A('TestLua#2',200,200)
+a:addText('213')
 a:addWindow(openWindow)
 
 if openWindow == true then

@@ -46,7 +46,7 @@ namespace Engine
 			type = ItemType::gun;
 		}
 
-		int getDamage() const { return (int)damage; }
+		float getDamage() const { return damage; }
 		int getRate() const { return (int)RateOfFire; }
 
 	private:
@@ -148,12 +148,12 @@ namespace Engine
 
 		void nextItem() { (curr_item != inv.end()) ? curr_item = inv.begin() : curr_item++; }
 
-		std::string getItemName(int num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
+		std::string getItemName(size_t num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
 
 		template<class T>
-		T* getItem(int index)
+		T* getItem(const int index)
 		{
-			assert((index > inv.size()) == false, "out of range");
+			assert((static_cast<size_t>(index) > inv.size()) == false, "out of range");
 			return dynamic_cast<T*>(inv[index]);
 		}
 
@@ -193,7 +193,7 @@ namespace Engine
 
 		int getIndexItem(std::string_view name)
 		{
-			for (auto i = 0; i < inv.size(); ++i)
+			for (size_t i = 0; i < inv.size(); ++i)
 				if (inv[i]->getName() == name)
 					return i;
 		}

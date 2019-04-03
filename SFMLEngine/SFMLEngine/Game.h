@@ -72,30 +72,30 @@ namespace Engine
 	class Game : public entityx::Receiver<Game>
 	{
 	private:
-		World*				world;
-		Engine::MainMenu*	m;
-		MusicPlayer         musicPlayer;
-		A*                  testWindow;
-		Engine::Client c;
+		World*      world;
+		MainMenu*   m;
+		MusicPlayer musicPlayer;
+		A*          testWindow;
+		Client      c;
 
-		lua_State*          L;
-		LuaEngine           lua_eng;
+		lua_State*      L;
+		LuaEngine       lua_eng;
 		RenderWindow*   window;
-		sf::ContextSettings settings;
-		std::string		    appname;
-		std::string         path;
+		ContextSettings settings;
+		std::string     appname;
+		std::string     path;
 
-		sf::Clock           deltaClock;
-		sf::Clock           pressClock;
-		timer			    time;
+		Clock deltaClock;
+		Clock pressClock;
+		timer time;
 
-		Camera              camera;
-		appState		    state;
-		appState            lastState;
+		Camera   camera;
+		appState state;
+		appState lastState;
 
-		bool                showConsole = false;
-		bool                LogConsole = false;
-		bool                isStateChange;
+		bool showConsole = false;
+		bool LogConsole = false;
+		bool isStateChange;
 
 	public:
 		Game(sf::RenderWindow& w);
