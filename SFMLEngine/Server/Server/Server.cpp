@@ -5,7 +5,7 @@ using namespace std;
 Server::Server()
 {
 	cout << "Server Running" << endl;
-	listener.listen(5005	);
+	listener.listen(5005);
 	selector.add(listener);
 }
 
@@ -17,7 +17,7 @@ void Server::Start()
 		{
 			if (selector.isReady(listener))
 			{
-				TcpSocket *socket = new TcpSocket;
+				TcpSocket* socket = new TcpSocket;
 				listener.accept(*socket);
 				Packet packet;
 				string PlayerName;
@@ -78,7 +78,6 @@ void Server::Start()
 								packet >> xa;
 								std::cout << "PacketType = " << type << " PosX: " << xa << " PosY: " << xz << std::endl;
 							}
-
 						}
 						else
 						{
@@ -99,5 +98,3 @@ Server::~Server()
 	for (auto c : clients)
 		delete c.second;
 }
-
-

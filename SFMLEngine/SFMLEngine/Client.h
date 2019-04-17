@@ -18,7 +18,8 @@ namespace Engine
 	enum PacketType {
 		message = 1,
 		position,
-		status
+		status,
+		info
 	};
 
 	class Client

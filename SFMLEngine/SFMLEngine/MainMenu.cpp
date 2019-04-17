@@ -6,7 +6,6 @@ namespace fs = std::experimental::filesystem;
 
 void Engine::MainMenu::makeMenu(std::string& p)
 {
-
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
 	sf::Texture t;
 	t.loadFromFile("Data/images/bg.png");
@@ -35,8 +34,6 @@ void Engine::MainMenu::makeMenu(std::string& p)
 		p += groupArray[0]->get<tgui::ListBox>("TestListBox2")->getSelectedItem();
 		Console::AppLog::addLog(p, Console::info);
 	}), "TestListBox2");
-
-
 
 	tgui::ListBox::Ptr listBox = groupArray[0]->get<tgui::ListBox>("TestListBox2");
 	std::string path = "Data\\Level";

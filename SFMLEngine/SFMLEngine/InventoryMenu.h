@@ -4,6 +4,7 @@
 #include "LogConsole.h"
 #include <entityx/entityx.h>
 #include "EngineEvents.h"
+#include "GuiEditor.h"
 using namespace entityx;
 
 namespace Engine
@@ -11,9 +12,10 @@ namespace Engine
 	class InventoryMenu : public BaseGui, public Receiver<InventoryMenu>
 	{
 		Gui gui;
+		GuiEditor g;
 	public:
 		InventoryMenu() = delete;
-		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme)
+		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme), g(*this)
 		{
 			gui.setTarget(w);
 			sf::Font font;
@@ -43,15 +45,15 @@ namespace Engine
 			int h = 0;
 			tgui::Theme theme;
 			theme.load("Data/GUI/MyUI/MainMenu.txt");
-			std::vector <tgui::Button::Ptr> buttonArray;
+			std::vector<tgui::Button::Ptr> buttonArray;
 			auto grid = tgui::Grid::create();
 
 			tgui::ToolTip::setTimeToDisplay(sf::milliseconds(200));
 			tgui::ToolTip::setDistanceToMouse({ 20, 20 });
 
-			auto panel = tgui::ScrollablePanel::create({ 813, 530 });
-			panel->setVerticalScrollbarPolicy(ScrollablePanel::ScrollbarPolicy::Automatic);
-			panel->setPosition(590, 310);
+			auto container_ = tgui::Group::create({ 813, 530 });
+			container_->setPosition({ 590, 310 });
+
 			for (int i = 0; i < inv.getSize(); i++)
 			{
 				if (w >= 6)
@@ -78,15 +80,15 @@ namespace Engine
 			{
 				w->connect("pressed", [&]()
 				{
-					auto wid = w->cast<tgui::Button>();
+					//auto wid = w->cast<tgui::Button>();
 					auto gun_name = w->getUserData<std::string>();
 					inv.setItemByName(gun_name);
 					std::string log = "Button " + inv.getCurrItem<Gun>()->getName();
 					Console::AppLog::addLog(log, Console::logType::info);
 				});
 			}
-			panel->add(grid);
-			groupArray.addWidget(panel, "InventoryContainer");
+			container_->add(grid);
+			groupArray.addWidget(container_, "InventoryContainer");
 			activateOrDisable();
 		}
 
@@ -103,6 +105,7 @@ namespace Engine
 
 		void draw() override
 		{
+			//g.drawEditor();
 			gui.draw();
 		}
 

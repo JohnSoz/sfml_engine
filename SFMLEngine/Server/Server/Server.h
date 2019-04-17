@@ -25,6 +25,7 @@ private:
 public:
 	Server();
 	void Start();
+	int makeUniqueId() { static int id; return ++id; }
 	~Server();
 };
 

@@ -23,10 +23,7 @@ namespace nlohmann
 	json serialize_basic(const sf::Vector2<T>& obj);
 
 	template <typename T>
-	void to_json(json& j, const sf::Vector2<T>& obj)
-	{
-		j = serialize(obj);
-	}
+	void to_json(json& j, const sf::Vector2<T>& obj) { j = serialize(obj); }
 
 	template <typename Class,
 		typename>

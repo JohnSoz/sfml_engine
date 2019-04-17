@@ -9,17 +9,15 @@ Engine::Game::Game(sf::RenderWindow& w)
 	window = &w;
 	world = new World();
 	time.setDelta(600);
-	initMenu(w);
-	m->makeMenu(path);
 	testWindow = new A("TestLua");
 	isStateChange = false;
-
 	EventManager::eventManager.subscribe<Events::Main_Menu_Event>(*this);
 }
 
 void Engine::Game::initMenu(sf::RenderWindow& w)
 {
 	m = new Engine::MainMenu("Data/GUI/MyUI/MainMenu.txt", w);
+	m->makeMenu(path);
 }
 
 void Engine::Game::receive(const Events::Main_Menu_Event& event)
@@ -33,13 +31,14 @@ Engine::Game::~Game()
 {
 	lua_close(L);
 	delete world;
+	delete m;
 	delete testWindow;
 }
 
 void Engine::Game::startGame()
 {
-
 	Console::AppLog::addLog("Engine::Game::startGame()", Console::info);
+	initMenu(*window);
 	L = luaL_newstate();
 	luaL_openlibs(L);
 	luabridge::getGlobalNamespace(L)
@@ -72,7 +71,7 @@ void Engine::Game::startGame()
 	lua_setglobal(L, "L_Client");
 
 	testWindow->addText("Text From C++");
-	musicPlayer.Play();
+	//musicPlayer.Play();
 }
 
 void Engine::Game::update()

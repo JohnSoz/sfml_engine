@@ -1,17 +1,14 @@
 #pragma once
 #include "Gui.h"
-
+#include "GuiEditor.h"
 namespace Engine
 {
-	class MainMenu //: public GUI
+	class MainMenu final : public BaseGui
 	{
 	private:
-		GroupArray groupArray;
-		Gui gui;
-
+		GuiEditor gEditor;
 	public:
-		MainMenu() = default;
-		MainMenu(std::string pathToTheme, sf::RenderWindow& w) : groupArray(w, pathToTheme)
+		MainMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme), gEditor(*this)
 		{
 			gui.setTarget(w);
 			sf::Font font;
@@ -20,12 +17,13 @@ namespace Engine
 			gui.add(groupArray[0]);
 		}
 		void makeMenu(std::string&);
-		void draw()
+		void draw() override
 		{
+			gEditor.drawEditor();
 			gui.draw();
 		}
 		void update() {}
-		void handleEvent(sf::Event& e)
+		void handleEvent(sf::Event& e)override
 		{
 			gui.handleEvent(e);
 		}
