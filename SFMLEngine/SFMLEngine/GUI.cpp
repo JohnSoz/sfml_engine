@@ -57,6 +57,10 @@ void Engine::BaseGui::save(std::string_view path)
 			widget["Size"]["x"] = w_ptr->getSize().x;
 			widget["Size"]["y"] = w_ptr->getSize().y;
 			widget["IsVisible"] = w_ptr->isVisible();
+			if (group.second->getWidgetType() == "Picture")
+			{
+				
+			}
 		}
 	}
 	o << std::setw(4) << j;
@@ -73,6 +77,7 @@ void Engine::BaseGui::load(std::string_view path)
 	{
 		Console::AppLog::addLog("Group: " + item.key(), Console::info);
 		auto group = this->get_group_array().addGroup(item.key());
+		gui.add(group, item.key());
 		if (item.value().is_object())
 			for (const auto& item2 : item.value().items()) //Widget name
 			{
@@ -90,28 +95,26 @@ void Engine::BaseGui::load(std::string_view path)
 
 				auto isVisible = item2.value().at("IsVisible").get<bool>();
 
-				tgui::Widget::Ptr widget;
+				Widget::Ptr widget;
 
 				if (Type == "Button")
 				{
-					widget = tgui::Button::create();
+					widget = makeButton(item2.key(), { posX, posY }, { sizeX, sizeX });
 				}
-				else if ("Canvas")
+				else if (Type == "Canvas")
 				{
-					widget = tgui::Canvas::create();
+					//widget = makeCanvas(item2.key(), { posX, posY }, { sizeX, sizeX });
 				}
-				else if ("TextBox")
+				else if (Type == "TextBox")
 				{
-					widget = tgui::TextBox::create();
+					widget = makeTextBox(item2.key(), { posX, posY }, { sizeX, sizeX });
 				}
-				else if ("ListBox")
+				else if (Type == "ListBox")
 				{
-					widget = tgui::ListBox::create();
+					widget = makeListBox({ item2.key() }, { posX, posY }, { sizeX, sizeX });
 				}
-				widget->setPosition(posX, posY);
-				widget->setSize(sizeX, sizeX);
 				widget->setVisible(isVisible);
-				group->add(widget, item2.key());
+				groupArray.addWidget(widget, item2.key(), item.key());
 			}
 	}
 }

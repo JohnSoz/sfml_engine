@@ -2,7 +2,7 @@
 using namespace Engine;
 #define TextSize 18
 
-std::pair<tgui::Button::Ptr, std::string> Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f)
+tgui::Button::Ptr Engine::makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f)
 {
 	auto Button = tgui::Button::create();
 	POS.x -= SIZE.x / 2;
@@ -13,11 +13,11 @@ std::pair<tgui::Button::Ptr, std::string> Engine::makeButton(std::string TEXT, s
 	if (f)
 		Button->connect("Pressed", f);
 	Button->setSize(SIZE);
-	return std::pair(Button, "Button");
+	return Button;
 }
 
 
-std::pair<tgui::Button::Ptr, std::string> Engine::makeButton(std::string TEXT, pair_s pos, sf::Vector2f SIZE, std::function<void()> f)
+tgui::Button::Ptr Engine::makeButton(std::string TEXT, pair_s pos, sf::Vector2f SIZE, std::function<void()> f)
 {
 	auto Button = tgui::Button::create();
 	Button->setPosition(pos.first, pos.second);
@@ -27,10 +27,10 @@ std::pair<tgui::Button::Ptr, std::string> Engine::makeButton(std::string TEXT, p
 	if (f)
 		Button->connect("Pressed", f);
 	Button->setSize(SIZE);
-	return std::pair(Button, "Button");
+	return Button;
 }
 
-std::pair<tgui::TextBox::Ptr, std::string> Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos)
+tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos)
 {
 	auto textbox = tgui::TextBox::create();
 	textbox->setSize(SIZE);
@@ -40,10 +40,10 @@ std::pair<tgui::TextBox::Ptr, std::string> Engine::makeTextBox(std::string TEXT,
 	pos.y -= SIZE.y / 2;
 	textbox->setPosition(pos);
 	textbox->addText(TEXT);
-	return std::pair(textbox, "TextBox");
+	return textbox;
 }
 
-std::pair<tgui::ListBox::Ptr, std::string> Engine::makeListBox(std::vector<std::string> items, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f, int itemHeight)
+tgui::ListBox::Ptr Engine::makeListBox(std::vector<std::string> items, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f, int itemHeight)
 {
 
 	auto listBox = tgui::ListBox::create();
@@ -55,13 +55,17 @@ std::pair<tgui::ListBox::Ptr, std::string> Engine::makeListBox(std::vector<std::
 		listBox->addItem(item);
 	if (f != nullptr)
 		listBox->connect("ItemSelected", f);
-	return std::pair(listBox, "ListBox");
+	return listBox;
 }
 
 
-tgui::Canvas::Ptr Engine::makeCanvas(sf::Sprite spr, sf::Vector2f size)
+tgui::Canvas::Ptr Engine::makeCanvas(std::string_view path, sf::Vector2f size)
 {
+	sf::Texture t;
+	t.loadFromFile(path.data());
+	sf::Sprite spr(t);
 	auto canvas = tgui::Canvas::create(size);
+	canvas->setUserData(spr);
 	canvas->setPosition(0, 0);
 	canvas->clear();
 	canvas->draw(spr);
@@ -69,9 +73,12 @@ tgui::Canvas::Ptr Engine::makeCanvas(sf::Sprite spr, sf::Vector2f size)
 	return canvas;
 }
 
-tgui::Picture::Ptr Engine::makePicture(sf::Texture & tex, sf::Vector2f pos, sf::Vector2f size, float opacity)
+tgui::Picture::Ptr Engine::makePicture(std::string_view path, sf::Vector2f pos, sf::Vector2f size, float opacity)
 {
+	sf::Texture tex;
+	tex.loadFromFile(path.data());
 	auto picture = tgui::Picture::create(tex, true);
+	picture->setUserData(tex);
 	picture->setSize(size);
 	picture->setPosition(pos);
 	picture->setInheritedOpacity(opacity);

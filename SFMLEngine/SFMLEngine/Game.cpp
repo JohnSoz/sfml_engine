@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "LogConsole.h"
+#include "staticVariable.h"
 
 Engine::Game::Game(sf::RenderWindow& w)
 {
@@ -212,4 +213,10 @@ void Engine::Game::handleEvent(sf::Event& e)
 		LogConsole = !LogConsole;
 		pressClock.restart();
 	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::F1) && pressClock.getElapsedTime().asMilliseconds() > 500)
+	{
+		VStaticContainer::ShowGuiEditor = !VStaticContainer::ShowGuiEditor;
+		pressClock.restart();
+	}
+	
 }

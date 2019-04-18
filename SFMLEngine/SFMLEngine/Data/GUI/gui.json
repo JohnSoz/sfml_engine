@@ -3,11 +3,11 @@
         "ExitButton": {
             "IsVisible": true,
             "Position": {
-                "x": 305.0,
+                "x": 355.0,
                 "y": 220.0
             },
             "Size": {
-                "x": 150.0,
+                "x": 200.0,
                 "y": 60.0
             },
             "Type": "Button"
@@ -16,25 +16,13 @@
             "IsVisible": true,
             "Position": {
                 "x": 900.0,
-                "y": 10.0
+                "y": 100.0
             },
             "Size": {
                 "x": 120.0,
                 "y": 60.0
             },
             "Type": "TextBox"
-        },
-        "TestListBox2": {
-            "IsVisible": true,
-            "Position": {
-                "x": 400.0,
-                "y": 600.0
-            },
-            "Size": {
-                "x": 250.0,
-                "y": 150.0
-            },
-            "Type": "ListBox"
         }
     }
 }

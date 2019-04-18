@@ -6,5 +6,6 @@ namespace Engine
 		static bool ShowDebugWindow;
 		static bool anyImGuiWindowOpen;
 		static bool windowIsActive;
+		static bool ShowGuiEditor;
 	};
 }

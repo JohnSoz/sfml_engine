@@ -12,10 +12,10 @@ namespace Engine
 	class InventoryMenu : public BaseGui, public Receiver<InventoryMenu>
 	{
 		Gui gui;
-		GuiEditor g;
+		//GuiEditor g;
 	public:
 		InventoryMenu() = delete;
-		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme), g(*this)
+		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme)
 		{
 			gui.setTarget(w);
 			sf::Font font;
@@ -33,13 +33,9 @@ namespace Engine
 		void makeMenu(Inventory& inv)
 		{
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
-			sf::Texture t;
-			t.loadFromFile("Data/images/bgTest.png");
-			groupArray.addWidget(makePicture(t, { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
 
-			sf::Texture tex;
-			tex.loadFromFile("Data/images/invBG.png");
-			groupArray.addWidget(makePicture(tex, { 300,300 }, { 1092,548 }), "InvBG");
+			groupArray.addWidget(makePicture("Data/images/bgTest.png", { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
+			groupArray.addWidget(makePicture("Data/images/invBG.png", { 300,300 }, { 1092,548 }), "InvBG");
 
 			int w = 0;
 			int h = 0;
@@ -80,7 +76,6 @@ namespace Engine
 			{
 				w->connect("pressed", [&]()
 				{
-					//auto wid = w->cast<tgui::Button>();
 					auto gun_name = w->getUserData<std::string>();
 					inv.setItemByName(gun_name);
 					std::string log = "Button " + inv.getCurrItem<Gun>()->getName();

@@ -7,11 +7,8 @@ namespace fs = std::experimental::filesystem;
 void Engine::MainMenu::makeMenu(std::string& p)
 {
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
-	sf::Texture t;
-	t.loadFromFile("Data/images/bg.png");
-	sf::Sprite spr(t);
 
-	groupArray.addWidget(makeCanvas(spr),"Canvas");
+	groupArray.addWidget(makeCanvas("Data/images/bg.png"),"Canvas");
 
 	groupArray.addWidget(makeButton("Play", sf::Vector2f(220, 250), sf::Vector2f(150, 60),
 		[&]()

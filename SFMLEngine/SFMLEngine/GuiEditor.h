@@ -184,9 +184,7 @@ namespace Engine
 					ImGui::Indent(ImGui::GetWindowSize().x - 100.f);
 					if (ImGui::Button("ADD", { 60.f, 40.f }))
 					{
-						sf::Texture t;
-						t.loadFromFile(buffer_path);
-						auto pic = makePicture(t, pos, size);
+						auto pic = makePicture(buffer_path, pos, size);
 						ptrGui->groupArray.addWidget(pic, buffer_name, buffer_groupType);
 						strcpy_s(buffer_name, "");
 						strcpy_s(buffer_groupType, "");

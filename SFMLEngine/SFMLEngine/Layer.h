@@ -25,7 +25,7 @@ namespace Engine
 		auto end() { return groups.end(); }
 
 		Group::Ptr addGroup(std::string name) { groups.emplace_back(name, Group::create()); return (*(this->end() - 1)).second; }
-		void addWidget(std::pair<Widget::Ptr, std::string> widget, std::string wName, std::string_view groupName = "Default");
+		//void addWidget(std::pair<Widget::Ptr, std::string> widget, std::string wName, std::string_view groupName = "Default");
 		void addWidget(Widget::Ptr wPtr, std::string wName, std::string_view groupName = "Default");
 
 

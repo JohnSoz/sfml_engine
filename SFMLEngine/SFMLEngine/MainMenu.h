@@ -1,6 +1,8 @@
 #pragma once
 #include "Gui.h"
 #include "GuiEditor.h"
+#include "staticVariable.h"
+
 namespace Engine
 {
 	class MainMenu final : public BaseGui
@@ -19,7 +21,8 @@ namespace Engine
 		void makeMenu(std::string&);
 		void draw() override
 		{
-			gEditor.drawEditor();
+			if (VStaticContainer::ShowGuiEditor)
+				gEditor.drawEditor();
 			gui.draw();
 		}
 		void update() {}
