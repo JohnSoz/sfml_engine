@@ -1,17 +1,25 @@
 {
-    "energy": 0.003000000026077032,
-    "friction": 0.004999999888241291,
-    "isCollision": false,
-    "isWalk": false,
-    "offset": {
-        "X": -128.0,
-        "Y": -0.0450439453125
+    "class Engine::Actor": {
+        "isCollision": true,
+        "isWalk": false,
+        "originOffset": {
+            "X": 8.0,
+            "Y": 16.0
+        }
     },
-    "onGround": false,
-    "pos": {
-        "X": 121.0,
-        "Y": 721.0
-    },
-    "speedX": 0.0,
-    "speedY": 0.0
+    "class Engine::Player": {
+        "energy": 0.003000000026077032,
+        "friction": 0.004999999888241291,
+        "offset": {
+            "X": -128.0,
+            "Y": -0.03125
+        },
+        "onGround": true,
+        "pos": {
+            "X": 121.0,
+            "Y": 721.0431518554688
+        },
+        "speedX": 0.0,
+        "speedY": 0.0
+    }
 }

@@ -1,5 +1,5 @@
-#include "Player.h"
 #include <entityx/entityx.h>
+#include "Player.h"
 using namespace Engine;
 
 void Player::isKeyPressed()
@@ -44,7 +44,7 @@ void Player::isKeyPressed()
 		}
 }
 
-void Player::RotateToMouse(float speed, RenderWindow & w)
+void Player::RotateToMouse(float speed, RenderWindow& w)
 {
 	LastAngle = sprite.getRotation();
 
@@ -165,7 +165,7 @@ void Player::checkClashes(const float& time)
 	}
 }
 
-void Engine::Player::handleEvent(sf::Event & e)
+void Engine::Player::handleEvent(sf::Event& e)
 {
 	if (inv.IsEnable())
 		inv.handleEvent(e);
@@ -174,5 +174,5 @@ void Engine::Player::handleEvent(sf::Event & e)
 
 Player::~Player()
 {
-	save<Player>(*this);
+	save<Player, Player, Actor>(*this);
 }

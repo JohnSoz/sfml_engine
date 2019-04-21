@@ -7,18 +7,19 @@ using namespace Engine;
 
 Client::Client()
 {
-	IP = IpAddress::getLocalAddress();
+	IP = sf::IpAddress("18.185.27.153");
 	std::srand((int)time(nullptr));
 	Name = "Player#" + std::to_string(std::rand() % 100);
 	thread = std::move(connect(std::bind(&Client::onConnect, this)));
 }
 
+//TODO: Если приняли пакет, то вызываем обработчик пакета в отдельном потоке 
 void Client::recivePacket()
 {
 	std::mutex g_i_mutex;
 	sf::Packet p;
 	std::lock_guard<std::mutex> lock(g_i_mutex);
-	if (socket.receive(p) == sf::Socket::Done)
+	if (socket.receive(p) == sf::Socket::Done)	
 	{
 		std::string recive;
 		p >> recive;
@@ -47,7 +48,7 @@ Client::~Client()
 std::thread Engine::Client::connect(std::function<void()> callback)
 {
 	sf::Packet packet;
-	status = socket.connect(IP, 5005);
+	status = socket.connect(IP, 80);
 	if (status != Socket::Error)
 	{
 		packet << Name;
@@ -59,7 +60,7 @@ std::thread Engine::Client::connect(std::function<void()> callback)
 	}
 	else
 	{
-		Console::AppLog::addLog("Connect to 127.0.0.1:2000 failed", Console::error);
+		Console::AppLog::addLog("Connect to 18.185.27.153:2000 failed", Console::error);
 		return std::thread();
 	}
 
@@ -72,7 +73,7 @@ void Engine::Client::onRecivePacket(sf::Packet packet)
 
 void Engine::Client::onConnect()
 {
-	Console::AppLog::addLog("Connect to 127.0.0.1:2000 success", Console::info);
+	Console::AppLog::addLog("Connect to 18.185.27.153 success", Console::info);
 	while (status != sf::Socket::Disconnected)
 	{
 		recivePacket();
@@ -81,7 +82,7 @@ void Engine::Client::onConnect()
 
 void Engine::Client::disckonnect()
 {
-	Console::AppLog::addLog("Disconnect from 127.0.0.1:2000", Console::info);
+	Console::AppLog::addLog("Disconnect from 18.185.27.153:2000", Console::info);
 	status = sf::Socket::Disconnected;
 	sendPacket(3, sf::Socket::Disconnected);
 	socket.disconnect();

@@ -1,8 +1,9 @@
 #pragma once
-#include <MetaStuff/Meta.h>
-#include "json.hpp"
-#include <SFML/Graphics/Vertex.hpp>
 #include <fstream>
+#include <MetaStuff/Meta.h>
+#include <SFML/Graphics/Vertex.hpp>
+#include "json.hpp"
+
 using json = nlohmann::json;
 using namespace nlohmann;
 namespace nlohmann
@@ -24,6 +25,8 @@ namespace nlohmann
 
 	template <typename T>
 	void to_json(json& j, const sf::Vector2<T>& obj) { j = serialize(obj); }
+
+	
 
 	template <typename Class,
 		typename>
@@ -77,11 +80,18 @@ namespace Engine
 		j = serialize(obj);
 	}
 
-	template<class T>
+	template<class Base>
+	void helper(json& j, Base& obj)
+	{
+		j = obj;
+	}
+
+	template<class T, class... Types>
 	void save(T& obj)
 	{
 		json j;
-		j = obj;
+		(helper<Types>(j[typeid(Types).name()], obj), ...);
+		//j = obj;
 		std::ofstream o("Data/save.json");
 		o << std::setw(4) << j;
 		o.close();

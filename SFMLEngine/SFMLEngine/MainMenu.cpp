@@ -7,24 +7,31 @@ namespace fs = std::experimental::filesystem;
 void Engine::MainMenu::makeMenu(std::string& p)
 {
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
-
+		
 	groupArray.addWidget(makeCanvas("Data/images/bg.png"),"Canvas");
 
-	groupArray.addWidget(makeButton("Play", sf::Vector2f(220, 250), sf::Vector2f(150, 60),
+	groupArray.addWidget(makeButton("Play", sf::Vector2f(380, 360), sf::Vector2f(220, 100),
 		[&]()
 	{
 		EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::StartGame);
 	}
 	), "RunButton");
 
-	groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 250), sf::Vector2f(150, 60),
+	groupArray.addWidget(makeButton("Settings", sf::Vector2f(380, 490), sf::Vector2f(220, 100),
+		[&]()
+	{
+		//ƒелай что-то
+	}
+	), "SettingsButton");
+
+	groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 620), sf::Vector2f(220, 100),
 		[&]()
 	{
 		EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Exits);
 	}
 	), "ExitButton");
 
-	groupArray.addWidget(makeListBox({}, sf::Vector2f(400, 600), sf::Vector2f(250, 150),
+	/*groupArray.addWidget(makeListBox({}, sf::Vector2f(400, 600), sf::Vector2f(250, 150),
 		[&]()
 	{
 		p = "Data/Level/";
@@ -43,6 +50,6 @@ void Engine::MainMenu::makeMenu(std::string& p)
 			fileName.erase(pos, 4);
 			listBox->addItem(fileName);
 		}
-	}
-	groupArray.addWidget(makeTextBox("TestMenu", sf::Vector2f(120, 60), sf::Vector2f(960, 40)), "RandomBox");
+	}*/
+	groupArray.addWidget(makeTextBox(" *GameName*", sf::Vector2f(256, 80), sf::Vector2f(960, 80)), "RandomBox");
 }

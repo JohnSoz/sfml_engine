@@ -5,27 +5,31 @@
 #include<string>
 #include<vector>
 #include<conio.h>
+#include "imgui.h"
+#include "imgui-SFML.h"
 using namespace sf;
 using namespace std;
 
 class Server
 {
 private:
-	enum PacketType 
+	enum PacketType
 	{
-		message=1,
+		message = 1,
 		position,
 		status
 	};
 	TcpListener listener;
 	SocketSelector selector;
 	vector<pair<string, TcpSocket*>> clients;
+	vector<pair<std::string, std::string>> users_debug;
 	bool done = false;
 	size_t port;
 public:
 	Server();
 	void Start();
 	int makeUniqueId() { static int id; return ++id; }
+
 	~Server();
 };
 

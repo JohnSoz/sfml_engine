@@ -103,7 +103,6 @@ namespace meta
 	inline auto registerMembers<Engine::Actor>()
 	{
 		return members(
-			member("direction", &Engine::Actor::direction),
 			member("isCollision", &Engine::Actor::isCollision),
 			member("isWalk", &Engine::Actor::isWalk),
 			member("originOffset", &Engine::Actor::originOffset)

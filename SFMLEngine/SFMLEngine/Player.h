@@ -22,7 +22,7 @@ namespace Engine
 	public:
 		Player(Image& IMAGE, sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl)
 			: Actor(IMAGE, POSITION, NAME, w, lvl),
-			  inv("Data/GUI/MyUI/MainMenu.txt", w)
+			inv("Data/GUI/MyUI/MainMenu.txt", w)
 		{
 			vec.x = 12;
 			EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
@@ -93,12 +93,10 @@ namespace meta
 		return members(
 			member("onGround", &Engine::Player::onGround),
 			member("friction", &Engine::Player::friction),
-			member("pos",      &Engine::Player::position),
-			member("isWalk", &Engine::Player::isWalk),
-			member("isCollision", &Engine::Player::isCollision),
-			member("energy",   &Engine::Player::energy),
+			member("pos", &Engine::Player::position),
+			member("energy", &Engine::Player::energy),
 			member("offset", &Engine::Player::offset),
-			member("speedX",   &Engine::Player::speedX),
-			member("speedY",   &Engine::Player::speedY));
+			member("speedX", &Engine::Player::speedX),
+			member("speedY", &Engine::Player::speedY));
 	}
 } // namespace meta

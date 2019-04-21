@@ -34,12 +34,12 @@ tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::
 {
 	auto textbox = tgui::TextBox::create();
 	textbox->setSize(SIZE);
-	textbox->setEnabled(true);
-	textbox->setTextSize(TextSize);
+	textbox->setEnabled(false);
+	textbox->setTextSize(36);
 	pos.x -= SIZE.x / 2;
 	pos.y -= SIZE.y / 2;
 	textbox->setPosition(pos);
-	textbox->addText(TEXT);
+	textbox->setText(TEXT);
 	return textbox;
 }
 

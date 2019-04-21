@@ -95,15 +95,30 @@ namespace Engine
 			{
 				auto w = ptrGui->groupArray.get(groupName)->get(selected);
 
+				ImGui::Text(("Type: " + w->getWidgetType()).c_str());
+				
 				if (ImGui::TreeNode("Position"))
 				{
-					sf::Vector2f pos = w->getPosition();
-					ImGui::DragFloat("Pos.x", &pos.x, 1.f, 0.f, 1920.f);
-					ImGui::DragFloat("Pos.y", &pos.y, 1.f, 0.f, 1080.f);
-					if (pos != w->getPosition())
-						w->setPosition(pos);
+					auto new_pos = w->getPosition();
+					auto w_pos   = w->getPosition();
+
+					new_pos.x += w->getSize().x / 2;
+					new_pos.y += w->getSize().y / 2;
+					w_pos.x   += w->getSize().x / 2;
+					w_pos.y   += w->getSize().y / 2;
+
+					ImGui::DragFloat("Pos.x", &new_pos.x, 1.f, 0.f, 1920.f);
+					ImGui::DragFloat("Pos.y", &new_pos.y, 1.f, 0.f, 1080.f);
+
+					if (new_pos != w_pos)
+					{
+						new_pos.x -= w->getSize().x / 2;
+						new_pos.y -= w->getSize().y / 2;
+						w->setPosition(new_pos);
+					}
 					ImGui::TreePop();
 				}
+
 				if (ImGui::TreeNode("Size"))
 				{
 					sf::Vector2f size = w->getSize();
@@ -113,6 +128,12 @@ namespace Engine
 						w->setSize(size);
 					ImGui::TreePop();
 				}
+
+				float opacity = w->getInheritedOpacity();
+				ImGui::PushItemWidth(80.f);
+				ImGui::DragFloat("Opacity", &opacity, 0.01f, 0.f, 1.f);
+				ImGui::PopItemWidth();
+				w->setInheritedOpacity(opacity);
 
 				bool vis = w->isVisible();
 				if (ImGui::Checkbox("isVisible", &vis))
@@ -210,7 +231,7 @@ namespace Engine
 			{
 				ptrGui->groupArray.addGroup(buffer_name);
 				ptrGui->gui.add((ptrGui->groupArray.end() - 1)->second);
-				strcpy(buffer_name, "");
+				strcpy_s(buffer_name, "");
 			}
 			ImGui::EndChild();
 		}
@@ -242,7 +263,7 @@ namespace Engine
 					if (ImGui::MenuItem("Load", "", menuState == LOAD))
 						menuState = LOAD;
 
-						ImGui::EndMenu();
+					ImGui::EndMenu();
 				}
 				ImGui::EndMainMenuBar();
 			}

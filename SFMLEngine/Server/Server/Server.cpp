@@ -1,11 +1,12 @@
 #include "Server.h"
 #include <future>
+#include <algorithm>
 using namespace std;
 
 Server::Server()
 {
 	cout << "Server Running" << endl;
-	listener.listen(5005);
+	auto z = listener.listen(80);
 	selector.add(listener);
 }
 
@@ -29,7 +30,7 @@ void Server::Start()
 				if (socket->receive(packet) == Socket::Done)
 				{
 					packet >> PlayerName;
-					cout << PlayerName << endl;
+					cout << "User: " << PlayerName << ", IP: " << socket->getRemoteAddress().toString() << endl;
 					std::string serverInfo = "Connect success";
 					txt += PlayerName + "; ";
 					for (auto user : clients)
@@ -46,20 +47,20 @@ void Server::Start()
 						std::cout << "infoPacket send success" << std::endl;
 					clients.emplace_back(PlayerName, socket);
 					selector.add(*socket);
-					cout << txt << std::endl;
 				}
 				else if (socket->receive(data, sizeof(data), recived))
 				{
 					std::cout << data;
 				}
 			}
-			else
+			else if (!clients.empty())
 			{
 				for (auto index = 0; index < clients.size(); ++index)
 				{
 					if (selector.isReady(*clients[index].second))
 					{
 						sf::Packet packet;
+						sf::Packet infoPacket;
 						if (clients[index].second->receive(packet) == Socket::Done)
 						{
 							int type;
@@ -69,6 +70,11 @@ void Server::Start()
 								std::string msg;
 								packet >> msg;
 								std::cout << "PacketType = " << type << " Msg: " << msg << std::endl;
+								for (auto client : clients)
+								{
+									infoPacket << msg;
+									client.second->send(infoPacket);
+								}
 							}
 							else if (type == 2)
 							{
