@@ -37,7 +37,14 @@ namespace Engine
 		sf::Vector2f origin;
 		AnimationState state;
 
-		Animation() { frameCount = 0; }
+		Animation()
+		{
+			frameCount = 0;
+			origin = { 0,0 };
+			rect = { 0,0,0,0 };
+			scale = 0.f;
+			speed = 0.f;
+		}
 		virtual sf::IntRect& tick(float time) = 0;
 	};
 

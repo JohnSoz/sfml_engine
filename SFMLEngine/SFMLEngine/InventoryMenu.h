@@ -78,7 +78,7 @@ namespace Engine
 				{
 					auto gun_name = w->getUserData<std::string>();
 					inv.setItemByName(gun_name);
-					std::string log = "Button " + inv.getCurrItem<Gun>()->getName();
+					std::string log = "Button " + inv.getCurrItem<Item>()->getName();
 					Console::AppLog::addLog(log, Console::logType::info);
 				});
 			}

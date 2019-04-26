@@ -1,19 +1,26 @@
 #pragma once
 #include <fstream>
 #include <MetaStuff/Meta.h>
-#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/Graphics.hpp>
 #include "json.hpp"
-
 using json = nlohmann::json;
-using namespace nlohmann;
-namespace nlohmann
+
+namespace sf
 {
+	template <typename T>
+	void to_json(json& j, const T& obj);
+}
+namespace Engine
+{
+	template <typename T>
+	void to_json(json& j, const T& obj);
+
 	template <typename Class,
-		typename = std::enable_if_t <meta::isRegistered<Class>()>>
+		typename = std::enable_if_t<meta::isRegistered<Class>()>>
 		json serialize(const Class & obj);
 
 	template <typename Class,
-		typename = std::enable_if_t <!meta::isRegistered<Class>()>,
+		typename = std::enable_if_t<!meta::isRegistered<Class>()>,
 		typename = void>
 		json serialize(const Class & obj);
 
@@ -24,9 +31,27 @@ namespace nlohmann
 	json serialize_basic(const sf::Vector2<T>& obj);
 
 	template <typename T>
-	void to_json(json& j, const sf::Vector2<T>& obj) { j = serialize(obj); }
+	json serialize_basic(const sf::Rect<T>& obj);
 
-	
+	inline json serialize_basic(const sf::Sprite& obj)
+	{
+		json j;
+		//TODO: TextureManager
+		//j["path"] = 0;
+		j["size"] = obj.getTextureRect();;
+		return j;
+	}
+
+	template <typename T>
+	void to_json(json& j, const T& obj)
+	{
+		if constexpr (std::is_enum<T>::value)
+		{
+			j = (int)obj;
+		}
+		else
+			j = serialize(obj);
+	}
 
 	template <typename Class,
 		typename>
@@ -34,7 +59,7 @@ namespace nlohmann
 	{
 		json value;
 		meta::doForAllMembers<Class>(
-			[&obj, &value](auto & member)
+			[&](auto& member)
 		{
 			auto& valueName = value[member.getName()];
 			if (member.canGetConstRef()) {
@@ -69,15 +94,16 @@ namespace nlohmann
 		j["Y"] = obj.y;
 		return j;
 	}
-}
-
-namespace Engine
-{
 
 	template <typename T>
-	void to_json(json& j, const T& obj)
+	json serialize_basic(const sf::Rect<T>& obj)
 	{
-		j = serialize(obj);
+		json j;
+		j["left"]   = obj.left;
+		j["top"]    = obj.top;
+		j["width"]  = obj.width;
+		j["height"] = obj.height;
+		return j;
 	}
 
 	template<class Base>
@@ -90,11 +116,26 @@ namespace Engine
 	void save(T& obj)
 	{
 		json j;
-		(helper<Types>(j[typeid(Types).name()], obj), ...);
-		//j = obj;
+		auto parseObjName = [](std::string s)->std::string
+		{
+			auto eraseIter = s.find_last_of(':');
+			s.erase(0, ++eraseIter);
+			return s;
+		};
+		auto& jsonToSave = j[obj.getName()];
+		helper<T>(jsonToSave[parseObjName(typeid(T).name())], obj);
+		(helper<Types>(jsonToSave[parseObjName(typeid(Types).name())], obj), ...);
 		std::ofstream o("Data/save.json");
 		o << std::setw(4) << j;
 		o.close();
 	}
 
+}
+namespace sf
+{
+	template <typename T>
+	void to_json(json& j, const T& obj)
+	{
+		j = Engine::serialize(obj);
+	}
 }

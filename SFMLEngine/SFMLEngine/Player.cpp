@@ -6,8 +6,8 @@ void Player::isKeyPressed()
 {
 	if (Keyboard::isKeyPressed(Keyboard::C))
 	{
-		if (!isShoot)
-			isShoot = true;
+		if (!isInvAction)
+			isInvAction = true;
 	}
 	if (Keyboard::isKeyPressed(Keyboard::W) && onGround)
 	{
@@ -129,6 +129,8 @@ void Player::update(float time)
 	checkClashes(time);
 	sprite.setPosition(position);
 	inventory.update();
+	inventoryAction();
+
 	debug::debugDraw<Player, Player, Object, Actor>(this, "Debug For Class Player");
 }
 
@@ -170,9 +172,31 @@ void Engine::Player::handleEvent(sf::Event& e)
 	if (inv.IsEnable())
 		inv.handleEvent(e);
 }
+//
+//Bullet* Engine::Player::ShootUpdate(Level& lvl)
+//{
+//	if (isShoot && !VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
+//	{
+//		auto item = inventory.getCurrItem<Gun>();
+//		if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())
+//		{
+//			gunClock.restart();
+//			Image i;
+//			i.loadFromFile("Data/images/bullet.png");
+//			auto pos = sprite.getPosition();
+//			pos.y -= 10;
+//			pos.x += 5;
+//			static int id;
+//			++id;
+//			return new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), direction, item->getDamage(), lvl, name);
+//		}
+//	}
+//	isShoot = false;
+//	return nullptr;
+//}
 #include "serializer.h"
 
 Player::~Player()
 {
-	save<Player, Player, Actor>(*this);
+	save<Player, Actor, Object>(*this);
 }

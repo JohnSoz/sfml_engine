@@ -1,25 +1,40 @@
 {
-    "class Engine::Actor": {
-        "isCollision": true,
-        "isWalk": false,
-        "originOffset": {
-            "X": 8.0,
-            "Y": 16.0
+    "Test": {
+        "Actor": {
+            "isCollision": false,
+            "isWalk": false,
+            "originOffset": {
+                "X": 8.0,
+                "Y": 16.0
+            }
+        },
+        "Object": {
+            "IsActive": true,
+            "name": "Test",
+            "position": {
+                "X": 145.12347412109375,
+                "Y": 300465.125
+            },
+            "sprite": {
+                "size": {
+                    "height": 30,
+                    "left": 0,
+                    "top": 1,
+                    "width": 15
+                }
+            },
+            "type": 3
+        },
+        "Player": {
+            "energy": 0.003000000026077032,
+            "friction": 0.004999999888241291,
+            "offset": {
+                "X": -152.12347412109375,
+                "Y": -0.03021240234375
+            },
+            "onGround": false,
+            "speedX": 0.0,
+            "speedY": -18.92167854309082
         }
-    },
-    "class Engine::Player": {
-        "energy": 0.003000000026077032,
-        "friction": 0.004999999888241291,
-        "offset": {
-            "X": -128.0,
-            "Y": -0.03125
-        },
-        "onGround": true,
-        "pos": {
-            "X": 121.0,
-            "Y": 721.0431518554688
-        },
-        "speedX": 0.0,
-        "speedY": 0.0
     }
 }

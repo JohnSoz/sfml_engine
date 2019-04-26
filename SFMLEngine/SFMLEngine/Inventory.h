@@ -3,29 +3,30 @@
 #include <list>
 #include <iostream>
 #include <SFML\Graphics.hpp>
-#include "Object.h"
 #include <assert.h>
+#include "Object.h"
+
 namespace Engine
 {
 	enum ItemType { item = 0, gun, heal };
+
+	class Player;
+
 	class Item : public Engine::Object
 	{
 	public:
 		Item() = default;
 		Item(std::string name) : Object(name) { type = ItemType::item; weight = 0; }
 		virtual ~Item() {}
-		float getWeight() const
-		{
-			return weight;
-		}
-		ItemType getType() const
-		{
-			return type;
-		}
+		float getWeight() const { return weight; }
+		ItemType getType() const { return type; }
 		std::string getType_s();
 		void update() {/* dw_o.draw("Item",true);*/ }
+		virtual void action(Player& p) = 0;
+
 	protected:
 		ItemType type;
+		sf::Clock actionClock;
 		float weight;
 	};
 
@@ -34,7 +35,7 @@ namespace Engine
 	private:
 		float RateOfFire, damage;
 		int AmmoInGun;
-
+		sf::Clock actionClock;
 	public:
 		Gun() = default;
 		Gun(std::string_view Name, float dmg, float rate, float w) : RateOfFire(rate), damage(dmg)
@@ -48,6 +49,7 @@ namespace Engine
 
 		float getDamage() const { return damage; }
 		int getRate() const { return (int)RateOfFire; }
+		void action(Player& p) override;
 
 	private:
 		void IniGun() {
@@ -73,7 +75,7 @@ namespace Engine
 			}
 			else
 			{
-				texture.loadFromFile("Inventor: image/������ ����� ���"); //ERR
+				texture.loadFromFile(""); //ERR
 			}
 		}
 	};
@@ -89,6 +91,7 @@ namespace Engine
 		{
 			return static_cast<int>(HP);
 		}
+		void action(Player& p) override;
 	};
 
 	class Inventory
@@ -101,7 +104,7 @@ namespace Engine
 			inv.push_back(new Gun("pistol", 2, 800, 0.7f));
 			inv.push_back(new Gun("rifle", 8, 300, 3.9f));
 			inv.push_back(new Gun("rocketLauncher", 15, 1500, 6.3f));
-			//inv.push_back(new Heal("HP", 20));
+			inv.push_back(new Heal("HP", 20));
 			curr_item = inv.begin();
 		}
 	public:
@@ -113,12 +116,12 @@ namespace Engine
 			inv.clear();
 		}
 
-		void AddItem(Item * i) { inv.push_back(i); }
+		void AddItem(Item* i) { inv.push_back(i); }
 
 		void delItem(std::string Name)
 		{
 			inv.erase(
-				std::remove_if(inv.begin(), inv.end(), [Name](Item * item)
+				std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
 			{
 				if (item->getName() == Name) { delete item;  return true; }
 			})
@@ -139,7 +142,7 @@ namespace Engine
 		template<class T>
 		T* getItemByName(std::string Name)
 		{
-			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item * item)
+			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item* item)
 			{
 				return (item->getName() == Name) ? true : false;
 			});
@@ -162,15 +165,9 @@ namespace Engine
 
 		void setItemByName(std::string_view name)
 		{
-			auto item = std::find_if(inv.begin(), inv.end(), [name](Item * item) { return item->getName() == name; });
-			if ((*item)->getType() != ItemType::heal)
-			{
-				curr_item = item;
-			}
-			else
-			{
+			auto item = std::find_if(inv.begin(), inv.end(), [name](Item* item) { return item->getName() == name; });
+			curr_item = item;
 
-			}
 		}
 
 		void setItemByIndex(size_t index)

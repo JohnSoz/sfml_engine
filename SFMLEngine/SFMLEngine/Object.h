@@ -9,7 +9,10 @@
 #include <iostream>
 #include <MetaStuff/Meta.h>
 #include "staticVariable.h"
-using namespace meta;
+#include "json.hpp"
+#include "serializer.h"
+using json = nlohmann::json;
+using namespace nlohmann;
 namespace Engine
 {
 	/// Enumeration of possible types for objects
@@ -36,10 +39,10 @@ namespace Engine
 		Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string name);
 		~Object() = default;
 
-		bool isActive()                 const noexcept { return IsActive; }
-		const std::string& getName()    const noexcept { return name; }
-		const sf::Sprite& getSprite()   const noexcept { return sprite; }
-		const sf::Texture& getTexture() const noexcept { return texture; }
+		bool isActive()                 const { return IsActive; }
+		std::string getName()           const { return name; }
+		const sf::Sprite& getSprite()   const { return sprite; }
+		const sf::Texture& getTexture() const { return texture; }
 		void destroy() { IsActive = false; }
 
 		friend bool operator==(const Object& obj, const Object& obj2);

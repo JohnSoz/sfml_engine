@@ -1,7 +1,7 @@
 #pragma once
 #include <entityx/Event.h>
 #include <string>
-
+#include "Entity.h"
 namespace Engine
 {
 	struct EventManager
@@ -20,6 +20,12 @@ namespace Engine
 			int state;
 			Main_Menu_Event() {}
 			Main_Menu_Event(int state) : state(state) {}
+		};
+
+		struct NewObject_Event
+		{
+			NewObject_Event(Entity& e) { obj = &e; }
+			Entity* obj;
 		};
 
 	}

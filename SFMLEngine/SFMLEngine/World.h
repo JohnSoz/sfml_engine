@@ -3,6 +3,7 @@
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "Actor.h"
+#include <entityx/entityx.h>
 
 namespace Engine
 {
@@ -26,7 +27,7 @@ namespace Engine
 		void handelEvent(sf::Event& e);
 		template<class Obj>
 		Obj& GetObjects(std::string NAME);
-		void PushObject(Entity* obj);
+		void PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
 		void UpdateObjects(float time);
 		void CollisionUpdate()
 		{
@@ -53,14 +54,14 @@ namespace Engine
 		void refresh();
 	};
 
-	class World
+	class World : public entityx::Receiver<World>
 	{
 	private:
 		sf::Clock         mainClock, deltaClock;
 		sf::Sprite        LevelSprite;
 		sf::Texture       LevelTexture;
 		ObjectHandler     objHandler;
-		Level             level;
+        static Level      level;
 		sf::RenderTexture renderTexture;
 		DebuggingSystem debug;
 		bool ShowOverlay;
@@ -69,11 +70,8 @@ namespace Engine
 		void Init(sf::RenderWindow& window);
 
 	public:
-		World()
-		{
-			renderTexture.create(1920, 1080);
-			ShowOverlay = true;
-		}
+		World();
+
 		~World() = default;
 
 		void handleEvent(sf::Event& event);
@@ -87,10 +85,12 @@ namespace Engine
 			debug.pushRectangle(e->getDebugRect());
 			objHandler.PushObject(e);
 		}
+		
+		void receive(const Events::NewObject_Event& entity);
 
 		void start();
 
-		Level* getLevel() { return &level; }
+		static Level& getLevel() { return level; }
 
 		ObjectHandler& getObjHendler() { return objHandler; }
 

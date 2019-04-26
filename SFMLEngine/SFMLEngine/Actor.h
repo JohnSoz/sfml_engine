@@ -5,6 +5,7 @@
 #include <MetaStuff/Meta.h>
 #include "JsonLoader.h"
 #include "InventoryMenu.h"
+
 using namespace meta;
 namespace Engine
 {
@@ -62,7 +63,7 @@ namespace Engine
 		float CurrAngle = sprite.getRotation(), LastAngle;
 		float time_actor;
 		sf::Clock Pressclock;
-		sf::Clock gunClock;
+		sf::Clock actionClock;
 		sf::Vector2f originOffset = {};
 		DirectionX direction;
 		DirectionY directionY = DirectionY::Up;

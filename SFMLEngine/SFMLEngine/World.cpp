@@ -4,6 +4,8 @@
 #include "Player.h"
 using namespace Engine;
 
+Level Engine::World::level;
+
 void Engine::ObjectHandler::handelEvent(sf::Event& e)
 {
 	for (auto& o : ObjectsArray)
@@ -17,19 +19,19 @@ template<class Obj>
 Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
 {
 	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
-		[NAME](const Entity * e1)->bool
+		[NAME](const Entity* e1)->bool
 	{
 		return (e1->name == NAME) ? true : false;
 	});
 	return *static_cast<Obj*>(*retObj);
 }
 
-void Engine::ObjectHandler::PushObject(Entity * obj)
+void Engine::ObjectHandler::PushObject(Entity* obj)
 {
 	string info = "Engine::ObjectHandler::PushObject(" + obj->getName() + ")";
 	Console::AppLog::addLog(info, Console::info);
-	ObjectsArray.shrink_to_fit();
 	ObjectsArray.push_back(obj);
+	iter = ObjectsArray.begin();
 }
 
 void Engine::ObjectHandler::UpdateObjects(float time)
@@ -47,7 +49,7 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 	}
 }
 
-void Engine::ObjectHandler::RenderObjects(sf::RenderWindow & WINDOW)
+void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
@@ -68,36 +70,36 @@ void Engine::ObjectHandler::refresh()
 {
 	Console::AppLog::addLog("Engine::ObjectHandler::refresh()", Console::info);
 	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
-		[](const Entity * entity)->bool
+		[](const Entity* entity)->bool
 	{
 		return !entity->isActive();
 	}), ObjectsArray.end());
 }
 
 
-void Engine::World::update(sf::RenderWindow & window, float time, sf::Event & event)
+void Engine::World::update(sf::RenderWindow& window, float time, sf::Event& event)
 {
 	objHandler.GetObjects<Player>("Test").isKeyPressed();
-	if (auto z = objHandler.GetObjects<Player>("Test").ShootUpdate(level); z != nullptr)
-	{
-		pushEntity(z);
-	}
-	objHandler.UpdateObjects(time);
-	objHandler.CollisionUpdate();
+	//if (auto z = objHandler.GetObjects<Player>("Test").ShootUpdate(level); z != nullptr)
+	//{
+	//	pushEntity(z);
+	//}
 	if (ShowOverlay)
 	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
 	}
+	objHandler.UpdateObjects(time);
+	objHandler.CollisionUpdate();
 }
 
 
-void Engine::World::handleEvent(sf::Event & event)
+void Engine::World::handleEvent(sf::Event& event)
 {
 	debug.handleEvent(event);
 	objHandler.GetObjects<Player>("Test").handleEvent(event);
 }
 
-void Engine::World::draw(sf::RenderWindow & window)
+void Engine::World::draw(sf::RenderWindow& window)
 {
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
@@ -106,7 +108,7 @@ void Engine::World::draw(sf::RenderWindow & window)
 }
 
 
-void Engine::World::Init(sf::RenderWindow & window)
+void Engine::World::Init(sf::RenderWindow& window)
 {
 	level.LoadFromFile("Data/Level/shpiga_test_level.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
@@ -128,6 +130,18 @@ void Engine::World::Init(sf::RenderWindow & window)
 	sf::Image i;
 	i.loadFromFile("Data/OSprite/Player.png");
 	pushEntity(new Engine::Player(i, sf::Vector2f(120, 120), "Test", window, level));
+}
+#include "EngineEvents.h"
+Engine::World::World()
+{
+	renderTexture.create(1920, 1080);
+	ShowOverlay = true;
+	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event>(*this);
+}
+
+void Engine::World::receive(const Events::NewObject_Event& entity)
+{
+	pushEntity(entity.obj);
 }
 
 void Engine::World::start()
