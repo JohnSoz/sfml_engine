@@ -4,11 +4,6 @@ using namespace Engine;
 
 void Player::isKeyPressed()
 {
-	if (Keyboard::isKeyPressed(Keyboard::C))
-	{
-		if (!isInvAction)
-			isInvAction = true;
-	}
 	if (Keyboard::isKeyPressed(Keyboard::W) && onGround)
 	{
 		isWalk = false;
@@ -103,6 +98,8 @@ void Player::update(float time)
 	case Up:
 		velocity.y = -speedY;
 		break;
+	case DirectionY::onGround:
+		velocity.y = 0;
 	default:;
 	}
 
@@ -128,39 +125,59 @@ void Player::update(float time)
 	position += velocity * time;
 	checkClashes(time);
 	sprite.setPosition(position);
-	inventory.update();
-	inventoryAction();
 
+	inventoryAction();
+	inventory.update();
+	if (isWalk)
+	{
+		animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
+		updateSprite();
+	}
+	else
+	{
+		animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
+		updateSprite();
+	}
+	sprite.setTextureRect(animManager.AnimUpdate(time));
 	debug::debugDraw<Player, Player, Object, Actor>(this, "Debug For Class Player");
 }
 
 void Player::checkClashes(const float& time)
 {
 	isCollision = false;
-	onGround = false;
+
 	for (auto& i : obj)
 	{
 		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
+		Rectangle playerRect2(playerRect.getX() - 5, playerRect.getY() + playerRect.getH() + 10, playerRect.getW() + 5, playerRect.getH());
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
-		if (i.name == "barrier")
+		if (i.name == "barrier") 
 		{
+			if (playerRect2.getSfmlRect_f()->intersects(i.rect))
+			{
+				offset = Rectangle::GetIntersectionDepth(playerRect2, objectRect).GetSfmlVector();
+
+				if (abs(offset.x) < 1)
+				{
+					onGround = false;
+				}
+			}
 			if (sprite.getGlobalBounds().intersects(i.rect))
 			{
 				isCollision = true;
-				isWalk = false;
 
-				offset = Rectangle::GetIntersectionDepth(playerRect, objectRect).GetSfmlVector();
+				auto copyOffset = Rectangle::GetIntersectionDepth(playerRect, objectRect).GetSfmlVector();
 
-				auto copyOffset = offset;
 
 				if (abs(copyOffset.x) > abs(copyOffset.y))
 					copyOffset.x = 0;
 				else
 					copyOffset.y = 0;
 
-				if (copyOffset.y < 0)
+				if (copyOffset.y != 0)
 					onGround = true;
-
+				else
+					onGround = false;
 				position = position + copyOffset;
 			}
 		}
@@ -171,29 +188,15 @@ void Engine::Player::handleEvent(sf::Event& e)
 {
 	if (inv.IsEnable())
 		inv.handleEvent(e);
+	if (e.type == sf::Event::KeyPressed)
+	{
+		if (e.key.code == sf::Keyboard::C)
+		{
+			isInvAction = !isInvAction;
+		}
+	}
 }
-//
-//Bullet* Engine::Player::ShootUpdate(Level& lvl)
-//{
-//	if (isShoot && !VStaticContainer::ShowDebugWindow && ImGui::GetIO().MetricsRenderWindows < 2)
-//	{
-//		auto item = inventory.getCurrItem<Gun>();
-//		if (gunClock.getElapsedTime().asMilliseconds() > item->getRate())
-//		{
-//			gunClock.restart();
-//			Image i;
-//			i.loadFromFile("Data/images/bullet.png");
-//			auto pos = sprite.getPosition();
-//			pos.y -= 10;
-//			pos.x += 5;
-//			static int id;
-//			++id;
-//			return new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), direction, item->getDamage(), lvl, name);
-//		}
-//	}
-//	isShoot = false;
-//	return nullptr;
-//}
+
 #include "serializer.h"
 
 Player::~Player()

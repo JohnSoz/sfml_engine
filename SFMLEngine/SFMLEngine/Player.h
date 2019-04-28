@@ -52,10 +52,14 @@ namespace Engine
 		void inventoryAction()
 		{
 			if (isInvAction)
+			{		
 				inventory.getCurrItem<Item>()->action(*this);
+			}
 			isInvAction = false;
 		}
+
 		DirectionX getDirection() const { return direction; }
+		void increaseHealth(int h) { health += h; }
 		void CollisionUpdate(Entity* entity) override {}
 		void checkClashes(const float& time);
 		void handleEvent(sf::Event& e) override;
@@ -78,6 +82,7 @@ namespace meta
 			member("health", &Engine::Player::health),
 			member("offset", &Engine::Player::offset),
 			member("speedX", &Engine::Player::speedX),
+			member("maxSpeed", &Engine::Player::maxSpeed),
 			member("speedY", &Engine::Player::speedY));
 	}
 } // namespace meta
