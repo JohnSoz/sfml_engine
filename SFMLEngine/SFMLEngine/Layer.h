@@ -23,7 +23,7 @@ namespace Engine
 		size_t size() const { return groups.size(); }
 		auto begin() { return groups.begin(); }
 		auto end() { return groups.end(); }
-
+		tgui::Theme& getTheme() { return theme; }
 		Group::Ptr addGroup(std::string name) { groups.emplace_back(name, Group::create()); return (*(this->end() - 1)).second; }
 		//void addWidget(std::pair<Widget::Ptr, std::string> widget, std::string wName, std::string_view groupName = "Default");
 		void addWidget(Widget::Ptr wPtr, std::string wName, std::string_view groupName = "Default");

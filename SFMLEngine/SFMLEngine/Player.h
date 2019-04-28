@@ -19,9 +19,10 @@ namespace Engine
 		float speedX, speedY;
 		bool onGround;
 		bool isInvAction;
+		bool isJump;
 	public:
-		Player(Image& IMAGE, sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl)
-			: Actor(IMAGE, POSITION, NAME, w, lvl),
+		Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl, std::string_view animation)
+			: Actor(POSITION, NAME, w, lvl, animation),
 			inv("Data/GUI/MyUI/MainMenu.txt", w)
 		{
 			vec.x = 12;
@@ -63,7 +64,6 @@ namespace Engine
 		void CollisionUpdate(Entity* entity) override {}
 		void checkClashes(const float& time);
 		void handleEvent(sf::Event& e) override;
-		//Bullet* ShootUpdate(Level& lvl);
 
 		~Player();
 

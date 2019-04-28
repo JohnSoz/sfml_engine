@@ -25,16 +25,16 @@ Engine::Entity::~Entity()
 {
 }
 #include "LogConsole.h"
-void Engine::Test::CollisionUpdate(Entity* entity)
-{
-	if (entity->getName() == "Bullet")
-	{
-		auto b = (Bullet*)entity;
-		if (b->shootersName != this->name)
-		{
-			getDamage();
-			Console::AppLog::addLog("Entity Test2 getDamage, hp = " + std::to_string(hp), Console::info);
-			b->destroy();
-		}
-	}
-}
+//void Engine::Test::CollisionUpdate(Entity* entity)
+//{
+//	if (entity->getName() == "Bullet")
+//	{
+//		auto b = (Bullet*)entity;
+//		if (b->shootersName != this->name)
+//		{
+//			getDamage();
+//			Console::AppLog::addLog("Entity Test2 getDamage, hp = " + std::to_string(hp), Console::info);
+//			b->destroy();
+//		}
+//	}
+//}

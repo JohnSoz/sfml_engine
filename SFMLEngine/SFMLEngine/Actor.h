@@ -9,38 +9,6 @@
 using namespace meta;
 namespace Engine
 {
-	class Actor;
-
-	class DebugWindow 
-	{
-	private:
-		void ShowHelpMarker(const char* desc);
-		ImVec2 size = { 400,400 };
-		std::vector<Object*> objectInf;
-	public:
-		bool isSelected;
-		void pushObjectToDebug(Object& o) { objectInf.push_back(&o); }
-		void actorInfo(bool *open, Actor& a);
-		void objectInfo(bool *open, Object& a);
-		void draw(bool *open)
-		{
-			for (auto i : objectInf)
-			{
-				auto z = static_cast<Entity*>(i);
-				switch (i->type)
-				{
-				case OActor:
-					objectInfo(open, *i);
-					actorInfo(open, *(Actor*)(z));
-					break;
-				case None:
-					objectInfo(open, *i);
-					break;
-				}
-			}
-		}
-	};
-
 	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
 	class Actor : public Entity
 	{
@@ -74,21 +42,19 @@ namespace Engine
 
 	public:
 		float Radian;
-		~Actor() = default;
+		virtual ~Actor() {}
 		Actor() = delete;
-		Actor(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl);
+		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);
 
 		virtual void handleEvent(sf::Event& e);
 
-		void isKeyPressed();
+		virtual void isKeyPressed();
 
-		void checkClashes(float time);
+		virtual void checkClashes(float time);
 
 		void CollisionUpdate(Entity* entity) override;
 
 		void RotateToMouse(float speed, sf::RenderWindow& window);
-
-		//Engine::Bullet* shotUpdate(Level& lvl);
 
 		void update(float time) override;
 

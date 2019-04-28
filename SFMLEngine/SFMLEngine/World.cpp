@@ -57,11 +57,11 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		if (o->getType() == OActor)
 		{
 			auto z = static_cast<Actor*>(o);
-			sf::CircleShape shape2(4);
+			/*sf::CircleShape shape2(4);
 			shape2.setFillColor(sf::Color::Red);
 			shape2.setOrigin(2, 2);
 			shape2.setPosition(z->sprite.getPosition());
-			WINDOW.draw(shape2);
+			WINDOW.draw(shape2);*/
 		}
 	}
 }
@@ -118,18 +118,7 @@ void Engine::World::Init(sf::RenderWindow& window)
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 
-	/*sf::Image i;
-	i.loadFromFile("Data/OSprite/nandGunMove.png");
-	pushEntity(new Engine::Actor(i, sf::Vector2f(120, 120), "Test", window, level));
-
-	sf::Image i2;
-	i2.loadFromFile("Data/OSprite/nandGunMove.png");
-	pushEntity(new Engine::Test(i2, sf::IntRect(1, 30, 190, 140), sf::Vector2f(400, 120), "Test2"));*/
-	//sf::Image img, sf::Vector2f pos, ObjectType t, std::string name
-
-	sf::Image i;
-	i.loadFromFile("Data/OSprite/Player.png");
-	pushEntity(new Engine::Player(i, sf::Vector2f(120, 120), "Test", window, level));
+	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
 }
 #include "EngineEvents.h"
 Engine::World::World()

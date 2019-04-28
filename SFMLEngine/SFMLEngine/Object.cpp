@@ -7,7 +7,8 @@ Engine::Object::Object(sf::Vector2f pos, std::string n)
 	position = pos;
 	IsActive = true;
 	type = ObjectType::None;
-	name = n;}
+	name = n;
+}
 
 
 Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string n)
@@ -21,6 +22,12 @@ Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::strin
 	sprite.setTexture(texture);
 	sprite.setPosition(position);}
 
+
+void Engine::Object::setTexture(sf::Texture tex)
+{
+	texture = tex;
+	sprite.setTexture(texture);
+}
 
 Engine::Object::Object()
 {

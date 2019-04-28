@@ -44,11 +44,11 @@ void Player::RotateToMouse(float speed, RenderWindow& w)
 	LastAngle = sprite.getRotation();
 
 	auto posMouse = w.mapPixelToCoords(Mouse::getPosition(w), w.getView());
-	const auto a = posMouse.x - sprite.getPosition().x;
-	const auto v = posMouse.y - sprite.getPosition().y;
+	const float a = posMouse.x - sprite.getPosition().x;
+	const float v = posMouse.y - sprite.getPosition().y;
 
 	Radian = atan2f(v, a);
-	CurrAngle = (atan2f(v, a)) * 180 / PI;
+	CurrAngle = (double)(atan2f(v, a)) * 180.f / PI;
 
 	if (CurrAngle > 180)
 		CurrAngle -= 360;
@@ -98,10 +98,11 @@ void Player::update(float time)
 	case Up:
 		velocity.y = -speedY;
 		break;
-	case DirectionY::onGround:
-		velocity.y = 0;
 	default:;
 	}
+
+	if (speedY > 0)
+		isJump = true;
 
 	if (!onGround)
 		speedY -= energy;
@@ -133,7 +134,13 @@ void Player::update(float time)
 		animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
 		updateSprite();
 	}
-	else
+	else if (isJump)
+	{
+		animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
+		updateSprite();
+		isJump = false;
+	}
+	else if (!isWalk)
 	{
 		animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
 		updateSprite();
@@ -149,26 +156,16 @@ void Player::checkClashes(const float& time)
 	for (auto& i : obj)
 	{
 		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
-		Rectangle playerRect2(playerRect.getX() - 5, playerRect.getY() + playerRect.getH() + 10, playerRect.getW() + 5, playerRect.getH());
+		Rectangle playerRect2(playerRect.getX(), (playerRect.getY() + playerRect.getH() + 5), playerRect.getW(), playerRect.getH());
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
-		if (i.name == "barrier") 
+		if (i.name == "barrier")
 		{
-			if (playerRect2.getSfmlRect_f()->intersects(i.rect))
-			{
-				offset = Rectangle::GetIntersectionDepth(playerRect2, objectRect).GetSfmlVector();
-
-				if (abs(offset.x) < 1)
-				{
-					onGround = false;
-				}
-			}
 			if (sprite.getGlobalBounds().intersects(i.rect))
 			{
 				isCollision = true;
 
 				auto copyOffset = Rectangle::GetIntersectionDepth(playerRect, objectRect).GetSfmlVector();
-
-
+				offset = copyOffset;
 				if (abs(copyOffset.x) > abs(copyOffset.y))
 					copyOffset.x = 0;
 				else
@@ -176,9 +173,16 @@ void Player::checkClashes(const float& time)
 
 				if (copyOffset.y != 0)
 					onGround = true;
-				else
+				else if (copyOffset.y == 0 && !isWalk)
 					onGround = false;
+
 				position = position + copyOffset;
+			}
+			if (playerRect2.getSfmlRect_f()->intersects(i.rect))
+			{
+				auto o = Rectangle::GetIntersectionDepth(playerRect2, objectRect).GetSfmlVector();
+				if (abs(o.x) < 1)
+					onGround = false;
 			}
 		}
 	}

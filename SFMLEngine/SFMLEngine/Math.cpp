@@ -2,7 +2,7 @@
 #include <map>
 using namespace Engine;
 
-namespace collision
+namespace Collision
 {
 	void SAT::normalize(sf::Vector2f& vector)
 	{
@@ -166,7 +166,10 @@ namespace Collision
 			for (unsigned int y = 0; y < tex->getSize().y; y++)
 			{
 				for (unsigned int x = 0; x < tex->getSize().x; x++)
-					mask[x + y * tex->getSize().x] = img.getPixel(x, y).a;
+				{
+					size_t index = x + y * tex->getSize().x;
+					mask[index] = img.getPixel(x, y).a;
+				}
 			}
 
 			Bitmasks.insert(std::pair<const sf::Texture*, sf::Uint8*>(tex, mask));
@@ -516,22 +519,22 @@ Rectangle::~Rectangle()
 {
 }
 
-double Rectangle::Left() const
+float Rectangle::Left() const
 {
 	return x;
 }
 
-double Rectangle::Right() const
+float Rectangle::Right() const
 {
 	return x + w;
 }
 
-double Rectangle::Top() const
+float Rectangle::Top() const
 {
 	return y;
 }
 
-double Rectangle::Bottom() const
+float Rectangle::Bottom() const
 {
 	return y + h;
 }
@@ -557,9 +560,9 @@ bool Rectangle::Contains(Vector2D & vVec) const
 bool Rectangle::Contains(double x, double y) const
 {
 	if ((x >= this->x) &&
-		(x <= this->x + this->w) &&
+		(x <= (this->x + this->w)) &&
 		(y >= this->y) &&
-		(x <= this->y + this->h))
+		(x <= (this->y + this->h)))
 	{
 		return true;
 	}

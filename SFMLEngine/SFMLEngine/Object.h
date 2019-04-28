@@ -31,13 +31,14 @@ namespace Engine
 		sf::Sprite sprite; //<Sprite of the current object
 		std::string name; //<Current object name /warning Must be unique
 		bool IsActive; //<The flag indicates whether the current object is alive /warning If the value is false, the object is removed from the game world
+		void setTexture(sf::Texture tex);
 	public:
 		Object();
 		explicit Object(std::string);
 		Object(sf::Vector2f pos, std::string name);
 		Object(sf::Vector2f pos, ObjectType t, std::string name);
 		Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string name);
-		~Object() = default;
+		~Object() { }
 
 		bool isActive()                 const { return IsActive; }
 		std::string getName()           const { return name; }

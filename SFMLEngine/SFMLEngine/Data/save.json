@@ -4,23 +4,23 @@
             "isCollision": false,
             "isWalk": false,
             "originOffset": {
-                "X": 8.0,
-                "Y": 16.0
+                "X": 15.0,
+                "Y": 23.0
             }
         },
         "Object": {
             "IsActive": true,
             "name": "Test",
             "position": {
-                "X": 145.12347412109375,
-                "Y": 300465.125
+                "X": 121.0,
+                "Y": 727.5
             },
             "sprite": {
                 "size": {
-                    "height": 30,
-                    "left": 0,
-                    "top": 1,
-                    "width": 15
+                    "height": 38,
+                    "left": 18,
+                    "top": 26,
+                    "width": 30
                 }
             },
             "type": 3
@@ -28,13 +28,15 @@
         "Player": {
             "energy": 0.003000000026077032,
             "friction": 0.004999999888241291,
+            "health": 50.0,
+            "maxSpeed": 0.20000000298023224,
             "offset": {
-                "X": -152.12347412109375,
-                "Y": -0.03021240234375
+                "X": -128.5,
+                "Y": -24.0
             },
-            "onGround": false,
+            "onGround": true,
             "speedX": 0.0,
-            "speedY": -18.92167854309082
+            "speedY": 0.0
         }
     }
 }

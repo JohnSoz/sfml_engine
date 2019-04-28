@@ -21,7 +21,6 @@ namespace Engine
 		float getWeight() const { return weight; }
 		ItemType getType() const { return type; }
 		std::string getType_s();
-		void update() {/* dw_o.draw("Item",true);*/ }
 		virtual void action(Player& p) = 0;
 
 	protected:
@@ -108,7 +107,10 @@ namespace Engine
 			curr_item = inv.begin();
 		}
 	public:
-		Inventory() { baseIni(); }
+		Inventory()
+		{
+			baseIni(); 
+		}
 		~Inventory()
 		{
 			for (auto& iter : inv)
@@ -133,9 +135,17 @@ namespace Engine
 
 		void update()
 		{
-			for (auto& i : inv)
+			for (auto iter = inv.begin(); iter != inv.end();)
 			{
-				i->update();
+				auto& obj = (*iter);
+				if (obj->isActive() == false)
+				{
+					delete obj;
+					iter = inv.erase(iter);
+					curr_item = inv.begin();
+				}
+				else
+					++iter;
 			}
 		}
 

@@ -1,17 +1,42 @@
 {
-    "energy": 0.003000000026077032,
-    "friction": 0.004999999888241291,
-    "isCollision": false,
-    "isWalk": false,
-    "offset": {
-        "X": -128.0,
-        "Y": -0.02972412109375
-    },
-    "onGround": false,
-    "pos": {
-        "X": 121.0,
-        "Y": 721.0
-    },
-    "speedX": 0.0,
-    "speedY": 0.0
+    "Test": {
+        "Actor": {
+            "isCollision": false,
+            "isWalk": false,
+            "originOffset": {
+                "X": 15.0,
+                "Y": 23.0
+            }
+        },
+        "Object": {
+            "IsActive": true,
+            "name": "Test",
+            "position": {
+                "X": 131.03811645507813,
+                "Y": 727.5
+            },
+            "sprite": {
+                "size": {
+                    "height": 38,
+                    "left": 18,
+                    "top": 26,
+                    "width": 30
+                }
+            },
+            "type": 3
+        },
+        "Player": {
+            "energy": 0.003000000026077032,
+            "friction": 0.004999999888241291,
+            "health": 50.0,
+            "maxSpeed": 0.20000000298023224,
+            "offset": {
+                "X": -138.5380859375,
+                "Y": -24.0
+            },
+            "onGround": true,
+            "speedX": 0.0,
+            "speedY": 0.0
+        }
+    }
 }

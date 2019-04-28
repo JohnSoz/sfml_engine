@@ -11,7 +11,7 @@ namespace Engine
 		sf::FloatRect viewPort;
 		sf::View camera;
 		sf::Vector2f defaultCenter;
-		Engine::Quad q;
+		//Engine::Quad q;
 		bool move = false;
 	public:
 		Camera()

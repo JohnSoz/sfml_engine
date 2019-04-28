@@ -23,7 +23,7 @@ namespace Engine
 		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
 		virtual ~Entity();
 
-		virtual void update(float time) { /*dw_o.draw(name); */ }
+		virtual void update(float time) {}
 		virtual void start() {}
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
@@ -35,25 +35,6 @@ namespace Engine
 		const Quad& getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); }
 
 		friend class ObjectHandler;
-	};
-
-	class Test : public Entity
-	{
-	public:
-		Test(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name) : Entity(IMAGE, r, pos, name)
-		{
-			hp = 100;
-			sprite.setScale(0.5f, 0.5f);
-			scale = 0.5;
-			globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width * scale, position.y + localRectangle.height * scale);
-			debugRectangle = sf::FloatRect(position.x + localRectangle.width * scale, position.y, position.x, position.y + localRectangle.height * scale);
-		}
-		void getDamage() { hp -= 1; }
-
-		void CollisionUpdate(Entity * entity) override;
-
-		float scale;
-		float hp;
 	};
 
 	class Bullet final : public Entity
@@ -75,7 +56,6 @@ namespace Engine
 			}
 		}
 		float scale = 0.2f;
-		//DebugWindows<Bullet> db;
 	public:
 		std::string shootersName;
 		Bullet() = default;
@@ -84,7 +64,6 @@ namespace Engine
 		{
 			shootersName = nameShooters;
 			dir = d;
-			//db.set(this);
 			IsActive = true;
 			obj = lvl.GetObjects("barrier");
 			damage = Damage;
@@ -110,8 +89,6 @@ namespace Engine
 			debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
 			CheckClashes();
 			sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
-			//dw_o.draw("Object", true);
-			//db.draw("Bullet");
 			debug::debugDraw<Bullet, Object, Bullet>(this, name);
 		}
 		friend auto meta::registerMembers<Bullet>();

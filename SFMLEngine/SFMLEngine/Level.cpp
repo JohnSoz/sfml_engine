@@ -110,7 +110,6 @@ void Level::ParseObject(TiXmlElement *layerElement)
 {
 	while (layerElement)
 	{
-
 		TiXmlElement *objectElement;
 		objectElement = layerElement->FirstChildElement("object");
 

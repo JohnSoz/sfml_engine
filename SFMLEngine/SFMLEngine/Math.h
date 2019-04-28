@@ -6,7 +6,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics.hpp>
 #include <array>
-namespace collision
+namespace Collision
 {
 	struct rectangle
 	{
@@ -81,12 +81,6 @@ namespace Engine
 		float x, y;
 	};
 
-	//     rect1(left,top) |------------------------| rect2(left,top)
-	//                     |                        |
-	//                     |                        |
-	//                     |                        |
-	//                     |                        |
-	// rect2(widht,height) |------------------------| rect1(widgt,heigt)
 	class Quad
 	{
 	public:
@@ -106,10 +100,15 @@ namespace Engine
 		Rectangle(double x = 0, double y = 0, double w = 0, double h = 0);
 		~Rectangle(void);;
 
-		inline double Left() const;
-		inline double Right() const;
-		inline double Top() const;
-		inline double Bottom() const;
+		float Left() const;
+		float Right() const;
+		float Top() const;
+		float Bottom() const;
+
+		float getX() const { return x; }
+		float getY() const { return y; }
+		float getW() const { return w; }
+		float getH() const { return h; }
 
 		bool Contains(Vector2D& vVec) const;
 		bool Contains(double x, double y) const;

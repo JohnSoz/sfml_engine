@@ -32,13 +32,13 @@ namespace Engine
 
 		std::string  name;
 		float        scale;
-		sf::Texture  texture;
 		sf::IntRect  rect;
 		sf::Vector2f origin;
 		AnimationState state;
 
 		Animation()
 		{
+			frame = 0;
 			frameCount = 0;
 			origin = { 0,0 };
 			rect = { 0,0,0,0 };
@@ -57,10 +57,20 @@ namespace Engine
 
 		sf::IntRect& tick(const float time) override
 		{
-			state = APlay;
-			frame += 0.003f * time;
-			if (frame > frameCount) { frame = 0; state = AEnd; }
-			return frames[static_cast<int>(frame)];
+			if (frames.size() > 0 && state != AEnd)
+			{
+				state = APlay;
+				frame += speed * time;
+				if (frame > frameCount)
+				{
+					frame = 0;
+					if (!looped)
+						state = AEnd;
+				}
+				return frames[static_cast<int>(frame)];
+			}
+			else
+				return frames[0];
 		}
 	};
 	class AnimationJson : public Animation
@@ -95,6 +105,10 @@ namespace Engine
 		std::list <Animation*> animationList; ///< Container with the animations
 		std::list <Animation*>::iterator currAnim; ///< Iterator to traverse the container \warning also stores the current animation
 	public:
+		sf::Texture  texture;
+		sf::IntRect  rect;
+		float scale;
+
 		AnimationManager() = default; ///< Standard constructor
 		~AnimationManager()///< Standard destructor
 		{

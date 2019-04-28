@@ -31,7 +31,8 @@ void Engine::Heal::action(Player& p)
 {
 	if (actionClock.getElapsedTime().asMilliseconds() > 500)
 	{
-		Console::AppLog::addLog("Player::addHP", Console::info);
+		p.increaseHealth(20);
 		actionClock.restart();
+		IsActive = false;
 	}
 }

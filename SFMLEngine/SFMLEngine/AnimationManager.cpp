@@ -43,9 +43,11 @@ IntRect& AnimationManager::AnimUpdate(float t)
 {
 	return (*currAnim)->tick(t);
 }
-
+#include <boost/lexical_cast.hpp>
 void AnimationManager::LoadAnimation_x(std::string_view fileName)
 {
+	using boost::lexical_cast;
+	using boost::bad_lexical_cast;
 	TiXmlDocument animFile(fileName.data());
 
 	animFile.LoadFile();
@@ -60,35 +62,46 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 	TiXmlElement* animElement;
 	animElement = head->FirstChildElement("animation");
 
-	string Name = animElement->Attribute("title");
-	float delay = atof(animElement->Attribute("delay"));
-
-	vector<IntRect> frames;
 	bool isXMLAnimation = true;
-	AnimationXml* anim = new AnimationXml;
 
 	auto xml_origin = settings->FirstChildElement("origin");
-	anim->origin.x = atoi(xml_origin->Attribute("x"));
-	anim->origin.y = atoi(xml_origin->Attribute("y"));
 
 	auto xml_rect = settings->FirstChildElement("rect");
-	anim->rect.left = atoi(xml_rect->Attribute("left"));
-	anim->rect.top = atoi(xml_rect->Attribute("top"));
-	anim->rect.width = atoi(xml_rect->Attribute("widht"));
-	anim->rect.height = atoi(xml_rect->Attribute("height"));
 
 	auto xml_loop = settings->FirstChildElement("loop");
-	anim->looped = xml_loop->Attribute("value") == "1";
 
 	auto xml_scale = settings->FirstChildElement("scale");
-	anim->scale = atof(xml_scale->Attribute("value"));
 
-	anim->name = Name;
-	anim->speed = delay;
-	anim->texture.loadFromFile("Data\\OSprite\\" + img);
-	anim->texture.setSmooth(true);
+	scale = atof(xml_scale->Attribute("value"));
+
+	texture.loadFromFile("Data\\OSprite\\" + img);
+	texture.setSmooth(true);
+
 	while (animElement)
 	{
+		AnimationXml* anim = new AnimationXml;
+		vector<IntRect> frames;
+
+		string Name = animElement->Attribute("title");
+		float delay = atof(animElement->Attribute("delay"));
+		anim->name = Name;
+		anim->speed = delay / 75000;
+
+		anim->origin.x = atoi(xml_origin->Attribute("x"));
+		anim->origin.y = atoi(xml_origin->Attribute("y"));
+
+		anim->rect.left = atoi(xml_rect->Attribute("left"));
+		anim->rect.top = atoi(xml_rect->Attribute("top"));
+		anim->rect.width = atoi(xml_rect->Attribute("widht"));
+		anim->rect.height = atoi(xml_rect->Attribute("height"));
+
+		auto loop_ = animElement->Attribute("loop");
+		if (loop_)
+			anim->looped = boost::lexical_cast<bool>(loop_);
+		else
+			anim->looped = boost::lexical_cast<bool>(xml_loop->Attribute("value"));
+		anim->scale = atof(xml_scale->Attribute("value"));
+
 		TiXmlElement* cut;
 		cut = animElement->FirstChildElement("cut");
 		while (cut)
@@ -102,19 +115,18 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 			cut = cut->NextSiblingElement("cut");
 		}
 		anim->frameCount++;
+		frames.shrink_to_fit();
+		anim->frameCount = frames.size();
+		anim->frames = std::move(frames);
+		if (animationList.empty())
+		{
+			animationList.push_back(anim);
+			currAnim = animationList.begin();
+		}
+		else
+			animationList.push_back(anim);
 		animElement = animElement->NextSiblingElement("animation");
 	}
-	frames.shrink_to_fit();
-	anim->frameCount = frames.size();
-	anim->frames = std::move(frames);
-	if (animationList.empty())
-	{
-		animationList.push_back(anim);
-		currAnim = animationList.begin();
-	}
-	else
-		animationList.push_back(anim);
-
 	animFile.Clear();
 }
 
@@ -127,7 +139,7 @@ std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::strin
 {
 	return
 		std::find_if(animationList.begin(), animationList.end(),
-			[=](Animation * anim)
+			[=](Animation* anim)
 	{
 		return (anim->name == Name);
 	});
