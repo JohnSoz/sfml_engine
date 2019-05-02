@@ -1,0 +1,15 @@
+<!DOCTYPE SpriteDecomposer>
+<sprites image="anim.png" transparentColor="">
+ <settings>
+  <origin x="24" y="20"/>  
+  <rect left="0" top="0" widht="25" height="47"/> 
+  <loop value="1" />
+  <scale value="0.5 "/>
+ </settings>
+ <animation title="Idle" delay="150">
+  <cut w="26" x="0" y="0" h="48" row="1" col="1"/>
+  <cut w="26" x="32" y="2" h="46" row="1" col="1"/>
+  <cut w="26" x="96" y="2" h="46" row="1" col="1"/>
+  <cut w="26" x="64" y="4" h="44" row="1" col="1"/>
+ </animation>
+</sprites>
