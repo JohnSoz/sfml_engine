@@ -11,7 +11,6 @@ namespace Engine
 		sf::FloatRect viewPort;
 		sf::View camera;
 		sf::Vector2f defaultCenter;
-		//Engine::Quad q;
 		bool move = false;
 	public:
 		Camera()
@@ -33,7 +32,7 @@ namespace Engine
 		{
 			return VectorAbs(defaultCenter - camera.getCenter());
 		}
-		void moveToPoint(sf::Vector2f point, sf::RenderWindow & window, sf::Vector2f offset = { 0.4f, 0.4f });
+		void moveToPoint(sf::Vector2f point, float time,sf::Vector2f offset = { 2.f, 2.f });
 		void setPosition(float x, float y);
 		void setViewPort(float w, float h);
 		const sf::View & getView() { return camera; }

@@ -4,6 +4,7 @@
 #include "imgui-sfml.h"
 #include "Actor.h"
 #include <entityx/entityx.h>
+#include "Camera.h" 
 
 namespace Engine
 {
@@ -26,7 +27,7 @@ namespace Engine
 
 		void handelEvent(sf::Event& e);
 		template<class Obj>
-		Obj& GetObjects(std::string NAME);
+		Obj* GetObjects(std::string NAME);
 		void PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
 		void UpdateObjects(float time);
 		void CollisionUpdate()
@@ -61,11 +62,11 @@ namespace Engine
 		sf::Sprite        LevelSprite;
 		sf::Texture       LevelTexture;
 		ObjectHandler     objHandler;
-        static Level      level;
+		static Level      level;
 		sf::RenderTexture renderTexture;
 		DebuggingSystem debug;
 		bool ShowOverlay;
-
+		Camera cam;
 
 		void Init(sf::RenderWindow& window);
 
@@ -85,7 +86,7 @@ namespace Engine
 			debug.pushRectangle(e->getDebugRect());
 			objHandler.PushObject(e);
 		}
-		
+
 		void receive(const Events::NewObject_Event& entity);
 
 		void start();

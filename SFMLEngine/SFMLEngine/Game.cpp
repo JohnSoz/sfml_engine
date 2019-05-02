@@ -42,16 +42,16 @@ void Engine::Game::startGame()
 	initMenu(*window);
 	L = luaL_newstate();
 	luaL_openlibs(L);
-	luabridge::getGlobalNamespace(L)
-		.beginClass<Camera>("Camera")
-		.addConstructor<void(*) ()>()
-		.addConstructor<void(*) (sf::Vector2f, sf::IntRect)>()
-		.addFunction("setPos", &Camera::setPosition)
-		.addFunction("test", &Camera::test)
-		.addFunction("setView", &Camera::setViewPort)
-		.endClass();
-	luabridge::push(L, &camera);
-	lua_setglobal(L, "cam");
+	//luabridge::getGlobalNamespace(L)
+	//	.beginClass<Camera>("Camera")
+	//	.addConstructor<void(*) ()>()
+	//	.addConstructor<void(*) (sf::Vector2f, sf::IntRect)>()
+	//	.addFunction("setPos", &Camera::setPosition)
+	//	.addFunction("test", &Camera::test)
+	//	.addFunction("setView", &Camera::setViewPort)
+	//	.endClass();
+	//luabridge::push(L, &camera);
+	//lua_setglobal(L, "cam");
 
 	luabridge::getGlobalNamespace(L)
 		.beginClass<A>("A")
@@ -151,7 +151,6 @@ void Engine::Game::draw()
 	}
 	Console::AppLog::Draw("LogConsole", &LogConsole, L);
 	ImGui::SFML::Render(*window);
-	window->setView(camera.getView());
 	window->display();
 }
 

@@ -38,6 +38,65 @@ namespace Engine
 {
 	sf::Vector2f VectorAbs(sf::Vector2f vec);
 
+
+	inline float Normalize(sf::Vector2f v)
+	{
+		return sqrt(v.x * v.x + v.y * v.y);
+	}
+
+	inline bool operator<(sf::Vector2f v1, sf::Vector2f v2)
+	{
+		return (v1.x < v2.x) && (v1.y < v2.y);
+	}
+
+	inline sf::Vector2f operator-(sf::Vector2f v1, sf::Vector2f v2)
+	{
+		return { v1.x - v2.x, v1.y - v2.y };
+	}
+
+	inline float lenght(sf::Vector2f v1)
+	{
+		return sqrt(v1.x * v1.x + v1.y * v1.y);
+	}
+
+	inline float dot(sf::Vector2f v1)
+	{
+		return v1.x * v1.x + v1.y * v1.y;
+	}
+
+	inline sf::Vector2f perp(sf::Vector2f v1)
+	{
+		return { v1.y,-v1.x };
+	}
+
+	inline float Distance(const sf::Vector2f& v2, const sf::Vector2f& v1)
+	{
+		return sqrtf(pow((v2.x - v1.x), 2) + pow((v2.y - v1.y), 2));
+	}
+
+	inline sf::Vector2f raycast(sf::Vector2f start, sf::Vector2f end, std::vector<sf::FloatRect> objects, sf::Vector2f size)
+	{
+		sf::Vector2f u = end - start;
+		u /= Normalize(u);
+		sf::Vector2f prevPos = start;
+
+		while (sf::FloatRect(0, 0, size.x, size.y).contains(start))
+		{
+			sf::FloatRect rect(start.x, start.y, .1f, .1f);
+			for (auto s : objects)
+			{
+				if (s.intersects(rect))
+				{
+					float distance = Distance(prevPos, { s.left, s.top });
+					return start;
+				}
+			}
+			start += u;
+		}
+		return start;
+	}
+
+
 	class Vector2D
 	{
 	public:

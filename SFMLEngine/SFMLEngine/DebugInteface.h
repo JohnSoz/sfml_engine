@@ -71,7 +71,7 @@ namespace Engine
 							ImGui::Text(field.c_str(), member.get(*ptr_type));
 							break;
 						case Engine::debug::FLOAT:
-							field = (std::string)member.getName() + ": %.5f";
+							field = (std::string)member.getName() + ": %f";
 							ImGui::Text(field.c_str(), member.get(*ptr_type));
 							if (ImGui::BeginPopupContextItem(field.c_str()))
 							{

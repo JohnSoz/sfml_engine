@@ -13,10 +13,12 @@ namespace Engine
 		Inventory inventory;
 		sf::Vector2f vec;
 		sf::Vector2f offset;
+
 		InventoryMenu inv;
 		float health, armor;
 		float energy, friction, maxSpeed;
 		float speedX, speedY;
+		float grav = 0.005f;
 		bool onGround;
 		bool isInvAction;
 		bool isJump;
@@ -83,6 +85,8 @@ namespace meta
 			member("offset", &Engine::Player::offset),
 			member("speedX", &Engine::Player::speedX),
 			member("maxSpeed", &Engine::Player::maxSpeed),
-			member("speedY", &Engine::Player::speedY));
+			member("speedY", &Engine::Player::speedY),
+			member("vel", &Engine::Player::velocity)
+		);
 	}
 } // namespace meta

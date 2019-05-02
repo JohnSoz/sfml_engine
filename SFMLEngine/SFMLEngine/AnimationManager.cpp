@@ -87,13 +87,13 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 		anim->name = Name;
 		anim->speed = delay / 75000;
 
-		anim->origin.x = atoi(xml_origin->Attribute("x"));
-		anim->origin.y = atoi(xml_origin->Attribute("y"));
-
 		anim->rect.left = atoi(xml_rect->Attribute("left"));
 		anim->rect.top = atoi(xml_rect->Attribute("top"));
 		anim->rect.width = atoi(xml_rect->Attribute("widht"));
 		anim->rect.height = atoi(xml_rect->Attribute("height"));
+
+		anim->origin.x = anim->rect.width / 2;
+		anim->origin.y = anim->rect.height / 2;
 
 		auto loop_ = animElement->Attribute("loop");
 		if (loop_)

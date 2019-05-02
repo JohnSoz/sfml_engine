@@ -15,7 +15,6 @@ extern "C"
 #include "lualib.h"
 }
 #include "EngineEvents.h"
-#include "Camera.h"
 namespace Engine
 {
 	class A
@@ -89,7 +88,6 @@ namespace Engine
 		Clock pressClock;
 		timer time;
 
-		Camera   camera;
 		appState state;
 		appState lastState;
 

@@ -16,14 +16,14 @@ void Engine::ObjectHandler::handelEvent(sf::Event& e)
 }
 
 template<class Obj>
-Obj& Engine::ObjectHandler::GetObjects(std::string NAME)
+Obj* Engine::ObjectHandler::GetObjects(std::string NAME)
 {
 	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
 		[NAME](const Entity* e1)->bool
 	{
 		return (e1->name == NAME) ? true : false;
 	});
-	return *static_cast<Obj*>(*retObj);
+	return static_cast<Obj*>(*retObj);
 }
 
 void Engine::ObjectHandler::PushObject(Entity* obj)
@@ -57,11 +57,23 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		if (o->getType() == OActor)
 		{
 			auto z = static_cast<Actor*>(o);
-			/*sf::CircleShape shape2(4);
-			shape2.setFillColor(sf::Color::Red);
-			shape2.setOrigin(2, 2);
+			VertexArray vs(Lines, 2);
+			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2,z->getPos().y };
+			vs[1].position = z->ray;
+			vs[0].color = sf::Color::Green;
+			vs[1].color = sf::Color::White;
+			WINDOW.draw(vs);
+			VertexArray vs2(Lines, 2);
+			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2,z->getPos().y };
+			vs2[1].position = z->ray2;
+			vs2[0].color = sf::Color::White;
+			vs2[1].color = sf::Color::Green;
+			WINDOW.draw(vs2);
+			sf::CircleShape shape2(2);
+			shape2.setFillColor(sf::Color::Blue);
+			shape2.setOrigin(1, 1);
 			shape2.setPosition(z->sprite.getPosition());
-			WINDOW.draw(shape2);*/
+			WINDOW.draw(shape2);
 		}
 	}
 }
@@ -79,24 +91,23 @@ void Engine::ObjectHandler::refresh()
 
 void Engine::World::update(sf::RenderWindow& window, float time, sf::Event& event)
 {
-	objHandler.GetObjects<Player>("Test").isKeyPressed();
-	//if (auto z = objHandler.GetObjects<Player>("Test").ShootUpdate(level); z != nullptr)
-	//{
-	//	pushEntity(z);
-	//}
+	Player* p = objHandler.GetObjects<Player>("Test");
+	p->isKeyPressed();
+	//cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
 	if (ShowOverlay)
 	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
 	}
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();
+	window.setView(cam.getView());
 }
 
 
 void Engine::World::handleEvent(sf::Event& event)
 {
 	debug.handleEvent(event);
-	objHandler.GetObjects<Player>("Test").handleEvent(event);
+	objHandler.GetObjects<Player>("Test")->handleEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow& window)
@@ -104,7 +115,7 @@ void Engine::World::draw(sf::RenderWindow& window)
 	window.draw(LevelSprite);
 	objHandler.RenderObjects(window);
 	debug.draw();
-	objHandler.GetObjects<Player>("Test").draw();
+	objHandler.GetObjects<Player>("Test")->draw();
 }
 
 
