@@ -24,15 +24,16 @@ namespace Engine
 		GroupArray groupArray;
 		std::string name;
 		Gui gui;
-		bool isEnable;
+		bool isEnable;//Имеет смысл?
 	public:
 		virtual ~BaseGui() = default;
 		BaseGui(sf::RenderWindow& w, std::string pathToTheme) : groupArray(w, pathToTheme) { isEnable = true; }
 
-		virtual void draw() {}
-		virtual void handleEvent(sf::Event&) {}
+		virtual void draw() { gui.draw(); }
+		virtual void update() {}
+		virtual void handleEvent(sf::Event& e) { gui.handleEvent(e); }
 		bool IsEnable() const { return isEnable; }
-		void activateOrDisable(const int n = -1);
+		void activateOrDisable(std::string_view name = "");
 
 		GroupArray& get_group_array() { return groupArray; }
 

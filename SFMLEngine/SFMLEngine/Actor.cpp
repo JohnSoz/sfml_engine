@@ -91,7 +91,7 @@ Engine::Actor::Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& 
 {
 	type = OActor;
 	direction = Left;
-	globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
+	//globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;
 	animManager.LoadAnimation_x(animation);

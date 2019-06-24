@@ -109,7 +109,7 @@ namespace Engine
 	public:
 		Inventory()
 		{
-			baseIni(); 
+			baseIni();
 		}
 		~Inventory()
 		{
@@ -166,12 +166,15 @@ namespace Engine
 		template<class T>
 		T* getItem(const int index)
 		{
-			assert((static_cast<size_t>(index) > inv.size()) == false, "out of range");
+			assert((static_cast<size_t>(index) > inv.size()) == false && "out of range");
 			return dynamic_cast<T*>(inv[index]);
 		}
 
 		template<class T>
-		T* getCurrItem() const { return dynamic_cast<T*>(*curr_item); }
+		T* getCurrItem() const
+		{
+			return dynamic_cast<T*>(*curr_item);
+		}
 
 		void setItemByName(std::string_view name)
 		{
@@ -182,7 +185,7 @@ namespace Engine
 
 		void setItemByIndex(size_t index)
 		{
-			assert(index > inv.size() == false, "out of range");
+			assert(index > inv.size() == false && "out of range");
 			curr_item = inv.begin() + index;
 		}
 

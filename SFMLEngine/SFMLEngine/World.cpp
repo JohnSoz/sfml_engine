@@ -49,6 +49,8 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 	}
 }
 
+
+
 void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 {
 	for (auto& o : ObjectsArray)
@@ -58,13 +60,13 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		{
 			auto z = static_cast<Actor*>(o);
 			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2,z->getPos().y };
+			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2 + 1,z->getPos().y };
 			vs[1].position = z->ray;
 			vs[0].color = sf::Color::Green;
 			vs[1].color = sf::Color::White;
 			WINDOW.draw(vs);
 			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2,z->getPos().y };
+			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2 - 1,z->getPos().y };
 			vs2[1].position = z->ray2;
 			vs2[0].color = sf::Color::White;
 			vs2[1].color = sf::Color::Green;
@@ -93,16 +95,22 @@ void Engine::World::update(sf::RenderWindow& window, float time, sf::Event& even
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
 	p->isKeyPressed();
-	//cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
-	if (ShowOverlay)
-	{
-		ImGUI::SimpleOverlay(&ShowOverlay);
-	}
+	cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
+
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();
 	window.setView(cam.getView());
 }
 
+void World::updateImGui()
+{
+	if (ShowOverlay)
+	{
+		ImGUI::SimpleOverlay(&ShowOverlay);
+	}
+	Player* p = objHandler.GetObjects<Player>("Test");
+	debug::debugDraw<Player, Object, Actor>(p, "Debug For Class Player");
+}
 
 void Engine::World::handleEvent(sf::Event& event)
 {
@@ -124,13 +132,13 @@ void Engine::World::Init(sf::RenderWindow& window)
 	level.LoadFromFile("Data/Level/shpiga_test_level.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
-	debug.levelIsoObjects(level.GetAllObjects());
 	debug.levelObjects(level.GetAllObjects());
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 
 	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
 }
+
 #include "EngineEvents.h"
 Engine::World::World()
 {

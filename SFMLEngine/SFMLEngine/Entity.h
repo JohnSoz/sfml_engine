@@ -17,7 +17,6 @@ namespace Engine
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
-		Entity(Entity&&) = default;
 		Entity(sf::Vector2f POSITION, std::string NAME);
 		Entity(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME);
 		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);

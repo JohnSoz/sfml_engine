@@ -84,3 +84,14 @@ tgui::Picture::Ptr Engine::makePicture(std::string_view path, sf::Vector2f pos, 
 	picture->setInheritedOpacity(opacity);
 	return picture;
 }
+
+tgui::Picture::Ptr Engine::makePicture(sf::Image tex, sf::Vector2f pos, float opacity)
+{
+	sf::Texture t;
+	t.loadFromImage(tex);
+	auto picture = tgui::Picture::create(t, true);
+	picture->setSize((sf::Vector2f)t.getSize());
+	picture->setPosition(pos);
+	picture->setInheritedOpacity(opacity);
+	return picture;
+}

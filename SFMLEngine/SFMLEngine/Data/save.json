@@ -5,15 +5,15 @@
             "isWalk": false,
             "originOffset": {
                 "X": 15.0,
-                "Y": 23.0
+                "Y": 19.0
             }
         },
         "Object": {
             "IsActive": true,
             "name": "Test",
             "position": {
-                "X": 121.0,
-                "Y": 727.5
+                "X": 655.868408203125,
+                "Y": 693.5
             },
             "sprite": {
                 "size": {

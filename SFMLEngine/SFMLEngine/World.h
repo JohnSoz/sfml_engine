@@ -81,6 +81,8 @@ namespace Engine
 
 		void update(sf::RenderWindow& window, float time, sf::Event& event);
 
+		void updateImGui();
+
 		void pushEntity(Entity* e)
 		{
 			debug.pushRectangle(e->getDebugRect());

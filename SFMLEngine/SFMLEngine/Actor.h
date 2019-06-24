@@ -36,7 +36,6 @@ namespace Engine
 		DirectionX direction;
 		DirectionY directionY = DirectionY::Up;
 		sf::RenderWindow* window;
-		//sf::Transformable PointOfFire;
 
 		void updateSprite();
 

@@ -25,7 +25,7 @@ namespace Engine
 				gEditor.drawEditor();
 			gui.draw();
 		}
-		void update() {}
+		void update() override {}
 		void handleEvent(sf::Event& e)override
 		{
 			gui.handleEvent(e);

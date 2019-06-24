@@ -9,7 +9,7 @@ void Player::isKeyPressed()
 		isWalk = false;
 		directionY = Up;
 		onGround = false;
-		velocity.y = -(energy * 120.f);
+		velocity.y = -(energy * 150.f);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
@@ -34,6 +34,7 @@ void Player::isKeyPressed()
 	if (Keyboard::isKeyPressed(Keyboard::I))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{
+			hud.update();
 			EventManager::eventManager.emit<Events::Event_Inventory_UI>();
 			Pressclock.restart();
 		}
@@ -83,85 +84,67 @@ void Player::RotateToMouse(float speed, RenderWindow& w)
 
 void Player::update(float time)
 {
-	switch (direction)
+	if (time)
 	{
-	case Left:
-		//velocity.x = -speedX;
-		break;
-	case Right:
-		//velocity.x = speedX;
-		break;
+		if (velocity.y < 0)
+			isJump = true;
+
+		if (!onGround)
+			velocity.y += energy / 2;
+		else
+			velocity.y = 0;
+
+		if (!isWalk)
+			(velocity.x > 0) ? velocity.x -= friction : velocity.x = 0;
+
+		position += velocity * time;
+		checkClashes(time);
+
+		sprite.setPosition(position);
+		if (isWalk)
+		{
+			animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
+			updateSprite();
+		}
+		else if (isJump)
+		{
+			animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
+			updateSprite();
+			isJump = false;
+		}
+		else if (!isWalk)
+		{
+			animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
+			updateSprite();
+		}
+		sprite.setTextureRect(animManager.AnimUpdate(time));
+
+		inventoryAction();
+		inventory.update();
+
+		localRectangle = sprite.getTextureRect();
+		const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
+
+		globalRectangle = sf::FloatRect(pos.x, pos.y,
+			pos.x + localRectangle.width * scale,
+			pos.y + localRectangle.height * scale);
+
+		debugRectangle = sf::FloatRect(pos.x + localRectangle.width * scale,
+			pos.y, pos.x,
+			pos.y + localRectangle.height * scale);
 	}
-
-	switch (directionY)
-	{
-	case Up:
-		//velocity.y = -speedY;
-		break;
-	default:;
-	}
-	//if(velocity.y < 0)
-	//velocity.y += grav;
-
-	if (velocity.y < 0)
-		isJump = true;
-
-	if (!onGround)
-		velocity.y += energy;
-	else
-		velocity.y = 0;
-
-	if (!isWalk)
-		(velocity.x > 0) ? velocity.x -= friction : velocity.x = 0;
-
-	position += velocity * time;
-	checkClashes(time);
-
-	sprite.setPosition(position);
-	if (isWalk)
-	{
-		animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
-		updateSprite();
-	}
-	else if (isJump)
-	{
-		animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
-		updateSprite();
-		isJump = false;
-	}
-	else if (!isWalk)
-	{
-		animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
-		updateSprite();
-	}
-	sprite.setTextureRect(animManager.AnimUpdate(time));
-
-	inventoryAction();
-	inventory.update();
-
-	localRectangle = sprite.getTextureRect();
-	const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - originOffset.y * scale };
-
-	globalRectangle = sf::FloatRect(pos.x, pos.y,
-		pos.x + localRectangle.width * scale,
-		pos.y + localRectangle.height * scale);
-
-	debugRectangle = sf::FloatRect(pos.x + localRectangle.width * scale,
-		pos.y, pos.x,
-		pos.y + localRectangle.height * scale);
-	debug::debugDraw<Player, Player, Object, Actor>(this, "Debug For Class Player");
 }
-#include <future> 
+
 void Player::checkClashes(const float& time)
 {
 	isCollision = false;
-	ray = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2,sprite.getPosition().y + sprite.getOrigin().y / 2};
-	ray2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2,sprite.getPosition().y + sprite.getOrigin().y / 2};
+	ray = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2 + 1, sprite.getPosition().y + sprite.getOrigin().y / 2 };
+	ray2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2 - 1, sprite.getPosition().y + sprite.getOrigin().y / 2 };
 
-	sf::Vector2f pos1 = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2, sprite.getPosition().y };
-	sf::Vector2f pos2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2, sprite.getPosition().y };
-	float dist = raycastLevelObject(pos1, { 0, sprite.getOrigin().y / 2 }, obj, "barrier");
-	float dist2 = raycastLevelObject(pos2, { 0, sprite.getOrigin().y / 2 }, obj, "barrier");
+	sf::Vector2f pos1 = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2 + 1, sprite.getPosition().y };
+	sf::Vector2f pos2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2 - 1, sprite.getPosition().y };
+	float dist = raycastLevelObject(pos1, { 1, sprite.getOrigin().y / 2 }, obj, "barrier");
+	float dist2 = raycastLevelObject(pos2, { -1, sprite.getOrigin().y / 2 }, obj, "barrier");
 	//std::cout << "dist = " << (float)(dist) << "   ___   " << "dist2 = " << (float)(dist2) << endl;
 
 	if (dist < 1 && dist2 < 1)
@@ -201,6 +184,7 @@ void Engine::Player::handleEvent(sf::Event& e)
 {
 	if (inv.IsEnable())
 		inv.handleEvent(e);
+	hud.handleEvent(e);
 	if (e.type == sf::Event::KeyPressed)
 	{
 		if (e.key.code == sf::Keyboard::C)

@@ -7,6 +7,7 @@
 #include<conio.h>
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include <Python.h>
 using namespace sf;
 using namespace std;
 
@@ -27,8 +28,10 @@ private:
 	size_t port;
 public:
 	Server();
-	void Start();
+	void Start(PyObject* obj);
 	int makeUniqueId() { static int id; return ++id; }
+	void acceptNewConnectin() {}
+
 
 	~Server();
 };

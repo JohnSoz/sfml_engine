@@ -158,6 +158,7 @@ namespace Engine
 					if (ImGui::TreeNode((void*)ptr, nameTree.c_str()))
 					{
 						(utility::helper<Types>(selected), ...);
+						utility::helper<PtrType>(selected);
 						curr_selected = selected;
 						is_prev_treeNode_open = true;
 						ImGui::TreePop();
@@ -172,6 +173,7 @@ namespace Engine
 					ImGui::BeginGroup();
 					ImGui::BeginChild("item view", ImVec2(0, -ImGui::GetFrameHeightWithSpacing()));
 					(utility::draw<PtrType, Types>(ptr, curr_selected), ...);
+					utility::draw<PtrType, PtrType>(ptr, curr_selected);
 					ImGui::EndChild();
 					ImGui::SameLine();
 					ImGui::EndGroup();

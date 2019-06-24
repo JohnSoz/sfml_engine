@@ -98,7 +98,7 @@ namespace Engine
 		ObjectLevel GetObjectByName(std::string name);
 		std::vector<Tileset> tilesets;
 		std::vector<ObjectLevel> GetObjects(std::string name);
-		std::vector<ObjectLevel> GetAllObjects();
+		const std::vector<ObjectLevel>& GetAllObjects();
 		void DrawLevel(sf::RenderWindow& window);
 		sf::Image DrawLevel2();
 		sf::Vector2i GetTileSize();

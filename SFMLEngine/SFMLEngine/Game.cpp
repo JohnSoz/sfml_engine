@@ -9,10 +9,11 @@ Engine::Game::Game(sf::RenderWindow& w)
 	state = appState::UI;
 	window = &w;
 	world = new World();
-	time.setDelta(600);
+	//time.setDelta(600);
 	testWindow = new A("TestLua");
 	isStateChange = false;
 	EventManager::eventManager.subscribe<Events::Main_Menu_Event>(*this);
+	time = true;
 }
 
 void Engine::Game::initMenu(sf::RenderWindow& w)
@@ -63,13 +64,13 @@ void Engine::Game::startGame()
 	luabridge::push(L, testWindow);
 	lua_setglobal(L, "L_testWindow");
 
-	luabridge::getGlobalNamespace(L)
+	/*luabridge::getGlobalNamespace(L)
 		.beginClass<Client>("Client")
 		.addConstructor<void(*) ()>()
 		.addFunction("sendPacket", &Client::sendMsg_l)
 		.endClass();
 	luabridge::push(L, &c);
-	lua_setglobal(L, "L_Client");
+	lua_setglobal(L, "L_Client");*/
 
 	testWindow->addText("Text From C++");
 	//musicPlayer.Play();
@@ -77,37 +78,54 @@ void Engine::Game::startGame()
 
 void Engine::Game::update()
 {
+	float fps=0;
 	while (window->isOpen())
 	{
+		auto timePoint1(chrono::high_resolution_clock::now());
+
 		const auto local_last_state = state;
-		time.Tick();
+		//time.Tick();
 		sf::Event event;
 		handleEvent(event);
+		currentSlice += lastFt;
 		ImGui::SFML::Update(*window, deltaClock.restart());
-
-		luaL_dofile(L, "script.lua");
-
-		switch (state)
+		if (state == Play)
+			world->updateImGui();
+		for (; currentSlice >= ftSlice; currentSlice -= ftSlice)
 		{
-		case Exits:
-			window->close();
-			break;
-		case Engine::Play:
-			world->update(*window, time.getTime(), event);
-			break;
-		case Engine::UI:
-			m->update();
-			break;
-		case Engine::Pause:
-			break;
+			switch (state)
+			{
+			case Exits:
+				window->close();
+				break;
+			case Engine::Play:
+				world->update(*window, (float)time, event);
+				break;
+			case Engine::UI:
+				m->update();
+				break;
+			case Engine::Pause:
+				break;
+			}
 		}
-
+		ImGui::Text(std::to_string(fps).c_str());
 		if (local_last_state != state)
 		{
 			isStateChange = !isStateChange;
 			stateChanged();
 		}
 		draw();
+		auto timePoint2(chrono::high_resolution_clock::now());
+		auto elapsedTime(timePoint2 - timePoint1);
+		float ft{
+			chrono::duration_cast<chrono::duration<float, milli>>(elapsedTime)
+				.count() };
+
+		lastFt = ft;
+
+		auto ftSeconds(ft / 1000.f);
+		fps = 1.f / ftSeconds;
+		
 	}
 }
 
@@ -122,12 +140,13 @@ void Engine::Game::stateChanged()
 	}
 
 	if (state == Engine::Pause)
-		time.pause();
+		time = false;
+		//.pause();
 
 	if (state == Engine::Resume)
 	{
 		state = lastState;
-		time.resume();
+		time = true;//time.resume();
 	}
 
 
@@ -147,7 +166,7 @@ void Engine::Game::draw()
 		break;
 	case Pause:
 		break;
-	default: ;
+	default:;
 	}
 	Console::AppLog::Draw("LogConsole", &LogConsole, L);
 	ImGui::SFML::Render(*window);
@@ -159,12 +178,14 @@ void Engine::Game::handleEvent(sf::Event& e)
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::N))
 	{
-		time.pause();
+		time = false;
+		//time.pause();
 	}
 
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::M))
 	{
-		time.resume();
+		time = true;
+		//time.resume();
 	}
 
 	while (window->pollEvent(e))
@@ -202,9 +223,8 @@ void Engine::Game::handleEvent(sf::Event& e)
 		case StartGame: break;
 		case Resume: break;
 		case Loading: break;
-		default: ;
+		default:;
 		}
-
 		ImGui::SFML::ProcessEvent(e);
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tilde) && pressClock.getElapsedTime().asMilliseconds() > 500)
@@ -217,5 +237,5 @@ void Engine::Game::handleEvent(sf::Event& e)
 		VStaticContainer::ShowGuiEditor = !VStaticContainer::ShowGuiEditor;
 		pressClock.restart();
 	}
-	
+
 }

@@ -6,18 +6,36 @@ using namespace std;
 Server::Server()
 {
 	cout << "Server Running" << endl;
-	auto z = listener.listen(80);
+	auto z = listener.listen(300);
 	selector.add(listener);
 }
 
-void Server::Start()
+void Server::Start(PyObject* pModule)
 {
-	while (!done)
+	std::cout << "Server.Start()" << endl;
+	auto time_prev = std::chrono::system_clock::now();
+	std::string last_user;
+	sf::Clock c;
+	while (true)
 	{
-		if (selector.wait())
+		if (c.getElapsedTime().asSeconds() > 30) {
+			auto pFunc2 = PyObject_GetAttrString(pModule, "setStatus");
+			if (pFunc2 && PyCallable_Check(pFunc2))
+			{
+				auto min = std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now() - time_prev).count();
+				std::string status = "uptime: " + std::to_string(min) + "|users: " + std::to_string(clients.size()) + "|lastUser: " + last_user;
+				PyObject* args = PyTuple_Pack(1, PyUnicode_FromString(status.c_str()));
+				PyObject_CallObject(pFunc2, args);
+				cout << status << endl;
+			}
+			Py_XDECREF(pFunc2);
+			c.restart();
+		}
+		if (selector.wait(sf::seconds(220)))
 		{
 			if (selector.isReady(listener))
 			{
+				std::cout << 11111 << endl;
 				TcpSocket* socket = new TcpSocket;
 				listener.accept(*socket);
 				Packet packet;
@@ -31,7 +49,11 @@ void Server::Start()
 				{
 					packet >> PlayerName;
 					cout << "User: " << PlayerName << ", IP: " << socket->getRemoteAddress().toString() << endl;
+					auto ip = socket->getRemoteAddress().toString();
+					ip.erase(ip.find_last_of('.'), ip.size());
+					ip += ".***";
 					std::string serverInfo = "Connect success";
+					last_user = PlayerName + ",ip " + ip;
 					txt += PlayerName + "; ";
 					for (auto user : clients)
 					{
@@ -53,7 +75,7 @@ void Server::Start()
 					std::cout << data;
 				}
 			}
-			else if (!clients.empty())
+			else
 			{
 				for (auto index = 0; index < clients.size(); ++index)
 				{
@@ -72,8 +94,11 @@ void Server::Start()
 								std::cout << "PacketType = " << type << " Msg: " << msg << std::endl;
 								for (auto client : clients)
 								{
-									infoPacket << msg;
-									client.second->send(infoPacket);
+									if (client != clients[index])
+									{
+										infoPacket << msg;
+										client.second->send(infoPacket);
+									}
 								}
 							}
 							else if (type == 2)

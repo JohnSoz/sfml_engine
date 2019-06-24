@@ -94,18 +94,31 @@ namespace Engine
 			if (!selected.empty())
 			{
 				auto w = ptrGui->groupArray.get(groupName)->get(selected);
+				std::string type = w->getWidgetType();
+				ImGui::Text(("Type: " + type).c_str());
 
-				ImGui::Text(("Type: " + w->getWidgetType()).c_str());
-				
+				if (type == "Picture")
+				{
+					if (ImGui::TreeNode("Texture"))
+					{
+						auto pic = w->cast<Picture>();
+						auto tex = pic->getRenderer()->getTexture().getData()->texture;
+						auto size_x = tex.getSize().x;
+						auto size_y = tex.getSize().y;
+						ImGui::Text("%ix%i", size_x, size_y);
+						ImGui::Image(pic->getRenderer()->getTexture().getData()->texture, sf::Vector2f(size_x, size_y), sf::FloatRect(0, 0, size_x, size_y));
+						ImGui::TreePop();
+					}
+				}
 				if (ImGui::TreeNode("Position"))
 				{
 					auto new_pos = w->getPosition();
-					auto w_pos   = w->getPosition();
+					auto w_pos = w->getPosition();
 
 					new_pos.x += w->getSize().x / 2;
 					new_pos.y += w->getSize().y / 2;
-					w_pos.x   += w->getSize().x / 2;
-					w_pos.y   += w->getSize().y / 2;
+					w_pos.x += w->getSize().x / 2;
+					w_pos.y += w->getSize().y / 2;
 
 					ImGui::DragFloat("Pos.x", &new_pos.x, 1.f, 0.f, 1920.f);
 					ImGui::DragFloat("Pos.y", &new_pos.y, 1.f, 0.f, 1080.f);

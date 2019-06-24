@@ -48,7 +48,7 @@ Client::~Client()
 std::thread Engine::Client::connect(std::function<void()> callback)
 {
 	sf::Packet packet;
-	status = socket.connect(IP, 80);
+	status = socket.connect(IP, 300);
 	if (status != Socket::Error)
 	{
 		packet << Name;

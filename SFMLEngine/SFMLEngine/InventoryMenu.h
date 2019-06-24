@@ -5,11 +5,10 @@
 #include <entityx/entityx.h>
 #include "EngineEvents.h"
 #include "GuiEditor.h"
-using namespace entityx;
 
 namespace Engine
 {
-	class InventoryMenu : public BaseGui, public Receiver<InventoryMenu>
+	class InventoryMenu : public BaseGui, public entityx::Receiver<InventoryMenu>
 	{
 		Gui gui;
 		Inventory* inv;
@@ -28,7 +27,7 @@ namespace Engine
 		void receive(const Events::Event_Inventory_UI&)
 		{
 			activateOrDisable();
-			updateInventory();
+			update();
 		}
 
 		void makeMenu(Inventory& inventr)
@@ -87,7 +86,7 @@ namespace Engine
 			activateOrDisable();
 		}
 
-		void updateInventory()
+		void update() override
 		{
 			auto cont = groupArray.get("Default")->get<tgui::Group>("InventoryContainer");
 			auto grid = tgui::Grid::create();
@@ -138,11 +137,6 @@ namespace Engine
 		{
 			//g.drawEditor();
 			gui.draw();
-		}
-
-		void update()
-		{
-
 		}
 
 		void handleEvent(sf::Event& e) override

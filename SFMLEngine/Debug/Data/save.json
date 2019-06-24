@@ -5,15 +5,15 @@
             "isWalk": false,
             "originOffset": {
                 "X": 15.0,
-                "Y": 23.0
+                "Y": 19.0
             }
         },
         "Object": {
             "IsActive": true,
             "name": "Test",
             "position": {
-                "X": 180.85964965820313,
-                "Y": 727.5
+                "X": 528.7233276367188,
+                "Y": 662.5
             },
             "sprite": {
                 "size": {
@@ -31,12 +31,16 @@
             "health": 50.0,
             "maxSpeed": 0.20000000298023224,
             "offset": {
-                "X": -188.359619140625,
-                "Y": -27.431396484375
+                "X": 0.0,
+                "Y": 0.0
             },
             "onGround": true,
             "speedX": 0.0,
-            "speedY": 0.0
+            "speedY": 0.0,
+            "vel": {
+                "X": 0.0,
+                "Y": 0.0
+            }
         }
     }
 }

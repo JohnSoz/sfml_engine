@@ -170,8 +170,6 @@ void Engine::ImGUI::SimpleOverlay(bool* open)
 
 		if (ImGui::Begin("Overlay", open, (corner != -1 ? ImGuiWindowFlags_NoMove : 0) | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav))
 		{
-			ImGui::Text("Show player position");
-			ImGui::Separator();
 			if (ImGui::IsMousePosValid())
 			{
 				ImGui::Text("Window size: (%.1f,%.1f)", ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y);
@@ -195,7 +193,7 @@ void Engine::ImGUI::SimpleOverlay(bool* open)
 					middle = 0;
 					counter = 0;
 				}
-				ImGui::PlotLines("Framerate", values, IM_ARRAYSIZE(values), values_offset, t.c_str(), 200, 400, ImVec2(0, 80));
+				ImGui::PlotLines("", values, IM_ARRAYSIZE(values), values_offset, t.c_str(), 200, 400, ImVec2(0, 80));
 			}
 			else
 				ImGui::Text("Player Position: <invalid>");

@@ -72,13 +72,15 @@ namespace Engine
 	{
 	private:
 		World*      world;
+		Clock Gtime;
 		MainMenu*   m;
 		MusicPlayer musicPlayer;
 		A*          testWindow;
-		Client      c;
-
+		//Client      c;
+		float ftStep{ 1.f }, ftSlice{ 1.f };
+		float lastFt{ 0.f };
+		float currentSlice{ 0.f };
 		lua_State*      L;
-		LuaEngine       lua_eng;
 		RenderWindow*   window;
 		ContextSettings settings;
 		std::string     appname;
@@ -86,7 +88,7 @@ namespace Engine
 
 		Clock deltaClock;
 		Clock pressClock;
-		timer time;
+		bool time;
 
 		appState state;
 		appState lastState;

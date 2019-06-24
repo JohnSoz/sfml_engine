@@ -91,7 +91,7 @@ std::vector<ObjectLevel> Level::GetObjects(std::string name)
 	return vec;
 }
 
-std::vector<ObjectLevel> Level::GetAllObjects()
+const std::vector<ObjectLevel>& Level::GetAllObjects()
 {
 	return objects;
 };

@@ -17,7 +17,6 @@ int main()
 	settings.minorVersion = 0;
 	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Engine V0.2", sf::Style::Default, settings);
 	window.setFramerateLimit(350);
-
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();
 	IO.Fonts->Clear();

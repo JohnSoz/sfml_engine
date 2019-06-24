@@ -1,39 +1,28 @@
 #include "GUI.h"
 using namespace Engine;
 
-void Engine::BaseGui::activateOrDisable(const int n /*= -1*/)
+void Engine::BaseGui::activateOrDisable(std::string_view name /*= ""*/)
 {
-	const auto enabled = groupArray[0]->isEnabled();
-	if (n == -1)
+	Group::Ptr item;
+	if (name.empty())
+		item = groupArray[0];
+	else
+		item = std::find_if(groupArray.begin(), groupArray.end(),
+			[name](std::pair<std::string, Group::Ptr>& item)
+	{return item.first == name; })->second;
+
+	const bool enabled = item->isEnabled();
+	if (enabled)
 	{
-		if (enabled)
-		{
-			groupArray[0]->setVisible(false);
-			groupArray[0]->setEnabled(false);
-		}
-		else
-		{
-			groupArray[0]->setVisible(true);
-			groupArray[0]->setEnabled(true);
-		}
+		item->setVisible(false);
+		item->setEnabled(false);
 	}
 	else
 	{
-		for (auto& [type, item] : groupArray)
-		{
-			if (enabled)
-			{
-				item->setVisible(false);
-				item->setEnabled(false);
-			}
-			else
-			{
-				item->setVisible(true);
-				item->setEnabled(true);
-			}
-		}
+		item->setVisible(true);
+		item->setEnabled(true);
 	}
-	isEnable = groupArray[0]->isEnabled();
+	isEnable = item->isEnabled(); //?
 }
 
 void Engine::BaseGui::save(std::string_view path)
@@ -59,7 +48,7 @@ void Engine::BaseGui::save(std::string_view path)
 			widget["IsVisible"] = w_ptr->isVisible();
 			if (group.second->getWidgetType() == "Picture")
 			{
-				
+
 			}
 		}
 	}
@@ -72,7 +61,7 @@ void Engine::BaseGui::load(std::string_view path)
 	std::ifstream o;
 	o.open(path.data());
 	json j;
-	j << o;
+	o >> j;
 	for (const auto& item : j.items()) //Group Information
 	{
 		Console::AppLog::addLog("Group: " + item.key(), Console::info);

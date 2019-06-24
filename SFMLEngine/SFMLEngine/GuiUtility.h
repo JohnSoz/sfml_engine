@@ -22,4 +22,6 @@ namespace Engine
 	tgui::Canvas::Ptr makeCanvas(std::string_view path, sf::Vector2f size = { 1920,1080 });
 
 	tgui::Picture::Ptr makePicture(std::string_view path, sf::Vector2f pos, sf::Vector2f size, float opacity = 1);
+
+	tgui::Picture::Ptr makePicture(sf::Image tex, sf::Vector2f pos, float opacity = 1);
 }
