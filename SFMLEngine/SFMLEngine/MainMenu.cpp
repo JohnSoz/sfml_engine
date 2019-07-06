@@ -7,28 +7,41 @@ namespace fs = std::experimental::filesystem;
 void Engine::MainMenu::makeMenu(std::string& p)
 {
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
-		
-	groupArray.addWidget(makeCanvas("Data/images/bg.png"),"Canvas");
+
+	groupArray.addWidget(makeCanvas("Data/images/bg.png"), "Canvas");
+
+	//gui.add(groupArray.addGroup("Settings"));
+	//groupArray.addWidget(makePicture("Data/images/Keyboard Buttons.png", sf::Vector2f(0, 0), sf::Vector2f(1920, 1080)), "SettingsPic", "Settings");
+
+	//activateOrDisable("Settings");
+
+	groupArray.addWidget(makeButton("Resume", sf::Vector2f(380, 230), sf::Vector2f(220, 100),
+		[&]()
+		{
+			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Loading);
+		}
+	), "LoadButton");
 
 	groupArray.addWidget(makeButton("Play", sf::Vector2f(380, 360), sf::Vector2f(220, 100),
 		[&]()
-	{
-		EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::StartGame);
-	}
+		{
+			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::StartGame);
+		}
 	), "RunButton");
 
 	groupArray.addWidget(makeButton("Settings", sf::Vector2f(380, 490), sf::Vector2f(220, 100),
 		[&]()
-	{
-		//ƒелай что-то
-	}
+		{
+			//activateOrDisable("Default");
+			//activateOrDisable("Settings");
+		}
 	), "SettingsButton");
 
 	groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 620), sf::Vector2f(220, 100),
 		[&]()
-	{
-		EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Exits);
-	}
+		{
+			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Exits);
+		}
 	), "ExitButton");
 
 	/*groupArray.addWidget(makeListBox({}, sf::Vector2f(400, 600), sf::Vector2f(250, 150),

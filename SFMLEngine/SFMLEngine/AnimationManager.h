@@ -12,6 +12,7 @@ Contains the necessary classes to work with animations
 #include <iostream>
 #include <math.h>
 #include "TinyXML/tinyxml.h"
+#include <MetaStuff/Meta.h>
 using json = nlohmann::json;
 
 #define PI 3.141592653589793238462643383279502884L 
@@ -43,7 +44,7 @@ namespace Engine
 			origin = { 0,0 };
 			rect = { 0,0,0,0 };
 			scale = 0.f;
-			speed = 0.f;
+			speed = 0.01f;
 		}
 		virtual sf::IntRect& tick(float time) = 0;
 	};
@@ -55,23 +56,7 @@ namespace Engine
 
 		AnimationXml() { looped = false; state = APause; }
 
-		sf::IntRect& tick(const float time) override
-		{
-			if (frames.size() > 0 && state != AEnd)
-			{
-				state = APlay;
-				frame += speed * time;
-				if (frame > frameCount)
-				{
-					frame = 0;
-					if (!looped)
-						state = AEnd;
-				}
-				return frames[static_cast<int>(frame)];
-			}
-			else
-				return frames[0];
-		}
+		sf::IntRect& tick(const float time) override;
 	};
 	class AnimationJson : public Animation
 	{
@@ -101,16 +86,18 @@ namespace Engine
 	{
 	private:
 		float AnimationFrame, time, Angle;
+
 		int step; ///< Not use
-		std::list <Animation*> animationList; ///< Container with the animations
-		std::list <Animation*>::iterator currAnim; ///< Iterator to traverse the container \warning also stores the current animation
+		std::list<Animation*> animationList; ///< Container with the animations
+		std::list<Animation*>::iterator currAnim; ///< Iterator to traverse the container \warning also stores the current animation
 	public:
 		sf::Texture  texture;
 		sf::IntRect  rect;
 		float scale;
+		std::string path;
 
-		AnimationManager() = default; ///< Standard constructor
-		~AnimationManager()///< Standard destructor
+		AnimationManager() { AnimationFrame = time = Angle = 0; };
+		~AnimationManager()
 		{
 			for (auto& iter : animationList)
 			{
@@ -134,6 +121,8 @@ namespace Engine
 		*/
 		template<class T>
 		T* GetCurrAnimation() { return dynamic_cast<T*>(*currAnim); }
+
+		AnimationXml* GetCurrAnimation() { return static_cast<AnimationXml*>(*currAnim); }
 
 		/*!
 		Updates the current animation
@@ -160,5 +149,17 @@ namespace Engine
 		std::list <Animation*>::iterator GetAnimationByName(std::string_view NAME);
 
 		std::list<Animation*>* const getAnimationList();
+
+		//friend auto meta::registerMembers<Engine::AnimationManager>();
 	};
+}
+namespace meta
+{
+	//template <>
+	//inline auto registerMembers<Engine::AnimationManager>()
+	//{
+	//	return members(
+	//		member("Path", &Engine::AnimationManager::path)
+	//	);
+	//}
 }

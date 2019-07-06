@@ -46,6 +46,7 @@ IntRect& AnimationManager::AnimUpdate(float t)
 #include <boost/lexical_cast.hpp>
 void AnimationManager::LoadAnimation_x(std::string_view fileName)
 {
+	path = fileName;
 	using boost::lexical_cast;
 	using boost::bad_lexical_cast;
 	TiXmlDocument animFile(fileName.data());
@@ -85,7 +86,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 		string Name = animElement->Attribute("title");
 		float delay = atof(animElement->Attribute("delay"));
 		anim->name = Name;
-		anim->speed = delay / 75000;
+		anim->speed = delay / 60000;
 
 		anim->rect.left = atoi(xml_rect->Attribute("left"));
 		anim->rect.top = atoi(xml_rect->Attribute("top"));
@@ -162,4 +163,22 @@ IntRect& AnimationJson::tick(float time)
 		int z = 5;
 	IntRect x(widht * int(frame), top, widht, height);
 	return x; //err
+}
+
+sf::IntRect& Engine::AnimationXml::tick(const float time)
+{
+	if (frames.size() > 0 && state != AEnd)
+	{
+		state = APlay;
+		frame += speed;
+		if (frame > frameCount)
+		{
+			frame = 0;
+			if (!looped)
+				state = AEnd;
+		}
+		return frames[static_cast<int>(frame)];
+	}
+	else
+		return frames[0];
 }

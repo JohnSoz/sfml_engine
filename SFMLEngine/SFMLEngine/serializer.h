@@ -9,9 +9,82 @@ namespace sf
 {
 	template <typename T>
 	void to_json(json& j, const T& obj);
+
+	template <typename T>
+	void from_json(const json& j, T& obj);
 }
 namespace Engine
 {
+
+	inline std::string parseObjectName(std::string s)
+	{
+		auto eraseIter = s.find_last_of(':');
+		s.erase(0, ++eraseIter);
+		return s;
+	}
+	//----------------------------deserialize----------------------------
+	template <typename T>
+	void from_json(const json& j, T& obj)
+	{
+		deserialize(obj, j);
+	}
+
+	template <typename Class>
+	Class deserialize(const json& obj)
+	{
+		Class c;
+		deserialize(c, obj);
+		return c;
+	}
+
+	template <typename Class,
+		typename = std::enable_if_t<meta::isRegistered<Class>()>>
+		void deserialize(Class & obj, const json & j_obj)
+	{
+		//auto object = j_obj["Test"][parseObjectName(typeid(Class).name())];
+		meta::doForAllMembers<Class>(
+			[&obj, &j_obj](auto& member)
+			{
+				auto& objName = j_obj[member.getName()];
+				if (!objName.is_null()) {
+					using MemberT = meta::get_member_type<decltype(member)>;
+					if (member.hasSetter())
+					{
+						member.set(obj, objName.template get<MemberT>());
+					}
+					else if (member.canGetRef())
+					{
+						std::cout << typeid(MemberT).name();
+						member.getRef(obj) = objName.template get<MemberT>();
+					}
+				}
+			}
+		);
+	}
+	template <typename Class,
+		typename = std::enable_if_t<!meta::isRegistered<Class>()>,
+		typename = void>
+		void deserialize(Class & obj, const json & object)
+	{
+		obj = object.get<Class>();
+	}
+
+	template <typename T>
+	void deserialize(sf::Vector2<T>& obj, const json& object)
+	{
+		obj.x = object.at("X").get<T>();
+		obj.y = object.at("Y").get<T>();
+	}
+
+	template <typename T>
+	void deserialize(sf::Rect<T>& obj, const json& object)
+	{
+		obj.height = object["height"].get<T>();
+		obj.width = object["width"].get<T>();
+		obj.left = object["left"].get<T>();
+		obj.top = object["top"].get<T>();
+	}
+	//----------------------------serialize----------------------------
 	template <typename T>
 	void to_json(json& j, const T& obj);
 
@@ -60,15 +133,15 @@ namespace Engine
 		json value;
 		meta::doForAllMembers<Class>(
 			[&](auto& member)
-		{
-			auto& valueName = value[member.getName()];
-			if (member.canGetConstRef()) {
-				valueName = member.get(obj);
+			{
+				auto& valueName = value[member.getName()];
+				if (member.canGetConstRef()) {
+					valueName = member.get(obj);
+				}
+				else if (member.hasGetter()) {
+					valueName = member.getCopy(obj);
+				}
 			}
-			else if (member.hasGetter()) {
-				valueName = member.getCopy(obj);
-			}
-		}
 		);
 		return value;
 	}
@@ -99,9 +172,9 @@ namespace Engine
 	json serialize_basic(const sf::Rect<T>& obj)
 	{
 		json j;
-		j["left"]   = obj.left;
-		j["top"]    = obj.top;
-		j["width"]  = obj.width;
+		j["left"] = obj.left;
+		j["top"] = obj.top;
+		j["width"] = obj.width;
 		j["height"] = obj.height;
 		return j;
 	}
@@ -112,22 +185,29 @@ namespace Engine
 		j = obj;
 	}
 
-	template<class T, class... Types>
+	template<class T>
 	void save(T& obj)
 	{
 		json j;
-		auto parseObjName = [](std::string s)->std::string
-		{
-			auto eraseIter = s.find_last_of(':');
-			s.erase(0, ++eraseIter);
-			return s;
-		};
-		auto& jsonToSave = j[obj.getName()];
-		helper<T>(jsonToSave[parseObjName(typeid(T).name())], obj);
-		(helper<Types>(jsonToSave[parseObjName(typeid(Types).name())], obj), ...);
+		//auto& jsonToSave = j[obj.getName()];
+		helper<T>(j, obj);
+		//(helper<Types>(jsonToSave[parseObjectName(typeid(Types).name())], obj), ...);
 		std::ofstream o("Data/save.json");
 		o << std::setw(4) << j;
 		o.close();
+
+	}
+
+	template<class T>
+	void load_obj(T& obj)
+	{
+		json j2;
+		std::ifstream i;
+		i.open("Data/save.json");
+		i >> j2;
+		deserialize<T>(obj, j2);
+		//(deserialize<Types>(obj, j2), ...);
+		i.close();
 	}
 
 }
@@ -137,5 +217,10 @@ namespace sf
 	void to_json(json& j, const T& obj)
 	{
 		j = Engine::serialize(obj);
+	}
+	template<typename T>
+	void from_json(const json& j, T& obj)
+	{
+		Engine::deserialize(obj, j);
 	}
 }

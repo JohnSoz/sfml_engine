@@ -24,7 +24,7 @@ namespace Engine
 	public:
 		bool isEnable = true;
 
-		GuiEditor() = delete;
+		GuiEditor() = default;
 
 		GuiEditor(BaseGui& b) : ptrGui(&b)
 		{

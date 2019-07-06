@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
@@ -5,7 +6,7 @@
 #include <cmath>
 #include "LogConsole.h"
 #include "ApplicationState.h"
-using namespace Engine;
+#include <stdlib.h>
 
 int main()
 {
@@ -24,14 +25,7 @@ int main()
 	ImGui::SFML::UpdateFontTexture();
 	Engine::DebuggingSystem::setWindow(window);
 	Engine::Game g(window);
-	try
-	{
-		g.startGame();
-		g.update();
-	}
-	catch (...)
-	{
-		std::cout << "err" << std::endl;
-	}
+	g.startGame();
+	g.update();
 	return 0;
 }

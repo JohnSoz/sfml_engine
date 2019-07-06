@@ -45,7 +45,6 @@ tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::
 
 tgui::ListBox::Ptr Engine::makeListBox(std::vector<std::string> items, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f, int itemHeight)
 {
-
 	auto listBox = tgui::ListBox::create();
 	listBox->setSize(SIZE);
 	listBox->setItemHeight(itemHeight);

@@ -7,6 +7,7 @@ void Player::isKeyPressed()
 	if (Keyboard::isKeyPressed(Keyboard::W) && onGround)
 	{
 		isWalk = false;
+		isJump = true;
 		directionY = Up;
 		onGround = false;
 		velocity.y = -(energy * 150.f);
@@ -86,8 +87,19 @@ void Player::update(float time)
 {
 	if (time)
 	{
-		if (velocity.y < 0)
+		switch (direction)
+		{
+		case DirectionX::Left:
+			sprite.setScale(scale * -1, scale);
+			break;
+		case DirectionX::Right:
+			sprite.setScale(scale, scale);
+			break;
+		}
+		/*if (velocity.y < 0)
 			isJump = true;
+		else
+			isJump = false;*/
 
 		if (!onGround)
 			velocity.y += energy / 2;
@@ -101,18 +113,17 @@ void Player::update(float time)
 		checkClashes(time);
 
 		sprite.setPosition(position);
-		if (isWalk)
+		if (isWalk && animManager.GetCurrAnimation()->name != "Walk" && onGround)
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
 			updateSprite();
 		}
-		else if (isJump)
+		else if (!onGround && animManager.GetCurrAnimation()->name != "Jump")
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
 			updateSprite();
-			isJump = false;
 		}
-		else if (!isWalk)
+		else if (!isWalk && animManager.GetCurrAnimation()->name != "Idle" && onGround)
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
 			updateSprite();
@@ -151,6 +162,7 @@ void Player::checkClashes(const float& time)
 		onGround = false;
 	else
 		onGround = true;
+
 	for (const auto& i : obj)
 	{
 		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
@@ -198,5 +210,8 @@ void Engine::Player::handleEvent(sf::Event& e)
 
 Player::~Player()
 {
-	save<Player, Actor, Object>(*this);
+	data.position = position;
+	data.name = name;
+	data.pathToAnimation = animManager.path;
+	save<save_data>(this->data);
 }

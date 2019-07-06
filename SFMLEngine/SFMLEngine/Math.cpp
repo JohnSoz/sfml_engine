@@ -195,9 +195,9 @@ namespace Collision
 			auto mask2 = Bitmasks.GetMask(Object2.getTexture());
 
 			// Loop through our pixels
-			for (int i = Intersection.left; i < Intersection.left + Intersection.width; i++)
+			for (auto i = Intersection.left; i < Intersection.left + Intersection.width; i++)
 			{
-				for (int j = Intersection.top; j < Intersection.top + Intersection.height; j++)
+				for (auto j = Intersection.top; j < Intersection.top + Intersection.height; j++)
 				{
 					const auto o1v = Object1.getInverseTransform().transformPoint(i, j);
 					const auto o2v = Object2.getInverseTransform().transformPoint(i, j);

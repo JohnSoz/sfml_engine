@@ -28,7 +28,7 @@ namespace Engine
 		void handelEvent(sf::Event& e);
 		template<class Obj>
 		Obj* GetObjects(std::string NAME);
-		void PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
+		Entity* PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
 		void UpdateObjects(float time);
 		void CollisionUpdate()
 		{
@@ -43,6 +43,7 @@ namespace Engine
 				}
 			}*/
 		}
+		[[deprecated]]
 		void callStart()
 		{
 			Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
@@ -83,15 +84,17 @@ namespace Engine
 
 		void updateImGui();
 
-		void pushEntity(Entity* e)
+		void load(sf::RenderWindow& window);
+
+		Entity* pushEntity(Entity* e)
 		{
 			debug.pushRectangle(e->getDebugRect());
-			objHandler.PushObject(e);
+			return objHandler.PushObject(e);
 		}
 
 		void receive(const Events::NewObject_Event& entity);
 
-		void start();
+		void start(sf::RenderWindow& window);
 
 		static Level& getLevel() { return level; }
 

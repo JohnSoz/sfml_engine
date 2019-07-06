@@ -16,7 +16,7 @@ namespace Engine
 		sf::RenderWindow* windowPtr;
 		tgui::Theme theme;
 	public:
-		GroupArray() = delete;
+		GroupArray() = default;
 		GroupArray(sf::RenderWindow& w, std::string pathToTheme) : windowPtr(&w) { theme.load(pathToTheme); addGroup("Default"); }
 
 		Group::Ptr get(std::string_view groupName);
@@ -27,7 +27,6 @@ namespace Engine
 		Group::Ptr addGroup(std::string name) { groups.emplace_back(name, Group::create()); return (*(this->end() - 1)).second; }
 		//void addWidget(std::pair<Widget::Ptr, std::string> widget, std::string wName, std::string_view groupName = "Default");
 		void addWidget(Widget::Ptr wPtr, std::string wName, std::string_view groupName = "Default");
-
 
 		Group::Ptr operator[](const int n) { return groups[n].second; }
 	};

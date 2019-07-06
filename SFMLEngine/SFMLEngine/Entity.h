@@ -12,7 +12,7 @@ namespace Engine
 		sf::IntRect      localRectangle;
 		sf::FloatRect    globalRectangle;
 		sf::FloatRect    debugRectangle;
-		typedef std::pair<const sf::FloatRect*, const sf::FloatRect*> Quad;
+		using Quad = std::pair<const sf::FloatRect*, const sf::FloatRect*>;
 
 	public:
 		Entity() = default;
@@ -23,6 +23,7 @@ namespace Engine
 		virtual ~Entity();
 
 		virtual void update(float time) {}
+		[[deprecated]]
 		virtual void start() {}
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void SetPos(int x, int y) { position.x = x; position.y = y; }
@@ -31,7 +32,7 @@ namespace Engine
 		sf::Vector2f  getPos()  const { return position; }
 		ObjectType    getType() const { return type; }
 
-		const Quad& getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); }
+		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); }
 
 		friend class ObjectHandler;
 	};

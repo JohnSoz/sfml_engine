@@ -43,9 +43,12 @@ namespace Engine
 		float Radian;
 		sf::Vector2f ray = { 0,0 };
 		sf::Vector2f ray2 = { 0,0 };
-		virtual ~Actor() {}
-		Actor() = delete;
+
+		Actor(Level& lvl);
+
 		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);
+
+		~Actor() {}
 
 		virtual void handleEvent(sf::Event& e);
 

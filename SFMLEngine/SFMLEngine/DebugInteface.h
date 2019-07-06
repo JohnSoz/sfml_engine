@@ -54,11 +54,12 @@ namespace Engine
 				if (typeid(type).name() == selected)
 				{
 					ImGui::Spacing();
-					ImGui::TextColored(ImVec4(.60,.35,.50,1.),std::string(selected).c_str());
+					ImGui::TextColored(ImVec4(.60f, .35f, .50f, 1.f), std::string(selected).c_str());
 					ImGui::Separator();
 					auto ptr_type = (type*)ptr;
 					meta::doForAllMembers<type>(
-						[&](const auto & member)
+						[&](const auto& member)
+						{if (member.canGetConstRef())
 					{
 						switch (checkType<decltype(member.getCopy(*ptr_type))>())
 						{
@@ -135,7 +136,8 @@ namespace Engine
 						break;
 						default:
 							break;
-						}});
+						}
+					}});
 
 				}
 			}

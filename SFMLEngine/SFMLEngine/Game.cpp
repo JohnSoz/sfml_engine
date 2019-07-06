@@ -78,7 +78,7 @@ void Engine::Game::startGame()
 
 void Engine::Game::update()
 {
-	float fps=0;
+	float fps = 0;
 	while (window->isOpen())
 	{
 		auto timePoint1(chrono::high_resolution_clock::now());
@@ -106,9 +106,14 @@ void Engine::Game::update()
 				break;
 			case Engine::Pause:
 				break;
+			case Engine::Loading:
+				world->Init(*window);
+				world->load(*window);
+				state = appState::Play;
+				break;
 			}
 		}
-		ImGui::Text(std::to_string(fps).c_str());
+		//	ImGui::Text(std::to_string(fps).c_str());
 		if (local_last_state != state)
 		{
 			isStateChange = !isStateChange;
@@ -125,23 +130,22 @@ void Engine::Game::update()
 
 		auto ftSeconds(ft / 1000.f);
 		fps = 1.f / ftSeconds;
-		
+
 	}
 }
 
 void Engine::Game::stateChanged()
 {
-
 	if (state == Engine::StartGame)
 	{
 		world->Init(*window);
-		world->start();
+		world->start(*window);
 		state = Engine::Play;
 	}
 
 	if (state == Engine::Pause)
 		time = false;
-		//.pause();
+	//.pause();
 
 	if (state == Engine::Resume)
 	{

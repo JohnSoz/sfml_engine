@@ -2,6 +2,7 @@
 #include "LogConsole.h"
 #include <algorithm>
 #include "Player.h"
+#include "serializer.h"
 using namespace Engine;
 
 Level Engine::World::level;
@@ -20,18 +21,19 @@ Obj* Engine::ObjectHandler::GetObjects(std::string NAME)
 {
 	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
 		[NAME](const Entity* e1)->bool
-	{
-		return (e1->name == NAME) ? true : false;
-	});
+		{
+			return (e1->name == NAME);
+		});
 	return static_cast<Obj*>(*retObj);
 }
 
-void Engine::ObjectHandler::PushObject(Entity* obj)
+Entity* Engine::ObjectHandler::PushObject(Entity* obj)
 {
 	string info = "Engine::ObjectHandler::PushObject(" + obj->getName() + ")";
 	Console::AppLog::addLog(info, Console::info);
 	ObjectsArray.push_back(obj);
 	iter = ObjectsArray.begin();
+	return *iter;
 }
 
 void Engine::ObjectHandler::UpdateObjects(float time)
@@ -50,13 +52,12 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 }
 
 
-
 void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 {
 	for (auto& o : ObjectsArray)
 	{
 		WINDOW.draw(o->sprite);
-		if (o->getType() == OActor)
+		if (o->getType() == OPlayer)
 		{
 			auto z = static_cast<Actor*>(o);
 			VertexArray vs(Lines, 2);
@@ -65,12 +66,14 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 			vs[0].color = sf::Color::Green;
 			vs[1].color = sf::Color::White;
 			WINDOW.draw(vs);
+
 			VertexArray vs2(Lines, 2);
 			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2 - 1,z->getPos().y };
 			vs2[1].position = z->ray2;
 			vs2[0].color = sf::Color::White;
 			vs2[1].color = sf::Color::Green;
 			WINDOW.draw(vs2);
+
 			sf::CircleShape shape2(2);
 			shape2.setFillColor(sf::Color::Blue);
 			shape2.setOrigin(1, 1);
@@ -85,9 +88,9 @@ void Engine::ObjectHandler::refresh()
 	Console::AppLog::addLog("Engine::ObjectHandler::refresh()", Console::info);
 	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
 		[](const Entity* entity)->bool
-	{
-		return !entity->isActive();
-	}), ObjectsArray.end());
+		{
+			return !entity->isActive();
+		}), ObjectsArray.end());
 }
 
 
@@ -110,6 +113,13 @@ void World::updateImGui()
 	}
 	Player* p = objHandler.GetObjects<Player>("Test");
 	debug::debugDraw<Player, Object, Actor>(p, "Debug For Class Player");
+}
+
+void Engine::World::load(sf::RenderWindow& window)
+{
+	Player* e = static_cast<Player*>(pushEntity(new Engine::Player(window, level)));
+	load_obj<save_data>(e->data);
+	e->load_opa();
 }
 
 void Engine::World::handleEvent(sf::Event& event)
@@ -135,8 +145,7 @@ void Engine::World::Init(sf::RenderWindow& window)
 	debug.levelObjects(level.GetAllObjects());
 	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
-
-	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
+	//pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
 }
 
 #include "EngineEvents.h"
@@ -152,7 +161,8 @@ void Engine::World::receive(const Events::NewObject_Event& entity)
 	pushEntity(entity.obj);
 }
 
-void Engine::World::start()
+void Engine::World::start(sf::RenderWindow& window)
 {
+	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
 	objHandler.callStart();
 }

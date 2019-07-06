@@ -12,7 +12,8 @@ namespace Engine
 		Inventory* inv;
 		GuiEditor gEditor;
 	public:
-		HUD(std::string pathToTheme, sf::RenderWindow& w, Inventory& i) : BaseGui(w, pathToTheme),gEditor(*this)
+		HUD() {}
+		HUD(std::string pathToTheme, sf::RenderWindow& w, Inventory& i) : BaseGui(w, pathToTheme), gEditor(*this)
 		{
 			inv = &i;
 			gui.setTarget(w);
@@ -24,7 +25,7 @@ namespace Engine
 
 		void makeHud()
 		{
-			groupArray.addWidget(makePicture(inv->getCurrItem<Item>()->getTexture().copyToImage(), { 100.f,800.f },  0.94f), "Item");
+			groupArray.addWidget(makePicture(inv->getCurrItem<Item>()->getTexture().copyToImage(), { 100.f,800.f }, 0.94f), "Item");
 		}
 
 		void update() override

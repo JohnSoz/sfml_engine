@@ -1,46 +1,8 @@
 {
-    "Test": {
-        "Actor": {
-            "isCollision": false,
-            "isWalk": false,
-            "originOffset": {
-                "X": 15.0,
-                "Y": 19.0
-            }
-        },
-        "Object": {
-            "IsActive": true,
-            "name": "Test",
-            "position": {
-                "X": 655.868408203125,
-                "Y": 693.5
-            },
-            "sprite": {
-                "size": {
-                    "height": 38,
-                    "left": 18,
-                    "top": 26,
-                    "width": 30
-                }
-            },
-            "type": 3
-        },
-        "Player": {
-            "energy": 0.003000000026077032,
-            "friction": 0.004999999888241291,
-            "health": 50.0,
-            "maxSpeed": 0.20000000298023224,
-            "offset": {
-                "X": 0.0,
-                "Y": 0.0
-            },
-            "onGround": true,
-            "speedX": 0.0,
-            "speedY": 0.0,
-            "vel": {
-                "X": 0.0,
-                "Y": 0.0
-            }
-        }
+    "animation": "Animation.xml",
+    "name": "Test",
+    "position": {
+        "X": 864.1595458984375,
+        "Y": 662.5
     }
 }

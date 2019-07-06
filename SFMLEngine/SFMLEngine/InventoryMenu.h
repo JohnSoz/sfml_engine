@@ -13,7 +13,7 @@ namespace Engine
 		Gui gui;
 		Inventory* inv;
 	public:
-		InventoryMenu() = delete;
+		InventoryMenu() = default;
 		InventoryMenu(std::string pathToTheme, sf::RenderWindow& w) : BaseGui(w, pathToTheme)
 		{
 			gui.setTarget(w);

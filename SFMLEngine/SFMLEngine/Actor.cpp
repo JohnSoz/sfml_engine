@@ -73,18 +73,16 @@ void Engine::Actor::updateSprite()
 	originOffset = currAnim->origin;
 	scale = currAnim->scale;
 	//sprite.setTexture(currAnim->texture);
-	switch (direction)
-	{
-	case DirectionX::Left:
-		sprite.setScale(scale * -1, scale);
-		break;
-	case DirectionX::Right:
-		sprite.setScale(scale, scale);
-		break;
-	}
 	sprite.setOrigin(originOffset);
 	sprite.setTextureRect(localRectangle);
 	sprite.setPosition(position);
+}
+
+Engine::Actor::Actor(Level& lvl)
+{
+	obj = lvl.GetAllObjects();
+	type = OActor;
+	direction = Left;
 }
 
 Engine::Actor::Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation) : Entity(POSITION, NAME)
