@@ -1,8 +1,19 @@
 #include "MainMenu.h"
 #include "EngineEvents.h"
 #include <filesystem>
+#include "ApplicationState.h"
 
 namespace fs = std::experimental::filesystem;
+
+Engine::MainMenu::MainMenu(std::string pathToTheme, sf::RenderWindow& w)
+	: BaseGui(w, pathToTheme), gEditor(*this)
+{
+	gui.setTarget(w);
+	sf::Font font;
+	font.loadFromFile("Data/Fonts/Bricks.otf");
+	gui.setFont(font);
+	gui.add(groupArray[0]);
+}
 
 void Engine::MainMenu::makeMenu(std::string& p)
 {
@@ -65,4 +76,16 @@ void Engine::MainMenu::makeMenu(std::string& p)
 		}
 	}*/
 	groupArray.addWidget(makeTextBox(" *GameName*", sf::Vector2f(256, 80), sf::Vector2f(960, 80)), "RandomBox");
+}
+
+void Engine::MainMenu::draw()
+{
+	if (VStaticContainer::ShowGuiEditor)
+		gEditor.drawEditor();
+	gui.draw();
+}
+
+void Engine::MainMenu::handleEvent(sf::Event& e)
+{
+	gui.handleEvent(e);
 }

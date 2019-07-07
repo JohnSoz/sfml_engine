@@ -9,8 +9,9 @@ namespace Engine
 	{
 	private:
 		sf::FloatRect viewPort;
-		sf::View camera;
-		sf::Vector2f defaultCenter;
+		sf::View      camera;
+		sf::Vector2f  defaultCenter;
+
 		bool move = false;
 	public:
 		Camera()

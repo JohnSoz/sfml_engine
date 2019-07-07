@@ -143,7 +143,6 @@ namespace Engine
 			}
 		}
 
-
 		template<class PtrType, class... Types>
 		void debugDraw(PtrType* ptr, std::string nameTree)
 		{

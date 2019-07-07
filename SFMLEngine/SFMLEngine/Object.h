@@ -31,27 +31,26 @@ namespace Engine
 		sf::Sprite sprite; //<Sprite of the current object
 		std::string name; //<Current object name /warning Must be unique
 		bool IsActive; //<The flag indicates whether the current object is alive /warning If the value is false, the object is removed from the game world
+
 		void setTexture(sf::Texture tex);
 		void setType(int t) { type = (ObjectType)t; }
 		int  getType() const { return type; }
 	public:
 		Object();
 		Object(const Object&) = default;
-		//Object(Object&&) = default;
 		explicit Object(std::string);
 		Object(sf::Vector2f pos, std::string name);
 		Object(sf::Vector2f pos, ObjectType t, std::string name);
 		Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string name);
 		~Object() { }
 
+		void destroy() { IsActive = false; }
 		bool isActive()                 const { return IsActive; }
 		std::string getName()           const { return name; }
 		const sf::Sprite& getSprite()   const { return sprite; }
 		const sf::Texture& getTexture() const { return texture; }
-		void destroy() { IsActive = false; }
-
+		
 		friend bool operator==(const Object& obj, const Object& obj2);
-
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Object>();
 	};
@@ -68,7 +67,6 @@ namespace meta
 			member("type", &Engine::Object::setType),
 			member("type", &Engine::Object::getType),
 			member("name", &Engine::Object::name),
-			//member("sprite", &Engine::Object::sprite),
 			member("IsActive", &Engine::Object::IsActive),
 			member("position", &Engine::Object::position)
 		);

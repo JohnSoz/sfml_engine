@@ -7,6 +7,15 @@ using sf::Vector2f;
 using sf::Texture;
 using std::vector;
 
+Engine::AnimationManager::~AnimationManager()
+{
+	for (auto& iter : animationList)
+	{
+		delete iter;
+	}
+	animationList.clear();
+}
+
 void AnimationManager::LoadAnimation_j(std::string_view path)
 {
 	AnimationJson* anim = new AnimationJson;

@@ -16,44 +16,19 @@ namespace Engine
 	public:
 		DebuggingSystem debug;
 		ObjectHandler() = default;
-		~ObjectHandler()
-		{
-			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
-			{
-				delete (*iter);
-			}
-			ObjectsArray.clear();
-		}
+		~ObjectHandler();
 
+		[[deprecated]]
+		void callStart();
 		void handelEvent(sf::Event& e);
+		void UpdateObjects(float time);
+		void CollisionUpdate();	
+		void RenderObjects(sf::RenderWindow& WINDOW);
+		void refresh();
+
 		template<class Obj>
 		Obj* GetObjects(std::string NAME);
 		Entity* PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
-		void UpdateObjects(float time);
-		void CollisionUpdate()
-		{
-			/*for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
-			{
-				for (auto iter2 = iter + 1; iter2 != ObjectsArray.end(); iter2++)
-				{
-					if ((*iter)->getRect().intersects((*iter2)->getRect()))
-					{
-						(*iter)->CollisionUpdate(*iter2);
-					}
-				}
-			}*/
-		}
-		[[deprecated]]
-		void callStart()
-		{
-			Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
-			for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
-			{
-				(*iter)->start();
-			}
-		}
-		void RenderObjects(sf::RenderWindow& WINDOW);
-		void refresh();
 	};
 
 	class World : public entityx::Receiver<World>
@@ -63,41 +38,27 @@ namespace Engine
 		sf::Sprite        LevelSprite;
 		sf::Texture       LevelTexture;
 		ObjectHandler     objHandler;
+		Camera            cam;
 		static Level      level;
 		sf::RenderTexture renderTexture;
-		DebuggingSystem debug;
-		bool ShowOverlay;
-		Camera cam;
-
+		DebuggingSystem   debug;
+		bool              ShowOverlay;
+		
 		void Init(sf::RenderWindow& window);
-
 	public:
 		World();
-
 		~World() = default;
 
 		void handleEvent(sf::Event& event);
-
 		void draw(sf::RenderWindow& window);
-
 		void update(sf::RenderWindow& window, float time, sf::Event& event);
-
 		void updateImGui();
-
 		void load(sf::RenderWindow& window);
-
-		Entity* pushEntity(Entity* e)
-		{
-			debug.pushRectangle(e->getDebugRect());
-			return objHandler.PushObject(e);
-		}
-
 		void receive(const Events::NewObject_Event& entity);
-
 		void start(sf::RenderWindow& window);
 
 		static Level& getLevel() { return level; }
-
+		Entity* pushEntity(Entity* e);
 		ObjectHandler& getObjHendler() { return objHandler; }
 
 		friend class Game;

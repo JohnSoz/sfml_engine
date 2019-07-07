@@ -7,8 +7,6 @@ using namespace sf;
 
 namespace Engine
 {
-	class GUI;
-
 	class GroupArray
 	{
 	private:

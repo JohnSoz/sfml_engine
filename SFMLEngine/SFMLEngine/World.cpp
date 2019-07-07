@@ -7,6 +7,15 @@ using namespace Engine;
 
 Level Engine::World::level;
 
+Engine::ObjectHandler::~ObjectHandler()
+{
+	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
+	{
+		delete (*iter);
+	}
+	ObjectsArray.clear();
+}
+
 void Engine::ObjectHandler::handelEvent(sf::Event& e)
 {
 	for (auto& o : ObjectsArray)
@@ -48,6 +57,29 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 		}
 		else
 			++iter;
+	}
+}
+
+void Engine::ObjectHandler::CollisionUpdate()
+{
+	/*for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
+	{
+		for (auto iter2 = iter + 1; iter2 != ObjectsArray.end(); iter2++)
+		{
+			if ((*iter)->getRect().intersects((*iter2)->getRect()))
+			{
+				(*iter)->CollisionUpdate(*iter2);
+			}
+		}
+	}*/
+}
+
+void Engine::ObjectHandler::callStart()
+{
+	Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
+	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
+	{
+		(*iter)->start();
 	}
 }
 
@@ -117,9 +149,13 @@ void World::updateImGui()
 
 void Engine::World::load(sf::RenderWindow& window)
 {
-	Player* e = static_cast<Player*>(pushEntity(new Engine::Player(window, level)));
-	load_obj<save_data>(e->data);
-	e->load_opa();
+	pushEntity(new Engine::Player(window, level));
+}
+
+Entity* Engine::World::pushEntity(Entity* e)
+{
+	debug.pushRectangle(e->getDebugRect());
+	return objHandler.PushObject(e);
 }
 
 void Engine::World::handleEvent(sf::Event& event)

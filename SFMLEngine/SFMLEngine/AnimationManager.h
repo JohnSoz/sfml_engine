@@ -26,17 +26,16 @@ namespace Engine
 	class Animation
 	{
 	public:
+		std::string    name;
+		sf::IntRect    rect;
+		sf::Vector2f   origin;
+		AnimationState state;
+
 		float frame; ///< Number of frames
 		float frameCount;
 		float speed; ///< The speed of the animation
-		bool looped;
-
-		std::string  name;
-		float        scale;
-		sf::IntRect  rect;
-		sf::Vector2f origin;
-		AnimationState state;
-
+		bool  looped;
+		float scale;
 		Animation()
 		{
 			frame = 0;
@@ -53,9 +52,7 @@ namespace Engine
 	{
 	public:
 		std::vector<sf::IntRect> frames;
-
 		AnimationXml() { looped = false; state = APause; }
-
 		sf::IntRect& tick(const float time) override;
 	};
 	class AnimationJson : public Animation
@@ -64,24 +61,11 @@ namespace Engine
 		sf::IntRect rect; ///< Frame(rectangle of the current frame)
 		std::vector<sf::IntRect> frames; ///< Container frame \warning used if \code bool isXMLAnimation = true \endcode
 		sf::Vector2f Center; ///< Center of the sprite object
+		AnimationJson(){frame = 0; scale = 0;  speed = 0;}
 
-		AnimationJson()
-		{
-			frame = 0; scale = 0;  speed = 0;
-		}
-		/*!
-		Updates the current animation frame, angle-rotation angle of the sprite
-		*/
 		sf::IntRect& tick(float time) override;
 	};
 
-	/*!
-	\brief Class for loading animation and its subsequent use
-	\bug
-	\warning
-	\example
-	\todo
-   */
 	class AnimationManager
 	{
 	private:
@@ -97,14 +81,7 @@ namespace Engine
 		std::string path;
 
 		AnimationManager() { AnimationFrame = time = Angle = 0; };
-		~AnimationManager()
-		{
-			for (auto& iter : animationList)
-			{
-				delete iter;
-			}
-			animationList.clear();
-		}
+		~AnimationManager();
 
 		/*!
 		Loads an animation from a json||Xml file

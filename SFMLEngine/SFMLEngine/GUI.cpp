@@ -1,5 +1,15 @@
+#include "LogConsole.h" 
+#include <cassert>
+#include "ApplicationState.h"
+#include <vector>
+#include <boost/type_index.hpp>
+#include "json.hpp"
+#include <fstream>
+#include <iomanip>
 #include "GUI.h"
 using namespace Engine;
+using json = nlohmann::json;
+using boost::typeindex::type_id_with_cvr;
 
 void Engine::BaseGui::activateOrDisable(std::string_view name /*= ""*/)
 {
@@ -9,7 +19,7 @@ void Engine::BaseGui::activateOrDisable(std::string_view name /*= ""*/)
 	else
 		item = std::find_if(groupArray.begin(), groupArray.end(),
 			[name](std::pair<std::string, Group::Ptr>& item)
-	{return item.first == name; })->second;
+			{return item.first == name; })->second;
 
 	const bool enabled = item->isEnabled();
 	if (enabled)

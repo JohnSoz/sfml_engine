@@ -10,58 +10,43 @@ using namespace meta;
 namespace Engine
 {
 	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
+
 	class Actor : public Entity
 	{
 	protected:
 		std::vector<ObjectLevel> obj;
-		//sf::Vector2f velocity;
-		//Inventory inventory;
-		//AnimationManager animManager;
-		AnimationManager animManager;
-		//InventoryMenu inv;
-		//DebugWindows<Actor> dw_a;
+		AnimationManager         animManager;
+		sf::Clock                Pressclock;
+		sf::Clock                actionClock;
+		sf::Vector2f             originOffset = {};
+		DirectionX               direction;
+		DirectionY               directionY = DirectionY::Up;
+		sf::RenderWindow*        window;
 
-		bool isWalk;
-		bool isCollision;
-		bool isShoot;
-
-		//float lives, armor;
-		//float speed, energy, friction, maxSpeed;
+		bool  isWalk;
+		bool  isCollision;
+		bool  isShoot;
 		float scale = 0.5;
 		float CurrAngle = sprite.getRotation(), LastAngle;
 		float time_actor;
-		sf::Clock Pressclock;
-		sf::Clock actionClock;
-		sf::Vector2f originOffset = {};
-		DirectionX direction;
-		DirectionY directionY = DirectionY::Up;
-		sf::RenderWindow* window;
 
 		void updateSprite();
-
 	public:
 		float Radian;
 		sf::Vector2f ray = { 0,0 };
 		sf::Vector2f ray2 = { 0,0 };
 
 		Actor(Level& lvl);
-
 		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);
-
 		~Actor() {}
 
 		virtual void handleEvent(sf::Event& e);
-
 		virtual void isKeyPressed();
-
 		virtual void checkClashes(float time);
 
 		void CollisionUpdate(Entity* entity) override;
-
 		void RotateToMouse(float speed, sf::RenderWindow& window);
-
 		void update(float time) override;
-
 		void start() override;
 
 		friend class DebugWindow;

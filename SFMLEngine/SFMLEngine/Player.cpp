@@ -1,6 +1,58 @@
 #include <entityx/entityx.h>
 #include "Player.h"
+#include "serializer.h"
+#include "deserializer.h"
 using namespace Engine;
+
+Engine::Player::Player(sf::RenderWindow& w, Level& lvl) :
+	Actor(lvl),
+	inv("Data/GUI/MyUI/MainMenu.txt", w),
+	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
+{
+	type = OPlayer;
+	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
+	isWalk = isCollision = isShoot = false;
+	onGround = true;
+	inv.makeMenu(inventory);
+	hud.makeHud();
+	health = armor = 50;
+	speedX = speedY = 0;
+	energy = 0.003f;
+	friction = 0.005f;
+	maxSpeed = 0.2f;
+	onGround = true;
+	isInvAction = false;
+	load_obj<save_data>(data);
+	*this = data;
+	setTexture(animManager.texture);
+	updateSprite();
+}
+
+Engine::Player::Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl, std::string_view animation)
+	: Actor(POSITION, NAME, w, lvl, animation),
+	inv("Data/GUI/MyUI/MainMenu.txt", w),
+	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
+{
+	type = OPlayer;
+	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
+	isWalk = isCollision = isShoot = false;
+	onGround = true;
+	inv.makeMenu(inventory);
+	hud.makeHud();
+	health = armor = 50;
+	speedX = speedY = 0;
+	energy = 0.003f;
+	friction = 0.005f;
+	maxSpeed = 0.2f;
+	onGround = true;
+	isInvAction = false;
+}
+
+Player::~Player()
+{
+	data = *this;
+	save<save_data>(this->data);
+}
 
 void Player::isKeyPressed()
 {
@@ -146,7 +198,13 @@ void Player::update(float time)
 	}
 }
 
-void Player::checkClashes(const float& time)
+void Engine::Player::draw()
+{
+	inv.draw();
+	hud.draw();
+}
+
+void Engine::Player::checkClashes(float time)
 {
 	isCollision = false;
 	ray = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2 + 1, sprite.getPosition().y + sprite.getOrigin().y / 2 };
@@ -192,6 +250,15 @@ void Player::checkClashes(const float& time)
 	}
 }
 
+void Engine::Player::inventoryAction()
+{
+	if (isInvAction)
+	{
+		inventory.getCurrItem<Item>()->action(*this);
+	}
+	isInvAction = false;
+}
+
 void Engine::Player::handleEvent(sf::Event& e)
 {
 	if (inv.IsEnable())
@@ -206,12 +273,19 @@ void Engine::Player::handleEvent(sf::Event& e)
 	}
 }
 
-#include "serializer.h"
-
-Player::~Player()
+save_data& Engine::save_data::operator=(const Player& p)
 {
-	data.position = position;
-	data.name = name;
-	data.pathToAnimation = animManager.path;
-	save<save_data>(this->data);
+	this->name = p.getName();
+	this->position = p.getPos();
+	this->pathToAnimation = p.getAnimManager().path;
+	return *this;
+}
+
+Player& Engine::Player::operator=(const save_data& p)
+{
+	this->name = p.name;
+	this->position = p.position;
+	this->animManager.path = p.pathToAnimation;
+	this->animManager.LoadAnimation_x(p.pathToAnimation);
+	return *this;
 }

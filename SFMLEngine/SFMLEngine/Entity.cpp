@@ -38,3 +38,50 @@ Engine::Entity::~Entity()
 //		}
 //	}
 //}
+
+void Engine::Bullet::CheckClashes()
+{
+	auto objRect = sf::FloatRect(position.x, position.y, localRectangle.width * scale, localRectangle.height * scale);
+	for (auto& o : obj)
+	{
+		if (objRect.intersects(o.rect))
+		{
+			IsActive = false;
+		}
+	}
+}
+
+Engine::Bullet::Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, DirectionX d, float Damage, Level lvl, std::string nameShooters)
+	: Entity(IMAGE, r, pos, name)
+{
+	shootersName = nameShooters;
+	dir = d;
+	IsActive = true;
+	obj = lvl.GetObjects("barrier");
+	damage = Damage;
+	sprite.setScale(scale, scale);
+	sprite.setOrigin(r.width * scale, r.height * scale);
+}
+
+void Engine::Bullet::CollisionUpdate(Entity* entity)
+{
+	std::cout << name;
+}
+
+void Engine::Bullet::update(float time)
+{
+	if (dir == Left)
+	{
+		position.x -= speed * time;
+	}
+	else
+		position.x += speed * time;
+
+	float posX = position.x + 1;
+	float posY = position.y + 1;
+	globalRectangle = sf::FloatRect(posX, posY, posX + localRectangle.width * scale, posY + localRectangle.height * scale);
+	debugRectangle = sf::FloatRect(posX + localRectangle.width * scale, posY, posX, posY + localRectangle.height * scale);
+	CheckClashes();
+	sprite.setPosition(position.x + localRectangle.width * scale / 2, position.y + localRectangle.width * scale / 2);
+	debug::debugDraw<Bullet, Object, Bullet>(this, name);
+}
