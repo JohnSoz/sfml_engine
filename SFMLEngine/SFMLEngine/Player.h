@@ -43,8 +43,6 @@ namespace Engine
 		Player& operator=(const Player& p) = default;
 		Player& operator=(const save_data& p);
 
-		[[deprecated]]
-		void start() override {}
 		void update(float time) override;
 		void handleEvent(sf::Event& e) override;
 		void CollisionUpdate(Entity* entity) override {}

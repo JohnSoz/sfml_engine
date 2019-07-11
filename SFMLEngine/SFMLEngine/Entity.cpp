@@ -51,13 +51,12 @@ void Engine::Bullet::CheckClashes()
 	}
 }
 
-Engine::Bullet::Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, DirectionX d, float Damage, Level lvl, std::string nameShooters)
+Engine::Bullet::Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, DirectionX d, float Damage, std::string nameShooters)
 	: Entity(IMAGE, r, pos, name)
 {
 	shootersName = nameShooters;
 	dir = d;
 	IsActive = true;
-	obj = lvl.GetObjects("barrier");
 	damage = Damage;
 	sprite.setScale(scale, scale);
 	sprite.setOrigin(r.width * scale, r.height * scale);

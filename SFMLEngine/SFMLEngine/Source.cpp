@@ -1,12 +1,13 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Game.h"
 #include "DebuggingSystem.h"
 #include <cmath>
-#include "LogConsole.h"
-#include "ApplicationState.h"
 #include <stdlib.h>
+#include <entityx/Event.h>
+#include "Game.h"
+using namespace Engine;
+
 
 int main()
 {
@@ -16,16 +17,20 @@ int main()
 	settings.antialiasingLevel = 16;
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
-	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Engine V0.2", sf::Style::Default, settings);
+
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Engine V0.3", sf::Style::Default, settings);
 	window.setFramerateLimit(350);
+
 	ImGui::SFML::Init(window, true);
 	ImGuiIO& IO = ImGui::GetIO();
 	IO.Fonts->Clear();
 	IO.Fonts->AddFontFromFileTTF("Data\\Fonts\\ArialRegular.ttf", 16.f);
 	ImGui::SFML::UpdateFontTexture();
+
 	Engine::DebuggingSystem::setWindow(window);
-	Engine::Game g(window);
-	g.startGame();
-	g.update();
+	
+	Game g(window);
+	g.start();
+
 	return 0;
 }

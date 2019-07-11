@@ -32,7 +32,7 @@ void Engine::Gun::action(Player& p)
 		pos.x += 5;
 		static int id;
 		++id;
-		Bullet* bullet = new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), p.getDirection(), getDamage(), World::getLevel(), name);
+		Bullet* bullet = new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), p.getDirection(), getDamage(), name);
 		EventManager::eventManager.emit<Events::NewObject_Event>(*bullet);
 	}
 }
@@ -144,12 +144,12 @@ int Engine::Inventory::getIndexItem(std::string_view name)
 			return i;
 }
 
-std::vector<Gun*> Engine::Inventory::getGunItems()
-{
-	std::vector<Gun*> vec;
-	for (auto& i : inv)
-		if (i->getType() == gun)
-			vec.push_back(static_cast<Gun*>(i));
-	return vec;
-}
+//std::vector<Gun*> Engine::Inventory::getGunItems()
+//{
+//	std::vector<Gun*> vec;
+//	for (auto& i : inv)
+//		if (i->getType() == gun)
+//			vec.push_back(static_cast<Gun*>(i));
+//	return vec;
+//}
 

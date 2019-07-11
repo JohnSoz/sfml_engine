@@ -10,29 +10,26 @@ namespace Engine
 		Play = 0, Pause, UI, Exits, StartGame, Resume, Loading
 	};
 
-	class StateStack;
-
 	class State
 	{
+	protected:
+		appState stateId;
+		
 	public:
-		struct info
-		{
-			sf::RenderWindow* window;
-			sf::Event* event;
-			appState stateId;
-			StateStack* state_stack;
-		};
-		info inf;
-
+		bool Initialized;
 		State() = delete;
-		State(State::info info) : inf(info) {}
-		~State() = default;
+		State(appState id) : stateId(id) { Initialized = false; }
+		virtual ~State() = default;
+
+		appState getStateId() const { return stateId; }
 
 		virtual void update(float time) = 0;
+		virtual void updateImGui() {}
 		virtual void handleEvent(sf::Event& e) = 0;
 		virtual void draw() = 0;
 
-		friend class StateStack;
+		virtual void Init() = 0;
+		virtual void Cleanup() = 0;
 	};
 
 	class StateStack
@@ -44,14 +41,10 @@ namespace Engine
 		StateStack() = default;
 		~StateStack() = default;
 
-		void addState(State& state);
+		void addState(State* state);
 		void changeState(appState Id);
 
-		const State& getState(appState state) const { return *currState; }
-
-		void update(float t) { currState->update(t); }
-		void handleEcent(sf::Event& ev) { currState->handleEvent(ev); }
-		void draw() { currState->draw(); }
+		State& getCurrState()  { return *currState; }
+		State& getState(appState state);
 	};
-
 }

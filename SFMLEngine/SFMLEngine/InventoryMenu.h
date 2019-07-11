@@ -50,14 +50,14 @@ namespace Engine
 			auto container_ = tgui::Group::create({ 813, 530 });
 			container_->setPosition({ 590, 310 });
 
-			for (int i = 0; i < inv->getSize(); i++)
+			for (auto& inv_item : *inv)
 			{
 				if (w >= 6)
 				{
 					w = 0;
 					h++;
 				}
-				auto inv_item = inv->getItem<Item>(i);
+				//auto inv_item = inv->getItem<Item>(i);
 				auto button = tgui::BitmapButton::create();
 				auto toolTip = tgui::Label::create(inv_item->getName());
 				toolTip->setRenderer(theme.getRenderer("ToolTip"));
@@ -74,12 +74,12 @@ namespace Engine
 			for (auto& w : grid->getWidgets())
 			{
 				w->connect("pressed", [&]()
-				{
-					auto gun_name = w->getUserData<std::string>();
-					inv->setItemByName(gun_name);
-					std::string log = "Button " + inv->getCurrItem<Item>()->getName();
-					Console::AppLog::addLog(log, Console::logType::info);
-				});
+					{
+						auto gun_name = w->getUserData<std::string>();
+						inv->setItemByName(gun_name);
+						std::string log = "Button " + inv->getCurrItem<Item>()->getName();
+						Console::AppLog::addLog(log, Console::logType::info);
+					});
 			}
 			container_->add(grid);
 			groupArray.addWidget(container_, "InventoryContainer");
@@ -117,12 +117,12 @@ namespace Engine
 			for (auto& w : grid->getWidgets())
 			{
 				w->connect("pressed", [&]()
-				{
-					auto gun_name = w->getUserData<std::string>();
-					inv->setItemByName(gun_name);
-					std::string log = "Button " + inv->getCurrItem<Item>()->getName();
-					Console::AppLog::addLog(log, Console::logType::info);
-				});
+					{
+						auto gun_name = w->getUserData<std::string>();
+						inv->setItemByName(gun_name);
+						std::string log = "Button " + inv->getCurrItem<Item>()->getName();
+						Console::AppLog::addLog(log, Console::logType::info);
+					});
 			}
 			cont->add(grid);
 		}

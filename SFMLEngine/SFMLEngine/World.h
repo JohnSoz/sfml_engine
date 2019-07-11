@@ -1,5 +1,6 @@
 #pragma once
 #include "DebuggingSystem.h"
+#include <SFML/Graphics.hpp>
 #include "imgui.h"
 #include "imgui-sfml.h"
 #include "Actor.h"
@@ -18,8 +19,6 @@ namespace Engine
 		ObjectHandler() = default;
 		~ObjectHandler();
 
-		[[deprecated]]
-		void callStart();
 		void handelEvent(sf::Event& e);
 		void UpdateObjects(float time);
 		void CollisionUpdate();	
@@ -39,25 +38,23 @@ namespace Engine
 		sf::Texture       LevelTexture;
 		ObjectHandler     objHandler;
 		Camera            cam;
-		static Level      level;
+		Level      level;
 		sf::RenderTexture renderTexture;
 		DebuggingSystem   debug;
 		bool              ShowOverlay;
-		
-		void Init(sf::RenderWindow& window);
 	public:
 		World();
 		~World() = default;
-
+		void Init(sf::RenderWindow& window);
 		void handleEvent(sf::Event& event);
 		void draw(sf::RenderWindow& window);
-		void update(sf::RenderWindow& window, float time, sf::Event& event);
+		void update(sf::RenderWindow& window, float time);
 		void updateImGui();
 		void load(sf::RenderWindow& window);
 		void receive(const Events::NewObject_Event& entity);
 		void start(sf::RenderWindow& window);
 
-		static Level& getLevel() { return level; }
+		Level& getLevel() { return level; }
 		Entity* pushEntity(Entity* e);
 		ObjectHandler& getObjHendler() { return objHandler; }
 

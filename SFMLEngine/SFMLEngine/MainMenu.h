@@ -15,6 +15,6 @@ namespace Engine
 		void draw() override;
 		void update() override {}
 		void handleEvent(sf::Event& e) override;
-		void makeMenu(std::string&);
+		void makeMenu();
 	};
 }

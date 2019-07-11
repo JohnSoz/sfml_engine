@@ -115,9 +115,6 @@ void Engine::Actor::CollisionUpdate(Entity* entity)
 
 void Engine::Actor::update(float time) {}
 
-void Engine::Actor::start() {}
-
-
 sf::Vector2f Engine::operator+(const sf::Vector2f& rect, float scale)
 {
 	return sf::Vector2f(rect.x + scale, rect.y + scale);

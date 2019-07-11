@@ -28,6 +28,12 @@ namespace Engine
 			Entity* obj;
 		};
 
+		struct Change_State_Event
+		{
+			Change_State_Event(int stateId) : id(stateId) {}
+			int id;
+		};
+
 	}
 }
 

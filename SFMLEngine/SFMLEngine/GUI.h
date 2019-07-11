@@ -13,7 +13,7 @@ namespace Engine
 		GroupArray groupArray;
 		std::string name;
 		Gui gui;
-		bool isEnable; //Имеет смысл?
+		bool isEnable; 
 	public:
 		BaseGui() = default;
 		BaseGui(std::string_view path) { load(path); };

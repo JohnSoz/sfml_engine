@@ -15,7 +15,7 @@ Engine::MainMenu::MainMenu(std::string pathToTheme, sf::RenderWindow& w)
 	gui.add(groupArray[0]);
 }
 
-void Engine::MainMenu::makeMenu(std::string& p)
+void Engine::MainMenu::makeMenu()
 {
 	Console::AppLog::addLog(Console::Log("Engine::MainMenu::makeMenu()", Console::logType::info));
 
@@ -36,7 +36,7 @@ void Engine::MainMenu::makeMenu(std::string& p)
 	groupArray.addWidget(makeButton("Play", sf::Vector2f(380, 360), sf::Vector2f(220, 100),
 		[&]()
 		{
-			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::StartGame);
+			EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play);
 		}
 	), "RunButton");
 
@@ -51,7 +51,7 @@ void Engine::MainMenu::makeMenu(std::string& p)
 	groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 620), sf::Vector2f(220, 100),
 		[&]()
 		{
-			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Exits);
+			EventManager::eventManager.emit<Events::Change_State_Event>(appState::Exits);
 		}
 	), "ExitButton");
 

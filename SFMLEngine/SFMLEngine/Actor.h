@@ -14,7 +14,6 @@ namespace Engine
 	class Actor : public Entity
 	{
 	protected:
-		std::vector<ObjectLevel> obj;
 		AnimationManager         animManager;
 		sf::Clock                Pressclock;
 		sf::Clock                actionClock;
@@ -47,7 +46,6 @@ namespace Engine
 		void CollisionUpdate(Entity* entity) override;
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 		void update(float time) override;
-		void start() override;
 
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Engine::Actor>();

@@ -5,7 +5,7 @@
 #include "serializer.h"
 using namespace Engine;
 
-Level Engine::World::level;
+//Level Engine::World::level;
 
 Engine::ObjectHandler::~ObjectHandler()
 {
@@ -74,16 +74,6 @@ void Engine::ObjectHandler::CollisionUpdate()
 	}*/
 }
 
-void Engine::ObjectHandler::callStart()
-{
-	Console::AppLog::addLog("Engine::ObjectHandler::callStart()", Console::info);
-	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
-	{
-		(*iter)->start();
-	}
-}
-
-
 void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 {
 	for (auto& o : ObjectsArray)
@@ -126,7 +116,7 @@ void Engine::ObjectHandler::refresh()
 }
 
 
-void Engine::World::update(sf::RenderWindow& window, float time, sf::Event& event)
+void Engine::World::update(sf::RenderWindow& window, float time)
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
 	p->isKeyPressed();
@@ -179,9 +169,7 @@ void Engine::World::Init(sf::RenderWindow& window)
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
 	debug.levelObjects(level.GetAllObjects());
-	///TEST
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
-	//pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
 }
 
 #include "EngineEvents.h"
@@ -194,11 +182,11 @@ Engine::World::World()
 
 void Engine::World::receive(const Events::NewObject_Event& entity)
 {
+	entity.obj->setLevel(level);
 	pushEntity(entity.obj);
 }
 
 void Engine::World::start(sf::RenderWindow& window)
 {
 	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
-	objHandler.callStart();
 }

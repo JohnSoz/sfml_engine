@@ -78,17 +78,27 @@ namespace Engine
 		void update();
 		void nextItem() { (curr_item != inv.end()) ? curr_item = inv.begin() : curr_item++; }
 
+		auto begin() { return inv.begin(); }
+		auto end() { return inv.end(); }
 		std::string getItemName(size_t num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
 		float getWeight();
 		int getSize() { return inv.size(); }
 		int getIndexItem(std::string_view name);
-		std::vector<Gun*> getGunItems();
-		std::vector<Item*> getArrayItem() { return inv; }
+
+		auto getItemsByType(ItemType type)
+		{
+			std::vector<Item*> out;
+			std::copy_if(inv.begin(), inv.end(), out.begin(), [type](const Item* i)
+				{
+					return i->getType() == type;
+				});
+			return out;
+		}
 
 		template<class T>
 		T* getItem(const int index)
 		{
-			assert((static_cast<size_t>(index) > inv.size()) == false && "out of range");
+			assert(!(static_cast<size_t>(index) > inv.size()) && "out of range");
 			return dynamic_cast<T*>(inv[index]);
 		}
 		template<class T>
@@ -97,7 +107,7 @@ namespace Engine
 			return dynamic_cast<T*>(*curr_item);
 		}
 		template<class T>
-		T* getItemByName(std::string Name)
+		T* getItemByName(std::string_view Name)
 		{
 			auto ret = std::find_if(inv.begin(), inv.end(), [Name](Item* item)
 				{
