@@ -1,5 +1,5 @@
-local openWindow = false
-local openWindow2 = false
+local openWindow = true
+local openWindow2 = true
 
 
 a = A('TestLua#2',200,200)--

@@ -180,6 +180,7 @@ namespace Engine
 
 		Rectangle getIntersectionRect(const Rectangle& rect);
 		static Vector2D GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB);
+		static Vector2D GetIntersectionDepth2(const Rectangle& rectA, const Rectangle& rectB);
 		static Vector2D GetBottomCenter(const Rectangle& rect);
 		static Vector2D GetCenter(const Rectangle& rect);
 		static float GetDistance(const Rectangle& rectA, const Rectangle& rectB);

@@ -74,7 +74,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 
 	bool isXMLAnimation = true;
 
-	auto xml_origin = settings->FirstChildElement("origin");
+	//auto xml_origin = settings->FirstChildElement("origin");
 
 	auto xml_rect = settings->FirstChildElement("rect");
 
@@ -96,14 +96,6 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 		float delay = atof(animElement->Attribute("delay"));
 		anim->name = Name;
 		anim->speed = delay / 60000;
-
-		anim->rect.left = atoi(xml_rect->Attribute("left"));
-		anim->rect.top = atoi(xml_rect->Attribute("top"));
-		anim->rect.width = atoi(xml_rect->Attribute("widht"));
-		anim->rect.height = atoi(xml_rect->Attribute("height"));
-
-		anim->origin.x = anim->rect.width / 2;
-		anim->origin.y = anim->rect.height / 2;
 
 		auto loop_ = animElement->Attribute("loop");
 		if (loop_)
@@ -132,6 +124,9 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 		{
 			animationList.push_back(anim);
 			currAnim = animationList.begin();
+			(*currAnim)->rect = (*currAnim)->frames[0];
+			(*currAnim)->origin.x = anim->rect.width / 2;
+			(*currAnim)->origin.y = anim->rect.height;
 		}
 		else
 			animationList.push_back(anim);
@@ -150,9 +145,9 @@ std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::strin
 	return
 		std::find_if(animationList.begin(), animationList.end(),
 			[=](Animation* anim)
-	{
-		return (anim->name == Name);
-	});
+			{
+				return (anim->name == Name);
+			});
 }
 
 std::list<Engine::Animation*>* const Engine::AnimationManager::getAnimationList()
@@ -186,6 +181,8 @@ sf::IntRect& Engine::AnimationXml::tick(const float time)
 			if (!looped)
 				state = AEnd;
 		}
+		origin.x = frames[static_cast<int>(frame)].width / 2;
+		origin.y = frames[static_cast<int>(frame)].height;
 		return frames[static_cast<int>(frame)];
 	}
 	else

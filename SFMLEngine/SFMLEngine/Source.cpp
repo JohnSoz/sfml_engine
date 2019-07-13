@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "DebuggingSystem.h"
@@ -7,7 +6,6 @@
 #include <entityx/Event.h>
 #include "Game.h"
 using namespace Engine;
-
 
 int main()
 {

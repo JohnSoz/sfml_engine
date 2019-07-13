@@ -14,7 +14,7 @@ extern "C"
 #include "MenuState.h"
 namespace Engine
 {
-	/*class A
+	class TestLua
 	{
 	public:
 		std::string name;
@@ -22,14 +22,14 @@ namespace Engine
 		std::string oneFrameText;
 		ImVec2 size;
 	public:
-		A() = delete;
-		A(std::string n)
+		TestLua() = delete;
+		TestLua(std::string n)
 		{
 			size = { 400,400 };
 			name = n;
 			text.clear();
 		}
-		A(std::string n, float x, float y)
+		TestLua(std::string n, float x, float y)
 		{
 			name = n;
 			size.x = x;
@@ -63,49 +63,7 @@ namespace Engine
 				oneFrameText.clear();
 			}
 		}
-	};*/
-
-	//class Game : public entityx::Receiver<Game>
-	//{
-	//private:
-	//	World*      world;
-	//	Clock Gtime;
-	//	MainMenu*   m;
-	//	MusicPlayer musicPlayer;
-	//	A*          testWindow;
-	//	//Client      c;
-	//	float ftStep{ 1.f }, ftSlice{ 1.f };
-	//	float lastFt{ 0.f };
-	//	float currentSlice{ 0.f };
-	//	lua_State*      L;
-	//	RenderWindow*   window;
-	//	ContextSettings settings;
-	//	std::string     appname;
-	//	std::string     path;
-
-	//	Clock deltaClock;
-	//	Clock pressClock;
-	//	bool time;
-
-	//	appState state;
-	//	appState lastState;
-
-	//	bool showConsole = false;
-	//	bool LogConsole = false;
-	//	bool isStateChange;
-
-	//public:
-	//	Game(sf::RenderWindow& w);
-	//	~Game();
-	//	void startGame();
-	//	void update();
-	//	void stateChanged();
-	//	void draw();
-	//	void initMenu(sf::RenderWindow& w);
-	//	void receive(const Events::Main_Menu_Event& event);
-	//	void handleEvent(sf::Event& e);
-	//};
-
+	};
 	class Game : public entityx::Receiver<Game>
 	{
 	private:
@@ -115,20 +73,29 @@ namespace Engine
 		Clock deltaClock;
 		Clock pressClock;
 		lua_State* L;
-
+		TestLua   test;
 		float ftStep{ 1.f }, ftSlice{ 1.f };
 		float lastFt{ 1.f };
 		float currentSlice{ 0.f };
 		bool LogConsole = false;
 		bool needToChangeState = false;
+
 		void handleEvent(sf::Event& e);
 		void draw();
-		void changeState()
+		void changeState();
+		void some_lua_stuff()
 		{
-			if (newStateId == appState::Exits)
-				window->close();
-			stack.changeState(newStateId);
-			needToChangeState = false;
+			Console::AppLog::addLog("Engine::Game::startGame()", Console::info);		
+			luabridge::getGlobalNamespace(L)
+				.beginClass<TestLua>("TestLua")
+				.addConstructor<void(*) (std::string, float, float)>()
+				.addFunction("addWindow", &TestLua::addWindow)
+				.addFunction("addText", &TestLua::addText_l)
+				.addFunction("getText", &TestLua::getText_l)
+				.endClass();
+			luabridge::push(L, &test);
+			lua_setglobal(L, "L_testWindow");
+			test.addText("Text From C++");
 		}
 	public:
 		Game(sf::RenderWindow& w);

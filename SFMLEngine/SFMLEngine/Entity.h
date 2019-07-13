@@ -34,6 +34,7 @@ namespace Engine
 		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); }
 
 		friend class ObjectHandler;
+		friend auto meta::registerMembers<Entity>();
 	};
 
 	class Bullet final : public Entity
@@ -61,6 +62,15 @@ namespace Engine
 }
 namespace meta
 {
+	template <>
+	inline auto registerMembers<Engine::Entity>()
+	{
+		return members(
+			member("localRectangle", &Engine::Entity::localRectangle),
+			member("globalRectangle", &Engine::Entity::globalRectangle),
+			member("debugRectangle", &Engine::Entity::debugRectangle)
+		);
+	}
 	template <>
 	inline auto registerMembers<Engine::Bullet>()
 	{

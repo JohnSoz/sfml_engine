@@ -654,6 +654,35 @@ Vector2D Rectangle::GetIntersectionDepth(const Rectangle & rectA, const Rectangl
 	return Vector2D(depthX, depthY);
 }
 
+Vector2D Engine::Rectangle::GetIntersectionDepth2(const Rectangle& rectA, const Rectangle& rectB)
+{
+	// Размеры.
+	float halfWidthA = rectA.w / 2.0f;
+	float halfHeightA = rectA.h;// / 2.0f;
+	float halfWidthB = rectB.w / 2.0f;
+	float halfHeightB = rectB.h / 2.0f;
+
+	// Центр.
+	Vector2D centerA(rectA.x + halfWidthA, rectA.y);
+	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
+
+	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами.
+	float distanceX = centerA.x - centerB.x;
+	float distanceY = centerA.y - centerB.y;
+	float minDistanceX = halfWidthA + halfWidthB;
+	float minDistanceY = halfHeightB;
+
+	// Если мы вообще не пересекаемся,  (0, 0).
+	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
+		return Vector2D::Zero();
+
+	// Вычисление и возврат глубины пересечения.
+	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+
+	return Vector2D(depthX, depthY);
+}
+
 //-----------------------------------------------------------------------------
 // Задача: Возвращает положение центра нижнего края прямоугольника.
 //-----------------------------------------------------------------------------

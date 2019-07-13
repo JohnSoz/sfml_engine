@@ -30,12 +30,13 @@ namespace Engine
 		sf::IntRect    rect;
 		sf::Vector2f   origin;
 		AnimationState state;
-
+		std::vector<sf::IntRect> frames;
 		float frame; ///< Number of frames
 		float frameCount;
 		float speed; ///< The speed of the animation
 		bool  looped;
 		float scale;
+
 		Animation()
 		{
 			frame = 0;
@@ -51,7 +52,7 @@ namespace Engine
 	class AnimationXml final : public Animation
 	{
 	public:
-		std::vector<sf::IntRect> frames;
+
 		AnimationXml() { looped = false; state = APause; }
 		sf::IntRect& tick(const float time) override;
 	};
@@ -59,9 +60,9 @@ namespace Engine
 	{
 	public:
 		sf::IntRect rect; ///< Frame(rectangle of the current frame)
-		std::vector<sf::IntRect> frames; ///< Container frame \warning used if \code bool isXMLAnimation = true \endcode
+		//std::vector<sf::IntRect> frames; ///< Container frame \warning used if \code bool isXMLAnimation = true \endcode
 		sf::Vector2f Center; ///< Center of the sprite object
-		AnimationJson(){frame = 0; scale = 0;  speed = 0;}
+		AnimationJson() { frame = 0; scale = 0;  speed = 0; }
 
 		sf::IntRect& tick(float time) override;
 	};

@@ -148,14 +148,14 @@ namespace Engine
 		{
 			if (Engine::VStaticContainer::ShowDebugWindow)
 			{
-				ImGui::SetNextWindowSize(ImVec2(550, 440), ImGuiCond_FirstUseEver);
+				ImGui::SetNextWindowSize(ImVec2(600, 440), ImGuiCond_FirstUseEver);
 				if (ImGui::Begin("Debug Window", NULL))
 				{
 					static std::string selected = "";
 					static bool is_prev_treeNode_open = false;
 
 					std::string curr_selected = "";
-					ImGui::BeginChild("Objects", ImVec2(250, 0), true);
+					ImGui::BeginChild("Objects", ImVec2(300, 0), true);
 					if (ImGui::TreeNode((void*)ptr, nameTree.c_str()))
 					{
 						(utility::helper<Types>(selected), ...);

@@ -27,7 +27,7 @@ namespace Engine
 
 		template<class Obj>
 		Obj* GetObjects(std::string NAME);
-		Entity* PushObject(Entity* obj); //TODO:  Запретить добавлять объекты во время выполнения UpdateObjects
+		Entity* PushObject(Entity* obj); 
 	};
 
 	class World : public entityx::Receiver<World>
@@ -38,7 +38,7 @@ namespace Engine
 		sf::Texture       LevelTexture;
 		ObjectHandler     objHandler;
 		Camera            cam;
-		Level      level;
+		Level             level;
 		sf::RenderTexture renderTexture;
 		DebuggingSystem   debug;
 		bool              ShowOverlay;

@@ -83,22 +83,22 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		{
 			auto z = static_cast<Actor*>(o);
 			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2 + 1,z->getPos().y };
+			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
 			vs[1].position = z->ray;
 			vs[0].color = sf::Color::Green;
 			vs[1].color = sf::Color::White;
 			WINDOW.draw(vs);
 
 			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2 - 1,z->getPos().y };
+			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
 			vs2[1].position = z->ray2;
 			vs2[0].color = sf::Color::White;
 			vs2[1].color = sf::Color::Green;
 			WINDOW.draw(vs2);
 
-			sf::CircleShape shape2(2);
+			sf::CircleShape shape2(1);
 			shape2.setFillColor(sf::Color::Blue);
-			shape2.setOrigin(1, 1);
+			//shape2.setOrigin(1, 1);
 			shape2.setPosition(z->sprite.getPosition());
 			WINDOW.draw(shape2);
 		}
@@ -120,7 +120,7 @@ void Engine::World::update(sf::RenderWindow& window, float time)
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
 	p->isKeyPressed();
-	cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
+	//cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
 
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();
@@ -130,11 +130,9 @@ void Engine::World::update(sf::RenderWindow& window, float time)
 void World::updateImGui()
 {
 	if (ShowOverlay)
-	{
 		ImGUI::SimpleOverlay(&ShowOverlay);
-	}
 	Player* p = objHandler.GetObjects<Player>("Test");
-	debug::debugDraw<Player, Object, Actor>(p, "Debug For Class Player");
+	debug::debugDraw<Player, Object, Actor, Entity>(p, "Debug For Class Player");
 }
 
 void Engine::World::load(sf::RenderWindow& window)
@@ -188,5 +186,5 @@ void Engine::World::receive(const Events::NewObject_Event& entity)
 
 void Engine::World::start(sf::RenderWindow& window)
 {
-	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Animation.xml"));
+	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Data\\Animation\\TestAnim.xml"));
 }

@@ -63,7 +63,6 @@ namespace meta
 	inline auto registerMembers<Engine::Object>()
 	{
 		return members(
-			//member("type", &Engine::Object::type),
 			member("type", &Engine::Object::setType),
 			member("type", &Engine::Object::getType),
 			member("name", &Engine::Object::name),
