@@ -83,14 +83,14 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		{
 			auto z = static_cast<Actor*>(o);
 			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getRect().width + z->getSprite().getOrigin().x / 2,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
+			vs[0].position = { z->getPos().x - z->getOrigin().x * z->getScale() + 1 ,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
 			vs[1].position = z->ray;
 			vs[0].color = sf::Color::Green;
 			vs[1].color = sf::Color::White;
 			WINDOW.draw(vs);
 
 			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getRect().width - z->getSprite().getOrigin().x / 2,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
+			vs2[0].position = { z->getPos().x + z->getOrigin().x * z->getScale() - 1 ,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
 			vs2[1].position = z->ray2;
 			vs2[0].color = sf::Color::White;
 			vs2[1].color = sf::Color::Green;
@@ -120,7 +120,7 @@ void Engine::World::update(sf::RenderWindow& window, float time)
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
 	p->isKeyPressed();
-	//cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
+	cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
 
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();

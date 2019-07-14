@@ -148,10 +148,11 @@ void Player::update(float time)
 			sprite.setScale(scale, scale);
 			break;
 		}
-		/*if (velocity.y < 0)
+
+		if (velocity.y < 0)
 			isJump = true;
 		else
-			isJump = false;*/
+			isJump = false;
 
 		if (!onGround)
 			velocity.y += energy / 2;
@@ -162,8 +163,9 @@ void Player::update(float time)
 			(velocity.x > 0) ? velocity.x -= friction : velocity.x = 0;
 
 		position += velocity * time;
-		sprite.setPosition(position);
 		checkClashes(time);
+		sprite.setPosition(position);
+
 		if (isWalk && animManager.GetCurrAnimation()->name != "Walk" && onGround)
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
@@ -171,9 +173,8 @@ void Player::update(float time)
 		else if (!onGround && animManager.GetCurrAnimation()->name != "Jump" && isJump)
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
-			isJump = false;
 		}
-		else if (!onGround && animManager.GetCurrAnimation()->name != "fall")
+		else if (!onGround && animManager.GetCurrAnimation()->name != "fall" && !isJump)
 		{
 			animManager.SetCurrAnimation(animManager.GetAnimationByName("fall"));
 		}
@@ -209,23 +210,23 @@ void Engine::Player::draw()
 void Engine::Player::checkClashes(float time)
 {
 	isCollision = false;
-	ray = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2, sprite.getPosition().y };
-	ray2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2, sprite.getPosition().y };
+	ray = { sprite.getPosition().x - originOffset.x * scale + 1, sprite.getPosition().y };
+	ray2 = { sprite.getPosition().x + originOffset.x * scale - 1, sprite.getPosition().y };
 
-	//sf::Vector2f pos1 = { sprite.getPosition().x - getRect().width + sprite.getOrigin().x / 2 - 1, sprite.getPosition().y - 2 };
-	//sf::Vector2f pos2 = { sprite.getPosition().x + getRect().width - sprite.getOrigin().x / 2 + 1, sprite.getPosition().y - 2 };
-	//float dist = raycastLevelObject(pos1, { -1,  2.2 }, obj, "barrier");
-	//float dist2 = raycastLevelObject(pos2, { +1, 2.2 }, obj, "barrier");
-	////std::cout << "dist = " << (float)(dist) << "   ___   " << "dist2 = " << (float)(dist2) << endl;
+	sf::Vector2f pos1 = { sprite.getPosition().x - originOffset.x * scale + 1, sprite.getPosition().y - 2 };
+	sf::Vector2f pos2 = { sprite.getPosition().x + originOffset.x * scale - 1, sprite.getPosition().y - 2 };
+	float dist = raycastLevelObject(pos1, { +1,  2.2 }, obj, "barrier");
+	float dist2 = raycastLevelObject(pos2, { -1, 2.2 }, obj, "barrier");
+	//std::cout << "dist = " << (float)(dist) << "   ___   " << "dist2 = " << (float)(dist2) << endl;
 
-	//if (dist < 1 && dist2 < 1)
-	//	onGround = false;
-	//else
-	//	onGround = true;
+	if (dist < 1 && dist2 < 1)
+		onGround = false;
+	else
+		onGround = true;
 
 	for (const auto& i : obj)
 	{
-		auto playerRect = Rectangle::fromSfmlRect(sprite.getGlobalBounds());
+		auto playerRect = Rectangle::fromSfmlRect(getRect());
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
 		if (i.name == "barrier")
 		{
@@ -234,22 +235,14 @@ void Engine::Player::checkClashes(float time)
 				isCollision = true;
 
 				auto copyOffset = Rectangle::GetIntersectionDepth2(playerRect, objectRect).GetSfmlVector();
-
-				if (abs(copyOffset.x) > abs(copyOffset.y))
-				{
-					cout << copyOffset.y << std::endl;
-					copyOffset.x = 0;
-				}
-				else
-					copyOffset.y = 0;
+				test.left = copyOffset.x;
+				test.top = copyOffset.y;
 
 				if (copyOffset.y > 0)
 				{
 					velocity.y = 0;
 					onGround = false;
 				}
-				else
-					onGround = true;
 				position = position + copyOffset;
 			}
 		}

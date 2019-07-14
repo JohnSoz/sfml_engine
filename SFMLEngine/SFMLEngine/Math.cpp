@@ -13,9 +13,9 @@ namespace Collision
 		vector.y = vector.y / length;
 	}
 
-	float SAT::dot(sf::Vector2f & vector1, sf::Vector2f & vector2)
+	float SAT::dot(sf::Vector2f& vector1, sf::Vector2f& vector2)
 	{
-		return vector1.x* vector2.x + vector1.y * vector2.y;
+		return vector1.x * vector2.x + vector1.y * vector2.y;
 	}
 
 	float SAT::distance(float minA, float maxA, float minB, float maxB) // Positive return = no hit
@@ -26,7 +26,7 @@ namespace Collision
 	}
 
 
-	void SAT::project(sf::Vector2f & axis, rectangle * _rectangle, float& min, float& max)
+	void SAT::project(sf::Vector2f& axis, rectangle* _rectangle, float& min, float& max)
 	{
 		float _dot = dot(axis, _rectangle->vertex[0]);
 
@@ -45,7 +45,7 @@ namespace Collision
 	}
 
 
-	bool SAT::collision(sf::Sprite * s1, sf::Sprite * s2)
+	bool SAT::collision(sf::Sprite* s1, sf::Sprite* s2)
 	{
 		rectangle one;
 		rectangle two;
@@ -136,7 +136,7 @@ namespace Collision
 				delete[] iter->second;
 		}
 
-		sf::Uint8 GetPixel(const sf::Uint8 * mask, const sf::Texture * tex, unsigned int x, unsigned int y)
+		sf::Uint8 GetPixel(const sf::Uint8* mask, const sf::Texture* tex, unsigned int x, unsigned int y)
 		{
 			if (x > tex->getSize().x || y > tex->getSize().y)
 				return 0;
@@ -144,7 +144,7 @@ namespace Collision
 			return mask[x + y * tex->getSize().x];
 		}
 
-		sf::Uint8* GetMask(const sf::Texture * tex)
+		sf::Uint8* GetMask(const sf::Texture* tex)
 		{
 			sf::Uint8* mask;
 			auto pair = Bitmasks.find(tex);
@@ -159,7 +159,7 @@ namespace Collision
 			return mask;
 		}
 
-		sf::Uint8* CreateMask(const sf::Texture * tex, const sf::Image & img)
+		sf::Uint8* CreateMask(const sf::Texture* tex, const sf::Image& img)
 		{
 			sf::Uint8* mask = new sf::Uint8[tex->getSize().y * tex->getSize().x];
 
@@ -183,7 +183,7 @@ namespace Collision
 
 	BitmaskManager Bitmasks;
 
-	bool PixelPerfectTest(const sf::Sprite & Object1, const sf::Sprite & Object2, sf::Uint8 AlphaLimit)
+	bool PixelPerfectTest(const sf::Sprite& Object1, const sf::Sprite& Object2, sf::Uint8 AlphaLimit)
 	{
 		sf::FloatRect Intersection;
 		if (Object1.getGlobalBounds().intersects(Object2.getGlobalBounds(), Intersection))
@@ -210,7 +210,7 @@ namespace Collision
 						if (Bitmasks.GetPixel(mask1, Object1.getTexture(), static_cast<int>(o1v.x) + O1SubRect.left,
 							static_cast<int>(o1v.y) + O1SubRect.top) > AlphaLimit &&
 							Bitmasks.GetPixel(mask2, Object2.getTexture(), static_cast<int>(o2v.x) + O2SubRect.left,
-							static_cast<int>(o2v.y) + O2SubRect.top) > AlphaLimit)
+								static_cast<int>(o2v.y) + O2SubRect.top) > AlphaLimit)
 							return true;
 					}
 				}
@@ -219,7 +219,7 @@ namespace Collision
 		return false;
 	}
 
-	bool CreateTextureAndBitmask(sf::Texture & LoadInto, const std::string & Filename)
+	bool CreateTextureAndBitmask(sf::Texture& LoadInto, const std::string& Filename)
 	{
 		sf::Image img;
 		if (!img.loadFromFile(Filename))
@@ -231,20 +231,20 @@ namespace Collision
 		return true;
 	}
 
-	sf::Vector2f GetSpriteCenter(const sf::Sprite & Object)
+	sf::Vector2f GetSpriteCenter(const sf::Sprite& Object)
 	{
 		sf::FloatRect AABB = Object.getGlobalBounds();
 		return sf::Vector2f(AABB.left + AABB.width / 2.f, AABB.top + AABB.height / 2.f);
 	}
 
-	sf::Vector2f GetSpriteSize(const sf::Sprite & Object)
+	sf::Vector2f GetSpriteSize(const sf::Sprite& Object)
 	{
 		sf::IntRect OriginalSize = Object.getTextureRect();
 		sf::Vector2f Scale = Object.getScale();
 		return sf::Vector2f(OriginalSize.width * Scale.x, OriginalSize.height * Scale.y);
 	}
 
-	bool CircleTest(const sf::Sprite & Object1, const sf::Sprite & Object2)
+	bool CircleTest(const sf::Sprite& Object1, const sf::Sprite& Object2)
 	{
 		sf::Vector2f Obj1Size = GetSpriteSize(Object1);
 		sf::Vector2f Obj2Size = GetSpriteSize(Object2);
@@ -289,7 +289,7 @@ namespace Collision
 		}
 	};
 
-	bool BoundingBoxTest(const sf::Sprite & Object1, const sf::Sprite & Object2)
+	bool BoundingBoxTest(const sf::Sprite& Object1, const sf::Sprite& Object2)
 	{
 		OrientedBoundingBox OBB1(Object1);
 		OrientedBoundingBox OBB2(Object2);
@@ -370,7 +370,7 @@ float Vector2D::Normalize()
 //-----------------------------------------------------------------------------
 // Задача:	Скалярное произведение
 //-----------------------------------------------------------------------------
-float Vector2D::DotProduct(const Vector2D & v2) const
+float Vector2D::DotProduct(const Vector2D& v2) const
 {
 	return (x * v2.x) + (y * v2.y);
 }
@@ -378,7 +378,7 @@ float Vector2D::DotProduct(const Vector2D & v2) const
 //-----------------------------------------------------------------------------
 // Задача:	Перекрестное произведение
 //-----------------------------------------------------------------------------
-float Vector2D::CrossProduct(const Vector2D & v2) const
+float Vector2D::CrossProduct(const Vector2D& v2) const
 {
 	return (x * v2.y) - (y * v2.x);
 }
@@ -394,7 +394,7 @@ Vector2D Vector2D::Zero()
 //-----------------------------------------------------------------------------
 // Задача:	Дистанция между двумя векторами
 //-----------------------------------------------------------------------------
-float Vector2D::Distance(const Vector2D & v1, const Vector2D & v2)
+float Vector2D::Distance(const Vector2D& v1, const Vector2D& v2)
 {
 	return sqrtf(pow((v2.x - v1.x), 2) + pow((v2.y - v1.y), 2));
 }
@@ -409,7 +409,7 @@ Vector2D Vector2D::FromSfmlVec(sf::Vector2f vec)
 	return Vector2D(vec.x, vec.y);
 }
 
-Vector2D& Vector2D::operator=(const Vector2D & v2)
+Vector2D& Vector2D::operator=(const Vector2D& v2)
 {
 	if (this == &v2)
 		return *this;
@@ -420,7 +420,7 @@ Vector2D& Vector2D::operator=(const Vector2D & v2)
 	return *this;
 }
 
-Vector2D& Vector2D::operator+=(const Vector2D & v2)
+Vector2D& Vector2D::operator+=(const Vector2D& v2)
 {
 	x += v2.x;
 	y += v2.y;
@@ -428,7 +428,7 @@ Vector2D& Vector2D::operator+=(const Vector2D & v2)
 	return *this;
 }
 
-Vector2D& Vector2D::operator-=(const Vector2D & v2)
+Vector2D& Vector2D::operator-=(const Vector2D& v2)
 {
 	x -= v2.x;
 	y -= v2.y;
@@ -452,12 +452,12 @@ Vector2D& Vector2D::operator/=(const float scalar)
 	return *this;
 }
 
-const Vector2D Vector2D::operator+(const Vector2D & v2) const
+const Vector2D Vector2D::operator+(const Vector2D& v2) const
 {
 	return Vector2D(*this) += v2;
 }
 
-const Vector2D Vector2D::operator-(const Vector2D & v2) const
+const Vector2D Vector2D::operator-(const Vector2D& v2) const
 {
 	return Vector2D(*this) -= v2;
 }
@@ -472,32 +472,32 @@ const Vector2D Vector2D::operator/(const float scalar) const
 	return Vector2D(*this) /= scalar;
 }
 
-bool Vector2D::operator==(const Vector2D & v2) const
+bool Vector2D::operator==(const Vector2D& v2) const
 {
 	return ((x == v2.x) && (y == v2.y));
 }
 
-bool Vector2D::operator>(const Vector2D & v2) const
+bool Vector2D::operator>(const Vector2D& v2) const
 {
 	return ((x > v2.x) && (y > v2.y));
 }
 
-bool Vector2D::operator<(const Vector2D & v2) const
+bool Vector2D::operator<(const Vector2D& v2) const
 {
 	return !(*this > v2);
 }
 
-bool Vector2D::operator>=(const Vector2D & v2) const
+bool Vector2D::operator>=(const Vector2D& v2) const
 {
 	return !((*this < v2) && (*this == v2));
 }
 
-bool Vector2D::operator<=(const Vector2D & v2) const
+bool Vector2D::operator<=(const Vector2D& v2) const
 {
 	return ((*this < v2) && (*this == v2));
 }
 
-bool Vector2D::operator!=(const Vector2D & v2) const
+bool Vector2D::operator!=(const Vector2D& v2) const
 {
 	return !((x == v2.x) && (y == v2.y));
 }
@@ -542,7 +542,7 @@ float Rectangle::Bottom() const
 //-----------------------------------------------------------------------------
 // Задача: Проверяет содержит ли прямоугольник вектор
 //-----------------------------------------------------------------------------
-bool Rectangle::Contains(Vector2D & vVec) const
+bool Rectangle::Contains(Vector2D& vVec) const
 {
 	if ((vVec.x >= x) &&
 		(vVec.x <= x + w) &&
@@ -592,7 +592,7 @@ Rectangle Rectangle::Empty()
 	return Rectangle();
 }
 
-Rectangle Rectangle::getIntersectionRect(const Rectangle & rect)
+Rectangle Rectangle::getIntersectionRect(const Rectangle& rect)
 {
 	Rectangle intersection = {};
 	auto r1MinX = std::min(x, x + w);
@@ -625,7 +625,7 @@ Rectangle Rectangle::getIntersectionRect(const Rectangle & rect)
 //-----------------------------------------------------------------------------
 // Задача: Глубина пересечения двух прямоугольников
 //-----------------------------------------------------------------------------
-Vector2D Rectangle::GetIntersectionDepth(const Rectangle & rectA, const Rectangle & rectB)
+Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB)
 {
 	// Размеры.
 	float halfWidthA = rectA.w / 2.0f;
@@ -659,34 +659,43 @@ Vector2D Engine::Rectangle::GetIntersectionDepth2(const Rectangle& rectA, const 
 	// Размеры.
 	float halfWidthA = rectA.w / 2.0f;
 	float halfHeightA = rectA.h;// / 2.0f;
+	float halfHeightA2 = rectA.h / 2.0f;
 	float halfWidthB = rectB.w / 2.0f;
 	float halfHeightB = rectB.h / 2.0f;
 
 	// Центр.
 	Vector2D centerA(rectA.x + halfWidthA, rectA.y);
+	Vector2D centerA2(rectA.x + halfWidthA, rectA.y + halfHeightA2);
 	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
 
 	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами.
 	float distanceX = centerA.x - centerB.x;
 	float distanceY = centerA.y - centerB.y;
+	float distanceY2 = centerA2.y - centerB.y;
 	float minDistanceX = halfWidthA + halfWidthB;
-	float minDistanceY = halfHeightB;
+	float minDistanceY = std::max(halfHeightB, halfHeightA);
+	float minDistanceY2 = halfHeightA2 + halfHeightB;
 
-	// Если мы вообще не пересекаемся,  (0, 0).
 	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
 		return Vector2D::Zero();
 
 	// Вычисление и возврат глубины пересечения.
 	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
 	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
-
+	float depthY2 = distanceY2 > 0 ? minDistanceY2 - distanceY2 : -minDistanceY2 - distanceY2;
+	if (depthX < depthY2)
+		depthY = 0;
+	if (abs(depthX) > abs(depthY2))
+		depthX = 0;
+	else
+		depthY = 0;
 	return Vector2D(depthX, depthY);
 }
 
 //-----------------------------------------------------------------------------
 // Задача: Возвращает положение центра нижнего края прямоугольника.
 //-----------------------------------------------------------------------------
-Vector2D Rectangle::GetBottomCenter(const Rectangle & rect)
+Vector2D Rectangle::GetBottomCenter(const Rectangle& rect)
 {
 	return Vector2D((float)(rect.x + rect.w / 2.0f), (float)(rect.y + rect.h));
 }
@@ -694,7 +703,7 @@ Vector2D Rectangle::GetBottomCenter(const Rectangle & rect)
 //-----------------------------------------------------------------------------
 // Задача: Определяет положение центральной точки прямоугольника
 //-----------------------------------------------------------------------------
-Vector2D Rectangle::GetCenter(const Rectangle & rect)
+Vector2D Rectangle::GetCenter(const Rectangle& rect)
 {
 	return Vector2D((float)(rect.x + rect.w / 2.0f), (float)(rect.y + rect.h / 2.0f));
 }
@@ -703,7 +712,7 @@ Vector2D Rectangle::GetCenter(const Rectangle & rect)
 // Задача: Возвращает расстояние с плавающей точкой между центральной точкой 
 // одного прямоугольника и Центральной точки другого.
 //-----------------------------------------------------------------------------
-float Rectangle::GetDistance(const Rectangle & rectA, const Rectangle & rectB)
+float Rectangle::GetDistance(const Rectangle& rectA, const Rectangle& rectB)
 {
 	return Vector2D::Distance(GetCenter(rectA), GetCenter(rectB));
 }
@@ -711,14 +720,14 @@ float Rectangle::GetDistance(const Rectangle & rectA, const Rectangle & rectB)
 //-----------------------------------------------------------------------------
 // Задача: Возвращает единичный вектор от одного прямоугольника к другому
 //-----------------------------------------------------------------------------
-Vector2D Rectangle::GetDirection(const Rectangle & rectA, const Rectangle & rectB)
+Vector2D Rectangle::GetDirection(const Rectangle& rectA, const Rectangle& rectB)
 {
 	Vector2D direction = GetCenter(rectA) - GetCenter(rectB);
 	direction.Normalize();
 	return direction;
 }
 
-Rectangle& Rectangle::operator=(const Rectangle & r2)
+Rectangle& Rectangle::operator=(const Rectangle& r2)
 {
 	if (this == &r2)
 		return *this;
@@ -731,17 +740,17 @@ Rectangle& Rectangle::operator=(const Rectangle & r2)
 	return *this;
 }
 
-bool Rectangle::operator==(const Rectangle & r2) const
+bool Rectangle::operator==(const Rectangle& r2) const
 {
 	return ((w == r2.w) && (h == r2.h));
 }
 
-bool Rectangle::operator!=(const Rectangle & r2) const
+bool Rectangle::operator!=(const Rectangle& r2) const
 {
 	return !((w == r2.w) && (h == r2.h));
 }
 
-std::ostream & Engine::operator<<(std::ostream & os, const Vector2D & dt)
+std::ostream& Engine::operator<<(std::ostream& os, const Vector2D& dt)
 {
 	os << "  X = " << dt.x << " Y = " << dt.y;
 	return os;

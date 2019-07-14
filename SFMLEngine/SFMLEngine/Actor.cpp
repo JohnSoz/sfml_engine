@@ -72,7 +72,7 @@ void Engine::Actor::updateSprite()
 	localRectangle = currAnim->rect;
 	originOffset = currAnim->origin;
 	scale = currAnim->scale;
-	//sprite.setTexture(currAnim->texture);
+	//sprite.setScale(sf::Vector2f(scale, scale));
 	sprite.setOrigin(originOffset);
 	sprite.setTextureRect(localRectangle);
 	sprite.setPosition(position);

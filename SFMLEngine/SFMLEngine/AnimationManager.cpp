@@ -74,12 +74,8 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 
 	bool isXMLAnimation = true;
 
-	//auto xml_origin = settings->FirstChildElement("origin");
-
 	auto xml_rect = settings->FirstChildElement("rect");
-
 	auto xml_loop = settings->FirstChildElement("loop");
-
 	auto xml_scale = settings->FirstChildElement("scale");
 
 	scale = atof(xml_scale->Attribute("value"));
@@ -95,7 +91,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 		string Name = animElement->Attribute("title");
 		float delay = atof(animElement->Attribute("delay"));
 		anim->name = Name;
-		anim->speed = delay / 60000;
+		anim->speed = delay / 20000;
 
 		auto loop_ = animElement->Attribute("loop");
 		if (loop_)

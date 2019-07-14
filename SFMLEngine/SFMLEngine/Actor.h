@@ -42,7 +42,8 @@ namespace Engine
 		virtual void handleEvent(sf::Event& e);
 		virtual void isKeyPressed();
 		virtual void checkClashes(float time);
-
+		sf::Vector2f getOrigin() { return originOffset; }
+		float getScale() { return scale; }
 		void CollisionUpdate(Entity* entity) override;
 		void RotateToMouse(float speed, sf::RenderWindow& window);
 		void update(float time) override;

@@ -12,6 +12,7 @@ namespace Engine
 		sf::IntRect      localRectangle;
 		sf::FloatRect    globalRectangle;
 		sf::FloatRect    debugRectangle;
+		sf::FloatRect    test;
 		std::vector<ObjectLevel> obj;
 		using Quad = std::pair<const sf::FloatRect*, const sf::FloatRect*>;
 		
@@ -67,6 +68,7 @@ namespace meta
 	{
 		return members(
 			member("localRectangle", &Engine::Entity::localRectangle),
+			member("intersec", &Engine::Entity::test),
 			member("globalRectangle", &Engine::Entity::globalRectangle),
 			member("debugRectangle", &Engine::Entity::debugRectangle)
 		);
