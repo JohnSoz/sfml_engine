@@ -151,13 +151,14 @@ void Player::update(float time)
 
 		if (velocity.y < 0)
 			isJump = true;
-		else
-			isJump = false;
-
+			
 		if (!onGround)
 			velocity.y += energy / 2;
 		else
+		{
+			isJump = false;
 			velocity.y = 0;
+		}
 
 		if (!isWalk)
 			(velocity.x > 0) ? velocity.x -= friction : velocity.x = 0;

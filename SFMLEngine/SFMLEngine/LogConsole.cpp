@@ -1,14 +1,13 @@
 #include "LogConsole.h"
 #include <cmath>
 #include <iostream>
-#include <LuaBridge/LuaBridge.h>
 
 vector<Console::Log> Console::AppLog::Buffer = {};
 std::string         Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
 bool                 Console::AppLog::ScrollToBottom = 0;
 std::vector<std::string>   Console::AppLog::current_input = {};
 
-void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
+void Console::AppLog::Draw(const char* title, bool* p_open, sol::state& state)
 {
 	if (*p_open)
 	{
@@ -27,7 +26,7 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 		ImGui::PushItemWidth(45);
 		if (ImGui::BeginCombo("", item_current.c_str(), ImGuiComboFlags_NoArrowButton))
 		{
-			for (auto & item : items)
+			for (auto& item : items)
 			{
 				bool is_selected = (item_current == item);
 				if (ImGui::Selectable(item.c_str(), is_selected))
@@ -41,12 +40,13 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 		ImGui::SameLine();
 		char buff_search[256] = { 0 };
 		char buff_input[256] = { 0 };
-		
+
 		ImGui::PushItemWidth(150);
 		bool value_changed = ImGui::InputText("Filter", buff_search, IM_ARRAYSIZE(buff_search));
 		ImGui::PopItemWidth();
 		ImGui::PushItemWidth(300);
 		bool input_change = ImGui::InputText("Input", buff_input, IM_ARRAYSIZE(buff_input), ImGuiInputTextFlags_EnterReturnsTrue);
+		std::string last_result;
 		if (input_change)
 		{
 			ScrollToBottom = true;
@@ -55,13 +55,14 @@ void Console::AppLog::Draw(const char* title, bool *p_open, lua_State* state)
 				Buffer.emplace_back(buff_input, script);
 				buff_input[0] = ' ';
 				string do_string = (string)buff_input;
-				luaL_loadstring(state, do_string.c_str());
-				lua_pcall(state, 0, 0, 0);
-				luabridge::LuaRef a = luabridge::getGlobal(state, "lua_result");
-				if (!a.isNil())
+				state.do_string(do_string.c_str());
+				auto a = state["lua_result"];
+				if (a.valid())
 				{
-					std::string answer = a.cast<std::string>();
-					Buffer.emplace_back(answer, script_result);
+					std::string answer = a.get<std::string>();
+					if (last_result != answer)
+						Buffer.emplace_back(answer, script_result);
+					last_result = answer;
 				}
 			}
 		}

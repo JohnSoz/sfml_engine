@@ -1,4 +1,5 @@
 #include "AnimationManager.h"
+#include <boost/lexical_cast.hpp>
 
 using namespace Engine;
 using std::string;
@@ -52,7 +53,7 @@ IntRect& AnimationManager::AnimUpdate(float t)
 {
 	return (*currAnim)->tick(t);
 }
-#include <boost/lexical_cast.hpp>
+
 void AnimationManager::LoadAnimation_x(std::string_view fileName)
 {
 	path = fileName;
@@ -133,6 +134,7 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 
 void AnimationManager::SetCurrAnimation(std::list <Animation*>::iterator iter)
 {
+	(*currAnim)->frame = 0;
 	currAnim = iter;
 }
 

@@ -37,7 +37,7 @@ void Engine::Game::draw()
 {
 	window->clear();
 	stack.getCurrState().draw();
-	Console::AppLog::Draw("LogConsole", &LogConsole, L);
+	Console::AppLog::Draw("LogConsole", &LogConsole, lua_state);
 	ImGui::SFML::Render(*window);
 	window->display();
 }
@@ -54,9 +54,7 @@ Engine::Game::Game(sf::RenderWindow& w) :
 	window(&w), test("TestLua")
 {
 	EventManager::eventManager.subscribe<Events::Change_State_Event>(*this);
-	L = luaL_newstate();
-	luaL_openlibs(L);
-	some_lua_stuff();
+	lua_state.open_libraries(sol::lib::base, sol::lib::math);
 	stack.addState(new MainState(*window));
 	stack.addState(new GameState(*window));
 }
@@ -68,9 +66,8 @@ void Engine::Game::start()
 		auto timePoint1(chrono::high_resolution_clock::now());
 		sf::Event event;
 		handleEvent(event);
-		currentSlice += lastFt;		
+		currentSlice += lastFt;
 		ImGui::SFML::Update(*window, deltaClock.restart());
-		luaL_dofile(L, "script.lua");
 		stack.getCurrState().updateImGui();
 		for (; currentSlice >= ftSlice; currentSlice -= ftSlice)
 			stack.getCurrState().update(ftStep);

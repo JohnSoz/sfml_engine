@@ -77,6 +77,7 @@ namespace meta
 	{
 		return members(
 			member("onGround", &Engine::Player::onGround),
+			member("isJump", &Engine::Player::isJump),
 			member("friction", &Engine::Player::friction),
 			member("energy", &Engine::Player::energy),
 			member("health", &Engine::Player::health),

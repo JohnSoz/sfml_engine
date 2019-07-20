@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-
+#include <entityx/entityx.h>
 namespace Engine
 {
 	enum appState
@@ -32,7 +32,7 @@ namespace Engine
 		virtual void Cleanup() = 0;
 	};
 
-	class StateStack
+	class StateStack : public entityx::Receiver<StateStack>
 	{
 	private:
 		std::vector<State*> states;

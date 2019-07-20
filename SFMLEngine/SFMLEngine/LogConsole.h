@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 using namespace std;
-
+#include <sol\sol.hpp>
 extern "C"
 {
 #include "lua.h"
@@ -75,6 +75,6 @@ namespace Console
 				Buffer.emplace_back(s, t);
 
 		}
-		static void Draw(const char *title, bool *p_open, lua_State *state); ///< Draws the console logs \details ImGUI is used to draw the console
+		static void Draw(const char* title, bool* p_open, sol::state& state); ///< Draws the console logs \details ImGUI is used to draw the console
 	};
 } // namespace Console

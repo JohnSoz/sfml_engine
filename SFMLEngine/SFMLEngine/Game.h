@@ -1,7 +1,7 @@
 #pragma once
 #include "timer.h"
 #include "ApplicationState.h"
-#include <LuaBridge/LuaBridge.h>
+#include <sol/sol.hpp>
 #include <entityx/entityx.h>
 extern "C"
 {
@@ -72,8 +72,9 @@ namespace Engine
 		sf::RenderWindow* window;
 		Clock deltaClock;
 		Clock pressClock;
-		lua_State* L;
+		sol::state lua_state;
 		TestLua   test;
+
 		float ftStep{ 1.f }, ftSlice{ 1.f };
 		float lastFt{ 1.f };
 		float currentSlice{ 0.f };
@@ -83,24 +84,12 @@ namespace Engine
 		void handleEvent(sf::Event& e);
 		void draw();
 		void changeState();
-		void some_lua_stuff()
-		{
-			Console::AppLog::addLog("Engine::Game::startGame()", Console::info);		
-			luabridge::getGlobalNamespace(L)
-				.beginClass<TestLua>("TestLua")
-				.addConstructor<void(*) (std::string, float, float)>()
-				.addFunction("addWindow", &TestLua::addWindow)
-				.addFunction("addText", &TestLua::addText_l)
-				.addFunction("getText", &TestLua::getText_l)
-				.endClass();
-			luabridge::push(L, &test);
-			lua_setglobal(L, "L_testWindow");
-			test.addText("Text From C++");
-		}
 	public:
 		Game(sf::RenderWindow& w);
+
 		void start();
-		StateStack& getStack() { return stack; }
 		void receive(const Events::Change_State_Event& event);
+
+		StateStack& getStack() { return stack; }		
 	};
 }
