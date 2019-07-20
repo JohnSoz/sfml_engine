@@ -90,7 +90,7 @@ namespace Engine
 		 \param PATH path to animation file (xml or json)
 		 \param LOADXML Flag true if you are going to load xml animation
 		*/
-		void LoadAnimation_j(std::string_view PATH);
+		void loadAnimation_j(std::string_view PATH);
 
 		/*!
 		Returns the current animation
@@ -98,33 +98,33 @@ namespace Engine
 		 \warning Can throw std::bad_cast
 		*/
 		template<class T>
-		T* GetCurrAnimation() { return dynamic_cast<T*>(*currAnim); }
+		T* getCurrAnimation() { return dynamic_cast<T*>(*currAnim); }
 
-		AnimationXml* GetCurrAnimation() { return static_cast<AnimationXml*>(*currAnim); }
+		AnimationXml* getCurrAnimation() { return static_cast<AnimationXml*>(*currAnim); }
 
 		/*!
 		Updates the current animation
 		 \details Will call tick(float t) of the current animation
 		 \return returns a rectangle
 		*/
-		sf::IntRect& AnimUpdate(float TIME);
+		sf::IntRect& animUpdate(float TIME);
 
 		/*!
 		Sets the current animation
 		 \warning this animation will not be put into pull animations(bag)
 		*/
-		void SetCurrAnimation(std::list <Animation*>::iterator iter);
+		void setCurrAnimation(std::list <Animation*>::iterator iter);
 
 		/*!
 		Loads the animation from xml file
 		 \details load animation from xml file and return vector from frames (rectangles) for animation
 		*/
-		void LoadAnimation_x(std::string_view fileName);
+		void loadAnimation_x(std::string_view fileName);
 
 		/*!
 		Returns the animation by name
 		*/
-		std::list <Animation*>::iterator GetAnimationByName(std::string_view NAME);
+		std::list <Animation*>::iterator getAnimationByName(std::string_view NAME);
 
 		std::list<Animation*>* const getAnimationList();
 

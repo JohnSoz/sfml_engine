@@ -2,7 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
-#include <entityx/entityx.h>
+
 namespace Engine
 {
 	enum appState
@@ -14,7 +14,9 @@ namespace Engine
 	{
 	protected:
 		appState stateId;
-		
+		appState nextState;
+		bool completed;
+		void updateStatus();
 	public:
 		bool Initialized;
 		State() = delete;
@@ -32,7 +34,7 @@ namespace Engine
 		virtual void Cleanup() = 0;
 	};
 
-	class StateStack : public entityx::Receiver<StateStack>
+	class StateStack
 	{
 	private:
 		std::vector<State*> states;
@@ -44,7 +46,7 @@ namespace Engine
 		void addState(State* state);
 		void changeState(appState Id);
 
-		State& getCurrState()  { return *currState; }
+		State& getCurrState() { return *currState; }
 		State& getState(appState state);
 	};
 }

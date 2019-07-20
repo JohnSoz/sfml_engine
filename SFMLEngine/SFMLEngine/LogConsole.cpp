@@ -1,11 +1,25 @@
 #include "LogConsole.h"
 #include <cmath>
 #include <iostream>
+#include <fstream>
 
 vector<Console::Log> Console::AppLog::Buffer = {};
 std::string         Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
 bool                 Console::AppLog::ScrollToBottom = 0;
 std::vector<std::string>   Console::AppLog::current_input = {};
+
+void Console::AppLog::saveLog(std::string_view path)
+{
+	std::ofstream out;
+	out.open(path.data());
+	if (out.is_open())
+	{
+		for (auto log : Buffer)
+		{
+			out << log.text << std::endl;
+		}
+	}
+}
 
 void Console::AppLog::Draw(const char* title, bool* p_open, sol::state& state)
 {

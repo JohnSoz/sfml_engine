@@ -167,24 +167,24 @@ void Player::update(float time)
 		checkClashes(time);
 		sprite.setPosition(position);
 
-		if (isWalk && animManager.GetCurrAnimation()->name != "Walk" && onGround)
+		if (isWalk && animManager.getCurrAnimation()->name != "Walk" && onGround)
 		{
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("Walk"));
+			animManager.setCurrAnimation(animManager.getAnimationByName("Walk"));
 		}
-		else if (!onGround && animManager.GetCurrAnimation()->name != "Jump" && isJump)
+		else if (!onGround && animManager.getCurrAnimation()->name != "Jump" && isJump)
 		{
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("Jump"));
+			animManager.setCurrAnimation(animManager.getAnimationByName("Jump"));
 		}
-		else if (!onGround && animManager.GetCurrAnimation()->name != "fall" && !isJump)
+		else if (!onGround && animManager.getCurrAnimation()->name != "fall" && !isJump)
 		{
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("fall"));
+			animManager.setCurrAnimation(animManager.getAnimationByName("fall"));
 		}
-		else if (!isWalk && animManager.GetCurrAnimation()->name != "Idle" && onGround)
+		else if (!isWalk && animManager.getCurrAnimation()->name != "Idle" && onGround)
 		{
-			animManager.SetCurrAnimation(animManager.GetAnimationByName("Idle"));
+			animManager.setCurrAnimation(animManager.getAnimationByName("Idle"));
 		}
 		updateSprite();
-		sprite.setTextureRect(animManager.AnimUpdate(time));
+		sprite.setTextureRect(animManager.animUpdate(time));
 
 		inventoryAction();
 		inventory.update();
@@ -286,6 +286,6 @@ Player& Engine::Player::operator=(const save_data& p)
 	this->name = p.name;
 	this->position = p.position;
 	this->animManager.path = p.pathToAnimation;
-	this->animManager.LoadAnimation_x(p.pathToAnimation);
+	this->animManager.loadAnimation_x(p.pathToAnimation);
 	return *this;
 }

@@ -17,7 +17,7 @@ Engine::AnimationManager::~AnimationManager()
 	animationList.clear();
 }
 
-void AnimationManager::LoadAnimation_j(std::string_view path)
+void AnimationManager::loadAnimation_j(std::string_view path)
 {
 	AnimationJson* anim = new AnimationJson;
 	json j;
@@ -49,12 +49,12 @@ void AnimationManager::LoadAnimation_j(std::string_view path)
 		animationList.push_back(anim);
 }
 
-IntRect& AnimationManager::AnimUpdate(float t)
+IntRect& AnimationManager::animUpdate(float t)
 {
 	return (*currAnim)->tick(t);
 }
 
-void AnimationManager::LoadAnimation_x(std::string_view fileName)
+void AnimationManager::loadAnimation_x(std::string_view fileName)
 {
 	path = fileName;
 	using boost::lexical_cast;
@@ -132,13 +132,13 @@ void AnimationManager::LoadAnimation_x(std::string_view fileName)
 	animFile.Clear();
 }
 
-void AnimationManager::SetCurrAnimation(std::list <Animation*>::iterator iter)
+void AnimationManager::setCurrAnimation(std::list <Animation*>::iterator iter)
 {
 	(*currAnim)->frame = 0;
 	currAnim = iter;
 }
 
-std::list <Animation*>::iterator AnimationManager::GetAnimationByName(std::string_view Name)
+std::list <Animation*>::iterator AnimationManager::getAnimationByName(std::string_view Name)
 {
 	return
 		std::find_if(animationList.begin(), animationList.end(),

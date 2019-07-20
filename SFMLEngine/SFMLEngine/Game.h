@@ -86,7 +86,7 @@ namespace Engine
 		void changeState();
 	public:
 		Game(sf::RenderWindow& w);
-
+		~Game() { Console::AppLog::saveLog("Data\\log.txt"); }
 		void start();
 		void receive(const Events::Change_State_Event& event);
 

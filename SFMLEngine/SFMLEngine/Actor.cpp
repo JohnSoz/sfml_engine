@@ -68,7 +68,7 @@ void Engine::Actor::RotateToMouse(float speed, sf::RenderWindow& window)
 
 void Engine::Actor::updateSprite()
 {
-	auto currAnim = animManager.GetCurrAnimation<AnimationXml>();
+	auto currAnim = animManager.getCurrAnimation<AnimationXml>();
 	localRectangle = currAnim->rect;
 	originOffset = currAnim->origin;
 	scale = currAnim->scale;
@@ -92,7 +92,7 @@ Engine::Actor::Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& 
 	//globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;
-	animManager.LoadAnimation_x(animation);
+	animManager.loadAnimation_x(animation);
 	auto object_level = *std::find_if(obj.begin(), obj.end(), [](auto Obj) { return (Obj.name == "PlayerSpawn"); });
 	position = sf::Vector2f(object_level.rect.left + object_level.rect.width / 2, object_level.rect.top + object_level.rect.height / 2);
 	setTexture(animManager.texture);

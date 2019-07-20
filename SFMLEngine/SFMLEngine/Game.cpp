@@ -46,8 +46,11 @@ void Engine::Game::changeState()
 {
 	if (newStateId == appState::Exits)
 		window->close();
-	stack.changeState(newStateId);
-	needToChangeState = false;
+	else
+	{
+		stack.changeState(newStateId);
+		needToChangeState = false;
+	}
 }
 
 Engine::Game::Game(sf::RenderWindow& w) :

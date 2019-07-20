@@ -1,5 +1,6 @@
 #include "ApplicationState.h"
 #include "LogConsole.h"
+#include "EngineEvents.h"
 using namespace Engine;
 
 void Engine::StateStack::addState(State* state)
@@ -35,4 +36,10 @@ void Engine::StateStack::changeState(appState Id)
 State& Engine::StateStack::getState(appState state)
 {
 	return *(*std::find_if(states.begin(), states.end(), [state](const State* s) {return s->getStateId() == state; }));
+}
+
+void Engine::State::updateStatus()
+{
+	if (completed)
+		EventManager::eventManager.emit<Events::Main_Menu_Event>(nextState);
 }
