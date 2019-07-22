@@ -15,7 +15,7 @@ namespace Engine
 
 	tgui::Button::Ptr makeButton(std::string TEXT, sf::Vector2f POS, sf::Vector2f SIZE = { 50,40 }, std::function<void()> f = nullptr);
 
-	tgui::TextBox::Ptr makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos);
+	tgui::TextBox::Ptr makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos, int textSize = 36);
 
 	tgui::ListBox::Ptr makeListBox(std::vector<std::string> items, sf::Vector2f POS, sf::Vector2f SIZE, std::function<void()> f = nullptr, int itemHeight = 25);
 

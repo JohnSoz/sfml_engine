@@ -1,7 +1,6 @@
 #pragma once
 #include "Gui.h"
 #include "GuiEditor.h"
-#include "staticVariable.h"
 
 namespace Engine
 {

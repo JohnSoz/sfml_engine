@@ -20,17 +20,20 @@ namespace Engine
 	public:
 		bool Initialized;
 		State() = delete;
-		State(appState id) : stateId(id) { Initialized = false; }
+		State(appState id) : stateId(id) { Initialized = false; completed = false; }
 		virtual ~State() = default;
 
-		appState getStateId() const { return stateId; }
+		appState getStateId()   const { return stateId; }
+		appState getNextState() const { return nextState; }
+		bool     isCompleted()  const { return completed; }
 
+		void setNextState(appState next) { nextState = next; }
 		virtual void update(float time) = 0;
 		virtual void updateImGui() {}
 		virtual void handleEvent(sf::Event& e) = 0;
 		virtual void draw() = 0;
 
-		virtual void Init() = 0;
+		virtual void Init(sf::RenderWindow& w) = 0;
 		virtual void Cleanup() = 0;
 	};
 
@@ -39,12 +42,17 @@ namespace Engine
 	private:
 		std::vector<State*> states;
 		State* currState;
+		sf::RenderWindow* window;
+		bool needToChangeState;
 	public:
-		StateStack() = default;
-		~StateStack() = default;
+		StateStack(sf::RenderWindow& w) : window(&w) { needToChangeState = false; }
+		~StateStack();
 
 		void addState(State* state);
-		void changeState(appState Id);
+		bool hasState(appState id);
+		void changeState();
+		void changeStateWithLoadingScreen(appState Id);
+		void changeStateTo(appState Id);
 
 		State& getCurrState() { return *currState; }
 		State& getState(appState state);

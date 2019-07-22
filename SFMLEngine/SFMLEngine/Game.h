@@ -1,5 +1,6 @@
 #pragma once
 #include "timer.h"
+#include "EngineEvents.h"
 #include "ApplicationState.h"
 #include <sol/sol.hpp>
 #include <entityx/entityx.h>
@@ -9,9 +10,7 @@ extern "C"
 #include "lauxlib.h"
 #include "lualib.h"
 }
-#include "EngineEvents.h"
-#include "GameState.h"
-#include "MenuState.h"
+
 namespace Engine
 {
 	class TestLua
@@ -70,17 +69,16 @@ namespace Engine
 		appState newStateId;
 		StateStack stack;
 		sf::RenderWindow* window;
-		Clock deltaClock;
-		Clock pressClock;
+		sf::Clock deltaClock;
+		sf::Clock pressClock;
 		sol::state lua_state;
-		TestLua   test;
 
 		float ftStep{ 1.f }, ftSlice{ 1.f };
 		float lastFt{ 1.f };
 		float currentSlice{ 0.f };
 		bool LogConsole = false;
 		bool needToChangeState = false;
-
+		bool changeWithLoading = false;
 		void handleEvent(sf::Event& e);
 		void draw();
 		void changeState();

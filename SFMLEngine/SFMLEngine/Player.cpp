@@ -151,7 +151,7 @@ void Player::update(float time)
 
 		if (velocity.y < 0)
 			isJump = true;
-			
+
 		if (!onGround)
 			velocity.y += energy / 2;
 		else
@@ -286,6 +286,6 @@ Player& Engine::Player::operator=(const save_data& p)
 	this->name = p.name;
 	this->position = p.position;
 	this->animManager.path = p.pathToAnimation;
-	this->animManager.loadAnimation_x(p.pathToAnimation);
+	this->animManager.loadAnimation_x(p.pathToAnimation, *window);
 	return *this;
 }

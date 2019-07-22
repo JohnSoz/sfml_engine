@@ -3,7 +3,9 @@
 #include "imgui-SFML.h"
 #include "LogConsole.h"
 #include "staticVariable.h"
-
+#include "GameState.h"
+#include "MenuState.h"
+#include "LoadingState.h"
 void Engine::Game::handleEvent(sf::Event& event)
 {
 	while (window->pollEvent(event))
@@ -48,18 +50,22 @@ void Engine::Game::changeState()
 		window->close();
 	else
 	{
-		stack.changeState(newStateId);
+		if (changeWithLoading)
+			stack.changeStateWithLoadingScreen(newStateId);
+		else
+			stack.changeStateTo(newStateId);
 		needToChangeState = false;
 	}
 }
 
 Engine::Game::Game(sf::RenderWindow& w) :
-	window(&w), test("TestLua")
+	window(&w), stack(w)
 {
 	EventManager::eventManager.subscribe<Events::Change_State_Event>(*this);
 	lua_state.open_libraries(sol::lib::base, sol::lib::math);
-	stack.addState(new MainState(*window));
-	stack.addState(new GameState(*window));
+	stack.addState(new MainState());
+	stack.addState(new GameState());
+	stack.addState(new LoadingState());
 }
 
 void Engine::Game::start()
@@ -82,11 +88,13 @@ void Engine::Game::start()
 		lastFt = ft;
 		if (needToChangeState)
 			changeState();
+		stack.changeState();
 	}
 }
 
 void Engine::Game::receive(const Events::Change_State_Event& event)
 {
 	newStateId = (appState)event.id;
+	changeWithLoading = event._flag;
 	needToChangeState = true;
 }

@@ -30,8 +30,9 @@ namespace Engine
 
 		struct Change_State_Event
 		{
-			Change_State_Event(int stateId) : id(stateId) {}
+			Change_State_Event(int stateId, bool changeWithLoadingScreen = false) : id(stateId), _flag(changeWithLoadingScreen) {}
 			int id;
+			bool _flag;
 		};
 
 	}

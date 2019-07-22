@@ -17,7 +17,7 @@ namespace Engine
 		AnimationManager         animManager;
 		sf::Clock                Pressclock;
 		sf::Clock                actionClock;
-		sf::Vector2f             originOffset = {};
+		sf::Vector2f             originOffset;
 		DirectionX               direction;
 		DirectionY               directionY = DirectionY::Up;
 		sf::RenderWindow*        window;
@@ -32,8 +32,8 @@ namespace Engine
 		void updateSprite();
 	public:
 		float Radian;
-		sf::Vector2f ray = { 0,0 };
-		sf::Vector2f ray2 = { 0,0 };
+		sf::Vector2f ray;
+		sf::Vector2f ray2;
 
 		Actor(Level& lvl);
 		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);

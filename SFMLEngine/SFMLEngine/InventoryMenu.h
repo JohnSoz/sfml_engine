@@ -34,10 +34,9 @@ namespace Engine
 		{
 			inv = &inventr;
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
-
+			gui.getTarget()->setActive(true);
 			groupArray.addWidget(makePicture("Data/images/bgTest.png", { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
 			groupArray.addWidget(makePicture("Data/images/invBG.png", { 300,300 }, { 1092,548 }), "InvBG");
-
 			int w = 0;
 			int h = 0;
 			tgui::Theme theme;
@@ -49,7 +48,6 @@ namespace Engine
 
 			auto container_ = tgui::Group::create({ 813, 530 });
 			container_->setPosition({ 590, 310 });
-
 			for (auto& inv_item : *inv)
 			{
 				if (w >= 6)

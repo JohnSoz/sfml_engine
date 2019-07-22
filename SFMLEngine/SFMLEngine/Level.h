@@ -94,9 +94,10 @@ namespace Engine
 		std::string orientation;
 
 	public:
-		bool LoadFromFile(std::string filename, int MapScale = 1);
-		ObjectLevel GetObjectByName(std::string name);
 		std::vector<Tileset> tilesets;
+		sf::RenderWindow* w;
+		bool LoadFromFile(std::string filename, int MapScale = 1);
+		ObjectLevel GetObjectByName(std::string name);	
 		std::vector<ObjectLevel> GetObjects(std::string name);
 		const std::vector<ObjectLevel>& GetAllObjects();
 		void DrawLevel(sf::RenderWindow& window);

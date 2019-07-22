@@ -92,11 +92,13 @@ Engine::Actor::Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& 
 	//globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;
-	animManager.loadAnimation_x(animation);
+	w.setActive(true);
+	animManager.loadAnimation_x(animation, w);
 	auto object_level = *std::find_if(obj.begin(), obj.end(), [](auto Obj) { return (Obj.name == "PlayerSpawn"); });
 	position = sf::Vector2f(object_level.rect.left + object_level.rect.width / 2, object_level.rect.top + object_level.rect.height / 2);
 	setTexture(animManager.texture);
 	updateSprite();
+	w.setActive(false);
 }
 
 void Engine::Actor::handleEvent(sf::Event& e) {}

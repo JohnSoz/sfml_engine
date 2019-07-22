@@ -2,6 +2,7 @@
 #include "EngineEvents.h"
 #include <filesystem>
 #include "ApplicationState.h"
+#include "staticVariable.h"
 
 namespace fs = std::experimental::filesystem;
 
@@ -36,7 +37,7 @@ void Engine::MainMenu::makeMenu()
 	groupArray.addWidget(makeButton("Play", sf::Vector2f(380, 360), sf::Vector2f(220, 100),
 		[&]()
 		{
-			EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play);
+			EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play, true);
 		}
 	), "RunButton");
 

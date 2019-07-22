@@ -42,9 +42,11 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 
 	TiXmlElement *el;
 	el = map->FirstChildElement("tileset");
+	
 	while (el)
 	{
-		tilesets.push_back(std::move(Tileset(el)));
+		//w->setActive(true);
+		tilesets.emplace_back(Tileset(el));
 		el = el->NextSiblingElement("tileset");
 	}
 

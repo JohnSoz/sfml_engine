@@ -163,9 +163,12 @@ void Engine::World::draw(sf::RenderWindow& window)
 
 void Engine::World::Init(sf::RenderWindow& window)
 {
+	level.w = &window;
+	window.setActive(true);
 	level.LoadFromFile("Data/Level/shpiga_test_level.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
+	window.setActive(false);
 	debug.levelObjects(level.GetAllObjects());
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 }
@@ -173,7 +176,6 @@ void Engine::World::Init(sf::RenderWindow& window)
 #include "EngineEvents.h"
 Engine::World::World()
 {
-	renderTexture.create(1920, 1080);
 	ShowOverlay = true;
 	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event>(*this);
 }

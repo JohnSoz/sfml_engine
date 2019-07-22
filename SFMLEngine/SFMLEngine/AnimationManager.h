@@ -119,7 +119,7 @@ namespace Engine
 		Loads the animation from xml file
 		 \details load animation from xml file and return vector from frames (rectangles) for animation
 		*/
-		void loadAnimation_x(std::string_view fileName);
+		void loadAnimation_x(std::string_view fileName,sf::RenderWindow&);
 
 		/*!
 		Returns the animation by name

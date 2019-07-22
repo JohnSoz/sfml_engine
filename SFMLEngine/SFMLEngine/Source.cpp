@@ -16,7 +16,7 @@ int main()
 	settings.majorVersion = 3;
 	settings.minorVersion = 0;
 
-	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Engine V0.3", sf::Style::Default, settings);
+	sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML Engine V0.3", sf::Style::Default);
 	window.setFramerateLimit(350);
 
 	ImGui::SFML::Init(window, true);

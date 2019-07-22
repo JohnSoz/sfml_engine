@@ -13,12 +13,9 @@ namespace Engine
 		sf::RenderWindow* window;
 		//MusicPlayer* musicPlayer;
 	public:
-		GameState(sf::RenderWindow& win) :
-			State(appState::Play)
-		{
-			window = &win;
-		}
-		~GameState() { Cleanup(); }
+		GameState() :
+			State(appState::Play) {}
+		~GameState() { if (Initialized) Cleanup(); }
 
 		void updateImGui() override { world->updateImGui(); }
 
@@ -39,8 +36,8 @@ namespace Engine
 			world->draw(*window);
 		}
 
-		void Init() override { world = new World(); world->Init(*window); world->start(*window); Initialized = true; }
-		void Cleanup() override { delete world; Initialized = false; }
+		void Init(sf::RenderWindow& w) override;
+		void Cleanup() override;
 	};
 
 }

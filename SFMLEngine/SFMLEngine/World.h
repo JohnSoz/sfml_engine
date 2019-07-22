@@ -39,7 +39,6 @@ namespace Engine
 		ObjectHandler     objHandler;
 		Camera            cam;
 		Level             level;
-		sf::RenderTexture renderTexture;
 		DebuggingSystem   debug;
 		bool              ShowOverlay;
 	public:

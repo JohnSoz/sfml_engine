@@ -54,13 +54,13 @@ IntRect& AnimationManager::animUpdate(float t)
 	return (*currAnim)->tick(t);
 }
 
-void AnimationManager::loadAnimation_x(std::string_view fileName)
+void AnimationManager::loadAnimation_x(std::string_view fileName, sf::RenderWindow& w)
 {
 	path = fileName;
 	using boost::lexical_cast;
 	using boost::bad_lexical_cast;
 	TiXmlDocument animFile(fileName.data());
-
+	
 	animFile.LoadFile();
 
 	TiXmlElement* head;
@@ -80,7 +80,6 @@ void AnimationManager::loadAnimation_x(std::string_view fileName)
 	auto xml_scale = settings->FirstChildElement("scale");
 
 	scale = atof(xml_scale->Attribute("value"));
-
 	texture.loadFromFile("Data\\OSprite\\" + img);
 	texture.setSmooth(true);
 

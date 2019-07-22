@@ -11,9 +11,12 @@ namespace Engine
 		sf::RenderWindow* window;
 		Clock deltaClock;
 	public:
-		MainState(sf::RenderWindow& win) :
-			State(appState::UI), window(&win) {}
-		~MainState() { Cleanup(); }
+		MainState() :
+			State(appState::UI)
+		{
+			nextState = appState::Play;
+		}
+		~MainState() { if (Initialized) Cleanup(); }
 		void update(float time) override
 		{
 			m->update();
@@ -27,8 +30,8 @@ namespace Engine
 			m->draw();
 		}
 
-		void Init() override { m = new MainMenu("Data/GUI/MyUI/MainMenu.txt", *window); m->makeMenu(); Initialized = true; }
-		void Cleanup() override { delete m;  Initialized = false; }
+		void Init(sf::RenderWindow& w) override;
+		void Cleanup() override;
 	};
 
 }

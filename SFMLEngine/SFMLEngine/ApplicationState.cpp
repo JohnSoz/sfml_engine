@@ -1,7 +1,17 @@
 #include "ApplicationState.h"
 #include "LogConsole.h"
 #include "EngineEvents.h"
+#include <future>
+#include <thread>
+#include <mutex>
 using namespace Engine;
+
+Engine::StateStack::~StateStack()
+{
+	for (auto iter = states.begin(); iter != states.end(); ++iter)
+		delete* iter;
+	states.clear();
+}
 
 void Engine::StateStack::addState(State* state)
 {
@@ -12,11 +22,71 @@ void Engine::StateStack::addState(State* state)
 	if (isFirst)
 	{
 		currState = state;
-		currState->Init();
+		currState->Init(*window);
 	}
 }
 
-void Engine::StateStack::changeState(appState Id)
+bool Engine::StateStack::hasState(appState id)
+{
+	auto state = std::find_if(states.begin(), states.end(), [id](const State* state)
+		{
+			return id == state->getStateId();
+		});
+	return state != states.end();
+}
+
+void Engine::StateStack::changeState()
+{
+	if (currState->isCompleted())
+	{
+		auto state = std::find_if(states.begin(), states.end(), [Id = currState->getNextState()](const State* state)
+		{
+			return Id == state->getStateId();
+		});
+		if (state != states.end())
+		{
+			currState->Cleanup();
+			currState = *state;
+			if (!currState->Initialized)
+				currState->Init(*window);
+		}
+		else
+			Console::AppLog::addLog("changeState() occurred with an error", Console::logType::error);
+	}
+}
+
+void Engine::StateStack::changeStateWithLoadingScreen(appState Id)
+{
+	if (!hasState(appState::Loading))
+		Console::AppLog::addLog("changeStateWithLoadingScreen() occurred with an error", Console::logType::error);
+	auto state1 = std::find_if(states.begin(), states.end(), [Id](const State* state)
+		{
+			return Id == state->getStateId();
+		});
+	window->setActive(false);
+	auto initState = [state1, this]() -> void
+	{
+		if (!(*state1)->Initialized)
+			(*state1)->Init(*window);
+	};	
+	auto state2 = std::find_if(states.begin(), states.end(), [Id = appState::Loading](const State* state)
+	{
+		return Id == state->getStateId();
+	});
+	sf::Thread thread(initState);
+	thread.launch();
+	if (state1 != states.end() && state2 != states.end())
+	{
+		currState->Cleanup();
+		currState = *state2;
+		currState->setNextState(Id);
+		if (!currState->Initialized)
+			currState->Init(*window);
+	}
+
+}
+
+void Engine::StateStack::changeStateTo(appState Id)
 {
 	auto state = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{
@@ -27,7 +97,7 @@ void Engine::StateStack::changeState(appState Id)
 		currState->Cleanup();
 		currState = *state;
 		if (!currState->Initialized)
-			currState->Init();
+			currState->Init(*window);
 	}
 	else
 		Console::AppLog::addLog("change of state occurred with an error", Console::logType::error);
