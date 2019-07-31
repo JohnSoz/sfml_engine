@@ -2,25 +2,22 @@
 using namespace Engine;
 using namespace sf;
 
-Engine::Object::Object(sf::Vector2f pos, std::string n)
+Engine::Object::Object(sf::Vector2f pos, std::string n) :
+	name(std::move(n)), position(pos), type(ObjectType::None)
 {
-	position = pos;
 	IsActive = true;
-	type = ObjectType::None;
-	name = n;
 }
 
 
-Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string n)
+Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::string n) :
+	name(std::move(n)), type(t), position(pos)
 {
-	type = t;
-	name = n;
-	position = pos;
 	IsActive = true;
 	texture.loadFromImage(img);
 	texture.setSmooth(true);
 	sprite.setTexture(texture);
-	sprite.setPosition(position);}
+	sprite.setPosition(position);
+}
 
 
 void Engine::Object::setTexture(sf::Texture tex)
@@ -29,28 +26,25 @@ void Engine::Object::setTexture(sf::Texture tex)
 	sprite.setTexture(texture);
 }
 
-Engine::Object::Object()
+Engine::Object::Object() :
+	type(ObjectType::None)
 {
-	type = ObjectType::None;
 	IsActive = true;
 }
 
-Engine::Object::Object(std::string Name)
+Engine::Object::Object(std::string n) :
+	name(std::move(n)), type(ObjectType::None)
 {
-	name = Name;
-	type = ObjectType::None;
 	IsActive = false;
 }
 
-Engine::Object::Object(sf::Vector2f pos, ObjectType t, std::string n)
+Engine::Object::Object(sf::Vector2f pos, ObjectType t, std::string n) :
+	name(std::move(n)), position(pos), type(t)
 {
-	position = pos;
-	type = t;
-	name = n;
 	IsActive = true;
 }
 
-bool Engine::operator==(const Object & obj, const Object & obj2)
+bool Engine::operator==(const Object& obj, const Object& obj2)
 {
 	return obj.name == obj2.name;
 }

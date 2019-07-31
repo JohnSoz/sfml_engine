@@ -15,6 +15,7 @@ Engine::HUD::HUD(std::string pathToTheme, sf::RenderWindow& w, Inventory& i)
 
 void Engine::HUD::makeHud()
 {
+	Console::AppLog::addLog("Engine::HUD::makeHud()", Console::logType::info);
 	gui.getTarget()->setActive(true);
 	groupArray.addWidget(makePicture(inv->getCurrItem<Item>()->getTexture().copyToImage(), { 100.f,800.f }, 0.94f), "Item");
 }

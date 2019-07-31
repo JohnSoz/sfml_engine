@@ -15,6 +15,7 @@ Engine::StateStack::~StateStack()
 
 void Engine::StateStack::addState(State* state)
 {
+	Console::AppLog::addLog("A new state has been added to the state stack, new state id: " + std::to_string(state->getStateId()), Console::system);
 	bool isFirst = false;
 	if (states.empty())
 		isFirst = true;
@@ -55,20 +56,25 @@ void Engine::StateStack::changeState()
 	}
 }
 
-void Engine::StateStack::changeStateWithLoadingScreen(appState Id)
+void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions action)
 {
 	if (!hasState(appState::Loading))
-		Console::AppLog::addLog("changeStateWithLoadingScreen() occurred with an error", Console::logType::error);
+	{
+		Console::AppLog::addLog("StateStack has no loadState", Console::logType::error);
+		return;
+	}
 	auto state1 = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{
 			return Id == state->getStateId();
 		});
+	if (action != actions::none)
+		(*state1)->setActions(action);
 	window->setActive(false);
 	auto initState = [state1, this]() -> void
 	{
 		if (!(*state1)->Initialized)
 			(*state1)->Init(*window);
-	};	
+	};
 	auto state2 = std::find_if(states.begin(), states.end(), [Id = appState::Loading](const State* state)
 	{
 		return Id == state->getStateId();
@@ -86,7 +92,7 @@ void Engine::StateStack::changeStateWithLoadingScreen(appState Id)
 
 }
 
-void Engine::StateStack::changeStateTo(appState Id)
+void Engine::StateStack::changeStateTo(appState Id, actions action)
 {
 	auto state = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{

@@ -2,25 +2,21 @@
 #include "timer.h"
 #include "EngineEvents.h"
 #include "ApplicationState.h"
+#define SOL_ALL_SAFETIES_ON 1
 #include <sol/sol.hpp>
 #include <entityx/entityx.h>
-extern "C"
-{
-#include "lua.h"
-#include "lauxlib.h"
-#include "lualib.h"
-}
+#include "LuaEngine.h"
 
 namespace Engine
 {
-	class TestLua
+	struct TestLua
 	{
-	public:
 		std::string name;
 		std::string text;
 		std::string oneFrameText;
 		ImVec2 size;
-	public:
+		bool isOpen;
+
 		TestLua() = delete;
 		TestLua(std::string n)
 		{
@@ -43,35 +39,53 @@ namespace Engine
 		{
 			oneFrameText += t;
 		}
+		static void registerClass()
+		{
+			Lua::LuaEngine::getLuaState().new_usertype<ImVec2>("vec2",
+				sol::constructors<ImVec2(float, float)>(),
+				"x", &ImVec2::x,
+				"y", &ImVec2::y
+				);
+			Lua::LuaEngine::getLuaState().new_usertype<TestLua>("TestLua",
+				sol::constructors<TestLua(std::string), TestLua(std::string, float, float)>(),
+				"addText", &TestLua::addText,
+				"addTextOne", &TestLua::addText_l,
+				"clear", &TestLua::clear,
+				"Begin", &TestLua::begin,
+				"End", &ImGui::End,
+				"text", &TestLua::Text,
+				"size", &TestLua::size,
+				"separator", &ImGui::Separator
+				);
+		}
 		std::string getText_l()
 		{
 			return oneFrameText + text;
 		}
-		void addWindow(bool isOpen)
+		void clear()
 		{
-			if (isOpen)
-			{
-				if (ImGui::Begin(name.c_str(), &isOpen, ImGuiWindowFlags_NoSavedSettings))
-				{
-					ImGui::SetWindowSize(size);
-					ImGui::Text(text.c_str());
-					ImGui::Separator();
-					ImGui::Text(oneFrameText.c_str());
-					ImGui::End();
-				}
-				oneFrameText.clear();
-			}
+			oneFrameText.clear();
+		}
+		void Text(std::string s)
+		{
+			ImGui::Text(s.c_str());
+		}
+		void begin()
+		{
+			ImGui::Begin(name.c_str(), &isOpen, ImGuiWindowFlags_NoSavedSettings);
+			ImGui::SetWindowSize(size);
 		}
 	};
 	class Game : public entityx::Receiver<Game>
 	{
 	private:
 		appState newStateId;
+		actions stateAction;
 		StateStack stack;
 		sf::RenderWindow* window;
 		sf::Clock deltaClock;
 		sf::Clock pressClock;
-		sol::state lua_state;
+		Lua::LuaEngine lua;
 
 		float ftStep{ 1.f }, ftSlice{ 1.f };
 		float lastFt{ 1.f };
@@ -79,6 +93,7 @@ namespace Engine
 		bool LogConsole = false;
 		bool needToChangeState = false;
 		bool changeWithLoading = false;
+
 		void handleEvent(sf::Event& e);
 		void draw();
 		void changeState();
@@ -88,6 +103,6 @@ namespace Engine
 		void start();
 		void receive(const Events::Change_State_Event& event);
 
-		StateStack& getStack() { return stack; }		
+		StateStack& getStack() { return stack; }
 	};
 }

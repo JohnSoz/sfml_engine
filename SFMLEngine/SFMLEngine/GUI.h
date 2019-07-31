@@ -1,7 +1,7 @@
 #pragma once
 #ifndef GUI_H
 #define GUI_H
-
+#include "LuaEngine.h" 
 #include "GroupArray.h"
 
 namespace Engine
@@ -21,7 +21,7 @@ namespace Engine
 		virtual ~BaseGui() = default;
 
 		virtual void draw() { gui.draw(); }
-		virtual void update() {}
+		virtual void update() = 0;
 		virtual void handleEvent(sf::Event& e) { gui.handleEvent(e); }
 
 		void activateOrDisable(std::string_view name = "");

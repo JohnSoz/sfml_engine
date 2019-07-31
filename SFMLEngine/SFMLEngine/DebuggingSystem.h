@@ -12,7 +12,6 @@
 #include "Level.h"
 #include "Math.h"
 #include <vector>
-#define _Debug_ 1; ///<warning The global flag. Debug = 1 when you need to debug
 using namespace std;
 
 namespace Engine

@@ -22,11 +22,7 @@ namespace Engine
 		DirectionY               directionY = DirectionY::Up;
 		sf::RenderWindow*        window;
 
-		bool  isWalk;
-		bool  isCollision;
-		bool  isShoot;
 		float scale = 0.5;
-		float CurrAngle = sprite.getRotation(), LastAngle;
 		float time_actor;
 
 		void updateSprite();
@@ -39,14 +35,14 @@ namespace Engine
 		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);
 		~Actor() {}
 
-		virtual void handleEvent(sf::Event& e);
-		virtual void isKeyPressed();
-		virtual void checkClashes(float time);
+		virtual void handleEvent(sf::Event& e) = 0;
+		virtual void isKeyPressed() = 0;
+		virtual void checkClashes(float time) = 0;
+		virtual void update(float time) = 0;
+
 		sf::Vector2f getOrigin() { return originOffset; }
 		float getScale() { return scale; }
 		void CollisionUpdate(Entity* entity) override;
-		void RotateToMouse(float speed, sf::RenderWindow& window);
-		void update(float time) override;
 
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Engine::Actor>();
@@ -58,8 +54,6 @@ namespace meta
 	inline auto registerMembers<Engine::Actor>()
 	{
 		return members(
-			member("isCollision", &Engine::Actor::isCollision),
-			member("isWalk", &Engine::Actor::isWalk),
 			member("originOffset", &Engine::Actor::originOffset)
 		);
 	}

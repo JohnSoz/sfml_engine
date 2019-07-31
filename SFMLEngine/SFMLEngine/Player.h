@@ -27,10 +27,13 @@ namespace Engine
 		save_data     data;
 		InventoryMenu inv;
 
+		float CurrAngle = sprite.getRotation(), LastAngle;
 		float health, armor;
 		float energy, friction, maxSpeed;
 		float speedX, speedY;
-		float grav = 0.005f;
+		bool  isWalk;
+		bool  isCollision;
+		bool  isShoot;
 		bool  onGround;
 		bool  isInvAction;
 		bool  isJump;	
@@ -85,7 +88,9 @@ namespace meta
 			member("speedX", &Engine::Player::speedX),
 			member("maxSpeed", &Engine::Player::maxSpeed),
 			member("speedY", &Engine::Player::speedY),
-			member("vel", &Engine::Player::velocity)
+			member("vel", &Engine::Player::velocity),
+			member("isCollision", &Engine::Player::isCollision),
+			member("isWalk", &Engine::Player::isWalk)
 		);
 	}
 } // namespace meta

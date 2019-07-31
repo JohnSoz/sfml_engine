@@ -8,21 +8,21 @@ namespace Engine
 	{
 	private:
 		sf::RenderWindow* window;
-		sf::Time minLoadingTime;
+		sf::Time LoadingTime;
 		sf::Clock c;
 		LoadingScreen* screen;
 	public:
 		LoadingState() :
 			State(appState::Loading)
 		{
-			minLoadingTime = sf::seconds(15);
+			LoadingTime = sf::seconds(8);
 		}
 		~LoadingState() { if (Initialized) Cleanup(); }
 
 		void update(float time) override
 		{
 			screen->update();
-			if (c.getElapsedTime() > minLoadingTime)
+			if (c.getElapsedTime() > LoadingTime)
 				completed = true;
 			updateStatus();
 		}

@@ -42,7 +42,6 @@ namespace Engine
 					}
 					else if (member.canGetRef())
 					{
-						std::cout << typeid(MemberT).name();
 						member.getRef(obj) = objName.template get<MemberT>();
 					}
 				}
@@ -82,6 +81,7 @@ namespace Engine
 		i >> j2;
 		deserialize<T>(obj, j2);
 		i.close();
+		Console::AppLog::addLog("game is loaded(path:Data/save.json)", Console::info);
 	}
 }
 

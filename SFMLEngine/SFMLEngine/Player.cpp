@@ -81,9 +81,8 @@ void Player::isKeyPressed()
 		velocity.x = (velocity.x < maxSpeed) ? velocity.x += energy : velocity.x = maxSpeed;
 	}
 	else
-	{
 		isWalk = false;
-	}
+
 	if (Keyboard::isKeyPressed(Keyboard::I))
 		if (Pressclock.getElapsedTime().asMilliseconds() > 500)
 		{

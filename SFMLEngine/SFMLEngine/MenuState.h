@@ -1,6 +1,7 @@
 #pragma once
 #include "ApplicationState.h"
 #include "MainMenu.h"
+#include "AudioPlayer.h"
 
 namespace Engine
 {
@@ -10,11 +11,13 @@ namespace Engine
 		MainMenu* m;
 		sf::RenderWindow* window;
 		Clock deltaClock;
+		MusicPlayer* mus;
 	public:
 		MainState() :
 			State(appState::UI)
 		{
 			nextState = appState::Play;
+			mus = new MusicPlayer("Menu");
 		}
 		~MainState() { if (Initialized) Cleanup(); }
 		void update(float time) override

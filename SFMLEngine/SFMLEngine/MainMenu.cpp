@@ -30,7 +30,7 @@ void Engine::MainMenu::makeMenu()
 	groupArray.addWidget(makeButton("Resume", sf::Vector2f(380, 230), sf::Vector2f(220, 100),
 		[&]()
 		{
-			EventManager::eventManager.emit<Events::Main_Menu_Event>(appState::Loading);
+			EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play, true, actions::loading);
 		}
 	), "LoadButton");
 

@@ -95,7 +95,6 @@ namespace Engine
 
 	public:
 		std::vector<Tileset> tilesets;
-		sf::RenderWindow* w;
 		bool LoadFromFile(std::string filename, int MapScale = 1);
 		ObjectLevel GetObjectByName(std::string name);	
 		std::vector<ObjectLevel> GetObjects(std::string name);

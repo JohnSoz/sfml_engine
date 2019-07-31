@@ -3,9 +3,8 @@
 #include <algorithm>
 #include "Player.h"
 #include "serializer.h"
+#include "EngineEvents.h"
 using namespace Engine;
-
-//Level Engine::World::level;
 
 Engine::ObjectHandler::~ObjectHandler()
 {
@@ -137,6 +136,7 @@ void World::updateImGui()
 
 void Engine::World::load(sf::RenderWindow& window)
 {
+	Console::AppLog::addLog(Console::Log("Engine::World::load()", Console::logType::info));
 	pushEntity(new Engine::Player(window, level));
 }
 
@@ -160,20 +160,16 @@ void Engine::World::draw(sf::RenderWindow& window)
 	objHandler.GetObjects<Player>("Test")->draw();
 }
 
-
 void Engine::World::Init(sf::RenderWindow& window)
 {
-	level.w = &window;
-	window.setActive(true);
 	level.LoadFromFile("Data/Level/shpiga_test_level.tmx");
 	this->LevelTexture.loadFromImage(level.DrawLevel2());
 	this->LevelSprite.setTexture(LevelTexture);
-	window.setActive(false);
 	debug.levelObjects(level.GetAllObjects());
 	Console::AppLog::addLog(Console::Log("Engine::World::Init()", Console::logType::info));
 }
 
-#include "EngineEvents.h"
+
 Engine::World::World()
 {
 	ShowOverlay = true;

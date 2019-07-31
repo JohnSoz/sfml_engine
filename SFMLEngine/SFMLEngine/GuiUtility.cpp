@@ -30,6 +30,17 @@ tgui::Button::Ptr Engine::makeButton(std::string TEXT, pair_s pos, sf::Vector2f 
 	return Button;
 }
 
+tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair_s pos, int textSize)
+{
+	auto textbox = tgui::TextBox::create();
+	textbox->setSize(SIZE);
+	textbox->setEnabled(false);
+	textbox->setTextSize(textSize);
+	textbox->setPosition(pos.first, pos.second);
+	textbox->setText(TEXT);
+	return textbox;
+}
+
 tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos, int textSize)
 {
 	auto textbox = tgui::TextBox::create();

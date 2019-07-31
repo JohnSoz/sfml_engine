@@ -9,7 +9,7 @@ Engine::LoadingScreen::LoadingScreen(std::string pathToTheme, sf::RenderWindow& 
 {
 	gui.setTarget(w);
 	sf::Font font;
-	font.loadFromFile("Data/Fonts/Bricks.otf");
+	font.loadFromFile("Data/Fonts/SackersGothicStd-Medium.otf");
 	gui.setFont(font);
 	gui.add(groupArray[0]);
 }
@@ -29,6 +29,6 @@ void Engine::LoadingScreen::makeMenu()
 {
 	Console::AppLog::addLog(Console::Log("Engine::LoadingScreen::makeMenu()", Console::logType::info));
 	groupArray.addWidget(makeCanvas("Data/images/LoadingScreen.png"), "Canvas");
-	groupArray.addWidget(makeTextBox(".", sf::Vector2f(190, 80), sf::Vector2f(100, 100), 16), "TimeBox");
+	groupArray.addWidget(makeTextBox(".", sf::Vector2f(320, 60), { 960, 540 }, 18), "TimeBox");
 	text = groupArray[0]->get<tgui::TextBox>("TimeBox");
 }

@@ -5,7 +5,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-using namespace std;
 #include <sol\sol.hpp>
 extern "C"
 {
@@ -13,7 +12,7 @@ extern "C"
 #include "lauxlib.h"
 #include "lualib.h"
 }
-
+using namespace std;
 namespace Console
 {
 
@@ -54,8 +53,9 @@ namespace Console
 	private:
 		static bool ScrollToBottom; ///< Flag, true if the scrollbar
 		static std::vector<std::string> current_input;
-		static vector<Log> Buffer;   ///< �ontainer log, stores logs
+		static vector<Log> Buffer;   ///< container log, stores logs
 		static std::string items[7]; ///< The text representation of the enumeration types of the log
+
 	public:
 		static void Clear() ///< Clears the logs console \warning This method removes logs from the buffer
 		{
@@ -73,7 +73,6 @@ namespace Console
 			}
 			else
 				Buffer.emplace_back(s, t);
-
 		}
 		static void saveLog(std::string_view path);
 		static void Draw(const char* title, bool* p_open, sol::state& state); ///< Draws the console logs \details ImGUI is used to draw the console

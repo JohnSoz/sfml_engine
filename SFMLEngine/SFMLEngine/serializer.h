@@ -126,7 +126,7 @@ namespace Engine
 		std::ofstream o("Data/save.json");
 		o << std::setw(4) << j;
 		o.close();
-
+		Console::AppLog::addLog("game is saved(path:Data/save.json)", Console::info);
 	}
 }
 namespace sf
