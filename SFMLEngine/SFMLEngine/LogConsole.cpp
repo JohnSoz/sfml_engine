@@ -2,9 +2,9 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
-
+using namespace Engine;
 vector<Console::Log> Console::AppLog::Buffer = {};
-std::string         Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
+std::string          Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
 bool                 Console::AppLog::ScrollToBottom = 0;
 std::vector<std::string>   Console::AppLog::current_input = {};
 

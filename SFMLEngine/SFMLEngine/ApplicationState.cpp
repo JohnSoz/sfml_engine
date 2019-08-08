@@ -89,7 +89,6 @@ void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions actio
 		if (!currState->Initialized)
 			currState->Init(*window);
 	}
-
 }
 
 void Engine::StateStack::changeStateTo(appState Id, actions action)

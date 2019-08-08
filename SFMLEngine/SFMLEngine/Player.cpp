@@ -210,6 +210,8 @@ void Engine::Player::draw()
 void Engine::Player::checkClashes(float time)
 {
 	isCollision = false;
+	auto pos = sprite.getPosition();
+	auto globBounds = sprite.getGlobalBounds();
 	ray = { sprite.getPosition().x - originOffset.x * scale + 1, sprite.getPosition().y };
 	ray2 = { sprite.getPosition().x + originOffset.x * scale - 1, sprite.getPosition().y };
 
@@ -225,15 +227,14 @@ void Engine::Player::checkClashes(float time)
 		onGround = true;
 
 	for (const auto& i : obj)
-	{
-		auto playerRect = Rectangle::fromSfmlRect(getRect());
+	{	
+		auto playerRect = Rectangle::fromSfmlRect(sf::FloatRect(getRect().left, position.y, getRect().width, getRect().height));
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
 		if (i.name == "barrier")
 		{
 			if (sprite.getGlobalBounds().intersects(i.rect))
 			{
 				isCollision = true;
-
 				auto copyOffset = Rectangle::GetIntersectionDepth2(playerRect, objectRect).GetSfmlVector();
 				test.left = copyOffset.x;
 				test.top = copyOffset.y;

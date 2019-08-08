@@ -1,4 +1,4 @@
-#include "Math.h"
+п»ї#include "Math.h"
 #include <map>
 using namespace Engine;
 
@@ -324,7 +324,7 @@ namespace Collision
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Конструктор
+// Р—Р°РґР°С‡Р°:	РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 //-----------------------------------------------------------------------------
 Vector2D::Vector2D(float x, float y)
 {
@@ -333,7 +333,7 @@ Vector2D::Vector2D(float x, float y)
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Поворачивает вектор
+// Р—Р°РґР°С‡Р°:	РџРѕРІРѕСЂР°С‡РёРІР°РµС‚ РІРµРєС‚РѕСЂ
 //-----------------------------------------------------------------------------
 void Vector2D::Rotate(const float angle)
 {
@@ -344,7 +344,7 @@ void Vector2D::Rotate(const float angle)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Magnitude
+// Р—Р°РґР°С‡Р°: Magnitude
 //-----------------------------------------------------------------------------
 float Vector2D::Magnitude() const
 {
@@ -352,7 +352,7 @@ float Vector2D::Magnitude() const
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Нормализует вектор 
+// Р—Р°РґР°С‡Р°:	РќРѕСЂРјР°Р»РёР·СѓРµС‚ РІРµРєС‚РѕСЂ 
 //-----------------------------------------------------------------------------
 float Vector2D::Normalize()
 {
@@ -368,7 +368,7 @@ float Vector2D::Normalize()
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Скалярное произведение
+// Р—Р°РґР°С‡Р°:	РЎРєР°Р»СЏСЂРЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
 //-----------------------------------------------------------------------------
 float Vector2D::DotProduct(const Vector2D& v2) const
 {
@@ -376,7 +376,7 @@ float Vector2D::DotProduct(const Vector2D& v2) const
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Перекрестное произведение
+// Р—Р°РґР°С‡Р°:	РџРµСЂРµРєСЂРµСЃС‚РЅРѕРµ РїСЂРѕРёР·РІРµРґРµРЅРёРµ
 //-----------------------------------------------------------------------------
 float Vector2D::CrossProduct(const Vector2D& v2) const
 {
@@ -384,7 +384,7 @@ float Vector2D::CrossProduct(const Vector2D& v2) const
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Пустой вектор
+// Р—Р°РґР°С‡Р°:	РџСѓСЃС‚РѕР№ РІРµРєС‚РѕСЂ
 //-----------------------------------------------------------------------------
 Vector2D Vector2D::Zero()
 {
@@ -392,7 +392,7 @@ Vector2D Vector2D::Zero()
 }
 
 //-----------------------------------------------------------------------------
-// Задача:	Дистанция между двумя векторами
+// Р—Р°РґР°С‡Р°:	Р”РёСЃС‚Р°РЅС†РёСЏ РјРµР¶РґСѓ РґРІСѓРјСЏ РІРµРєС‚РѕСЂР°РјРё
 //-----------------------------------------------------------------------------
 float Vector2D::Distance(const Vector2D& v1, const Vector2D& v2)
 {
@@ -505,7 +505,7 @@ bool Vector2D::operator!=(const Vector2D& v2) const
 #include <stdlib.h>
 
 //-----------------------------------------------------------------------------
-// Задача: Конструктор
+// Р—Р°РґР°С‡Р°: РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ
 //-----------------------------------------------------------------------------
 Rectangle::Rectangle(double x, double y, double w, double h)
 {
@@ -540,7 +540,7 @@ float Rectangle::Bottom() const
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Проверяет содержит ли прямоугольник вектор
+// Р—Р°РґР°С‡Р°: РџСЂРѕРІРµСЂСЏРµС‚ СЃРѕРґРµСЂР¶РёС‚ Р»Рё РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РІРµРєС‚РѕСЂ
 //-----------------------------------------------------------------------------
 bool Rectangle::Contains(Vector2D& vVec) const
 {
@@ -555,7 +555,7 @@ bool Rectangle::Contains(Vector2D& vVec) const
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Содержит ли прямоугольник координаты x и y
+// Р—Р°РґР°С‡Р°: РЎРѕРґРµСЂР¶РёС‚ Р»Рё РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє РєРѕРѕСЂРґРёРЅР°С‚С‹ x Рё y
 //-----------------------------------------------------------------------------
 bool Rectangle::Contains(double x, double y) const
 {
@@ -585,7 +585,7 @@ Rectangle Rectangle::fromSfmlRect(sf::FloatRect rect)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Пустой прямоугольник 
+// Р—Р°РґР°С‡Р°: РџСѓСЃС‚РѕР№ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє 
 //-----------------------------------------------------------------------------
 Rectangle Rectangle::Empty()
 {
@@ -623,77 +623,72 @@ Rectangle Rectangle::getIntersectionRect(const Rectangle& rect)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Глубина пересечения двух прямоугольников
+// Р—Р°РґР°С‡Р°: Р“Р»СѓР±РёРЅР° РїРµСЂРµСЃРµС‡РµРЅРёСЏ РґРІСѓС… РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєРѕРІ
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB)
 {
-	// Размеры.
+	// Р Р°Р·РјРµСЂС‹.
 	float halfWidthA = rectA.w / 2.0f;
 	float halfHeightA = rectA.h / 2.0f;
 	float halfWidthB = rectB.w / 2.0f;
 	float halfHeightB = rectB.h / 2.0f;
 
-	// Центр.
+	// Р¦РµРЅС‚СЂ.
 	Vector2D centerA(rectA.x + halfWidthA, rectA.y + halfHeightA);
 	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
 
-	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами.
+	// Р’С‹С‡РёСЃР»РёС‚СЊ С‚РµРєСѓС‰РёРµ Рё РјРёРЅРёРјР°Р»СЊРЅС‹Рµ РЅРµРїРµСЂРµСЃРµРєР°СЋС‰РёРµСЃСЏ СЂР°СЃСЃС‚РѕСЏРЅРёСЏ РјРµР¶РґСѓ С†РµРЅС‚СЂР°РјРё.
 	float distanceX = centerA.x - centerB.x;
 	float distanceY = centerA.y - centerB.y;
 	float minDistanceX = halfWidthA + halfWidthB;
 	float minDistanceY = halfHeightA + halfHeightB;
 
-	// Если мы вообще не пересекаемся,  (0, 0).
+	// Р•СЃР»Рё РјС‹ РІРѕРѕР±С‰Рµ РЅРµ РїРµСЂРµСЃРµРєР°РµРјСЃСЏ,  (0, 0).
 	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
 		return Vector2D::Zero();
 
-	// Вычисление и возврат глубины пересечения.
+	// Р’С‹С‡РёСЃР»РµРЅРёРµ Рё РІРѕР·РІСЂР°С‚ РіР»СѓР±РёРЅС‹ РїРµСЂРµСЃРµС‡РµРЅРёСЏ.
 	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
 	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
-
-	return Vector2D(depthX, depthY);
-}
-
-Vector2D Engine::Rectangle::GetIntersectionDepth2(const Rectangle& rectA, const Rectangle& rectB)
-{
-	// Размеры.
-	float halfWidthA = rectA.w / 2.0f;
-	float halfHeightA = rectA.h;// / 2.0f;
-	float halfHeightA2 = rectA.h / 2.0f;
-	float halfWidthB = rectB.w / 2.0f;
-	float halfHeightB = rectB.h / 2.0f;
-
-	// Центр.
-	Vector2D centerA(rectA.x + halfWidthA, rectA.y);
-	Vector2D centerA2(rectA.x + halfWidthA, rectA.y + halfHeightA2);
-	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
-
-	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами.
-	float distanceX = centerA.x - centerB.x;
-	float distanceY = centerA.y - centerB.y;
-	float distanceY2 = centerA2.y - centerB.y;
-	float minDistanceX = halfWidthA + halfWidthB;
-	float minDistanceY = std::max(halfHeightB, halfHeightA);
-	float minDistanceY2 = halfHeightA2 + halfHeightB;
-
-	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
-		return Vector2D::Zero();
-
-	// Вычисление и возврат глубины пересечения.
-	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
-	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
-	float depthY2 = distanceY2 > 0 ? minDistanceY2 - distanceY2 : -minDistanceY2 - distanceY2;
-	if (depthX < depthY2)
-		depthY = 0;
-	if (abs(depthX) > abs(depthY2))
+	if (abs(depthX) > abs(depthY))
 		depthX = 0;
 	else
 		depthY = 0;
 	return Vector2D(depthX, depthY);
 }
 
+Vector2D Engine::Rectangle::GetIntersectionDepth2(const Rectangle& rectA, const Rectangle& rectB) //< С‡С‚Рѕ-С‚Рѕ РІСЂРѕРґРµ РєРѕСЃС‚С‹Р»СЏ РќСѓР¶РЅРѕ СЋР·Р°С‚СЊ РєРѕРіРґР° origin СЃРїСЂР°Р№С‚Р° = 
+                                                                                                                 // sprite.pos.x + sprite.rect.width/2, sprite.pos.y + sprite.rect.height
+{
+	float halfWidthA  = rectA.w / 2.0f;
+	float halfHeightA = rectA.h / 2.0f;
+	float halfWidthB  = rectB.w / 2.0f;
+	float halfHeightB = rectB.h / 2.0f;
+
+	Vector2D centerA(rectA.x + halfWidthA, rectA.y - halfHeightA);
+	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
+
+	float distanceX    = centerA.x - centerB.x;
+	float distanceY    = centerA.y - centerB.y;
+	float minDistanceX = halfWidthA + halfWidthB;
+	float minDistanceY = halfHeightA + halfHeightB;
+
+	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
+		return Vector2D::Zero();
+
+	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+
+	if (abs(depthX) > abs(depthY))
+		depthX = 0;
+	else
+		depthY = 0;
+
+	return Vector2D(depthX, depthY);
+}
+
 //-----------------------------------------------------------------------------
-// Задача: Возвращает положение центра нижнего края прямоугольника.
+// Р—Р°РґР°С‡Р°: Р’РѕР·РІСЂР°С‰Р°РµС‚ РїРѕР»РѕР¶РµРЅРёРµ С†РµРЅС‚СЂР° РЅРёР¶РЅРµРіРѕ РєСЂР°СЏ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°.
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetBottomCenter(const Rectangle& rect)
 {
@@ -701,7 +696,7 @@ Vector2D Rectangle::GetBottomCenter(const Rectangle& rect)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Определяет положение центральной точки прямоугольника
+// Р—Р°РґР°С‡Р°: РћРїСЂРµРґРµР»СЏРµС‚ РїРѕР»РѕР¶РµРЅРёРµ С†РµРЅС‚СЂР°Р»СЊРЅРѕР№ С‚РѕС‡РєРё РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetCenter(const Rectangle& rect)
 {
@@ -709,8 +704,8 @@ Vector2D Rectangle::GetCenter(const Rectangle& rect)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Возвращает расстояние с плавающей точкой между центральной точкой 
-// одного прямоугольника и Центральной точки другого.
+// Р—Р°РґР°С‡Р°: Р’РѕР·РІСЂР°С‰Р°РµС‚ СЂР°СЃСЃС‚РѕСЏРЅРёРµ СЃ РїР»Р°РІР°СЋС‰РµР№ С‚РѕС‡РєРѕР№ РјРµР¶РґСѓ С†РµРЅС‚СЂР°Р»СЊРЅРѕР№ С‚РѕС‡РєРѕР№ 
+// РѕРґРЅРѕРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° Рё Р¦РµРЅС‚СЂР°Р»СЊРЅРѕР№ С‚РѕС‡РєРё РґСЂСѓРіРѕРіРѕ.
 //-----------------------------------------------------------------------------
 float Rectangle::GetDistance(const Rectangle& rectA, const Rectangle& rectB)
 {
@@ -718,7 +713,7 @@ float Rectangle::GetDistance(const Rectangle& rectA, const Rectangle& rectB)
 }
 
 //-----------------------------------------------------------------------------
-// Задача: Возвращает единичный вектор от одного прямоугольника к другому
+// Р—Р°РґР°С‡Р°: Р’РѕР·РІСЂР°С‰Р°РµС‚ РµРґРёРЅРёС‡РЅС‹Р№ РІРµРєС‚РѕСЂ РѕС‚ РѕРґРЅРѕРіРѕ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР° Рє РґСЂСѓРіРѕРјСѓ
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetDirection(const Rectangle& rectA, const Rectangle& rectB)
 {
