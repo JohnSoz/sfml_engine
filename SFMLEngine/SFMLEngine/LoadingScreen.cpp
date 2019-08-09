@@ -29,6 +29,6 @@ void Engine::LoadingScreen::makeMenu()
 {
 	Console::AppLog::addLog(Console::Log("Engine::LoadingScreen::makeMenu()", Console::logType::info));
 	groupArray.addWidget(makeCanvas("Data/images/LoadingScreen.png"), "Canvas");
-	groupArray.addWidget(makeTextBox(".", sf::Vector2f(320, 60), { 960, 540 }, 18), "TimeBox");
+	groupArray.addWidget(makeTextBox(".", sf::Vector2f(350, 70), { 960, 540 }, 18), "TimeBox");
 	text = groupArray[0]->get<tgui::TextBox>("TimeBox");
 }

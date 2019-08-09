@@ -1,7 +1,6 @@
 #pragma once
 #include "ApplicationState.h"
 #include "LoadingScreen.h"
-
 namespace Engine
 {
 	class LoadingState : public State
@@ -15,10 +14,9 @@ namespace Engine
 		LoadingState() :
 			State(appState::Loading)
 		{
-			LoadingTime = sf::seconds(8);
+			LoadingTime = sf::seconds(4);
 		}
 		~LoadingState() { if (Initialized) Cleanup(); }
-
 		void update(float time) override
 		{
 			screen->update();

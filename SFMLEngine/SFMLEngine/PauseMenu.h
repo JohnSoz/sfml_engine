@@ -25,10 +25,12 @@ namespace Engine
 		{
 			groupArray.addWidget(makeCanvas("Data/images/Debug.png"), "Canvas");
 			groupArray.get("Default")->get<tgui::Canvas>("Canvas")->setInheritedOpacity(0.5f);
-			groupArray.addWidget(makeTextBox(" *PauseMenu*", sf::Vector2f(260, 80), sf::Vector2f(960, 80)), "RandomBox");
+			groupArray.addWidget(makeTextBox(" *PauseMenu*", sf::Vector2f(270, 80), sf::Vector2f(960, 80)), "PauseBox");
 		}
-		void update() override {}
-		void draw() override { gui.draw(); }
+		void update() override { }
+		void draw() override {
+			gui.draw();
+		}
 		void handleEvent(sf::Event& e) override { gui.handleEvent(e); }
 	};
 

@@ -20,10 +20,10 @@ namespace Engine
 		~GameState() { if (Initialized) Cleanup(); }
 
 		void update(float time) override;
-		void updateImGui() override { world->updateImGui(); }
+		void updateImGui() override { if (!isPause) world->updateImGui(); }
 		void handleEvent(sf::Event& e) override {
 			if (e.type == e.KeyPressed && (e.key.code == sf::Keyboard::F2)) {
-				pause->activateOrDisable(); 
+				pause->activateOrDisable();
 				isPause = !isPause;
 			}
 			if (!isPause)
@@ -31,7 +31,7 @@ namespace Engine
 			else
 				pause->handleEvent(e);
 		}
-		void draw() override {world->draw(*window);  pause->draw(); }
+		void draw() override { world->draw(*window); pause->draw(); }
 
 		void Init(sf::RenderWindow& w) override;
 		void Cleanup() override;

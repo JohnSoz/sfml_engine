@@ -45,13 +45,14 @@ tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, pair
 tgui::TextBox::Ptr Engine::makeTextBox(std::string TEXT, sf::Vector2f SIZE, sf::Vector2f pos, int textSize)
 {
 	auto textbox = tgui::TextBox::create();
-	textbox->setSize(SIZE);
 	textbox->setEnabled(false);
 	textbox->setTextSize(textSize);
-	textbox->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
+	//textbox->setHorizontalScrollbarPolicy(tgui::Scrollbar::Policy::Never);
 	pos.x -= SIZE.x / 2;
 	pos.y -= SIZE.y / 2;
 	textbox->setPosition(pos);
+	textbox->setSize(SIZE);
+	textbox->setSize(tgui::bindSize(textbox));
 	textbox->setText(TEXT);
 	return textbox;
 }

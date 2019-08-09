@@ -3,7 +3,6 @@
 
 void Engine::GameState::Init(sf::RenderWindow& w)
 {
-	w.setActive(true); //< for correct work in multithreading
 	Initialized = true;
 	window = &w;
 	isPause = false;
@@ -17,7 +16,6 @@ void Engine::GameState::Init(sf::RenderWindow& w)
 	else
 		world->start(*window);
 	Console::AppLog::addLog(Console::Log("Engine::GameState::Init()", Console::logType::info));
-	w.setActive(false);
 }
 
 void Engine::GameState::update(float time)

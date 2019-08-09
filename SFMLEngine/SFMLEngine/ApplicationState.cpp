@@ -3,7 +3,6 @@
 #include "EngineEvents.h"
 #include <future>
 #include <thread>
-#include <mutex>
 using namespace Engine;
 
 Engine::StateStack::~StateStack()
@@ -58,32 +57,25 @@ void Engine::StateStack::changeState()
 
 void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions action)
 {
-	if (!hasState(appState::Loading))
-	{
-		Console::AppLog::addLog("StateStack has no loadState", Console::logType::error);
-		return;
-	}
 	auto state1 = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{
 			return Id == state->getStateId();
 		});
 	if (action != actions::none)
 		(*state1)->setActions(action);
-	window->setActive(false);
-	auto initState = [state1, this]() -> void
-	{
-		if (!(*state1)->Initialized)
-			(*state1)->Init(*window);
-	};
+	auto task = [](State* state1, sf::RenderWindow* window) {
+		if (!(state1)->Initialized)
+			(state1)->Init(*window);
+	};	
+	std::thread(task, *state1, window).detach();
+
 	auto state2 = std::find_if(states.begin(), states.end(), [Id = appState::Loading](const State* state)
 	{
 		return Id == state->getStateId();
 	});
-	sf::Thread thread(initState);
-	thread.launch();
-	if (state1 != states.end() && state2 != states.end())
+	if (state2 != states.end())
 	{
-		currState->Cleanup();
+		currState->Cleanup();	
 		currState = *state2;
 		currState->setNextState(Id);
 		if (!currState->Initialized)

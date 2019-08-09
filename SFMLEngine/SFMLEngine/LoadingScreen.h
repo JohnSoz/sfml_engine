@@ -15,7 +15,7 @@ namespace Engine
 		void draw() override;
 		void update() override 
 		{
-			std::string time_str = "LoadingTime: " + std::to_string(time.getElapsedTime().asSeconds());
+			std::string time_str = "  LoadingTime: " + std::to_string(time.getElapsedTime().asSeconds());
 			text->setText(time_str);
 		}
 

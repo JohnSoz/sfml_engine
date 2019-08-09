@@ -34,7 +34,7 @@ namespace Engine
 		{
 			inv = &inventr;
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
-			gui.getTarget()->setActive(true);
+			//gui.getTarget()->setActive(true);
 			groupArray.addWidget(makePicture("Data/images/bgTest.png", { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
 			groupArray.addWidget(makePicture("Data/images/invBG.png", { 300,300 }, { 1092,548 }), "InvBG");
 			int w = 0;
