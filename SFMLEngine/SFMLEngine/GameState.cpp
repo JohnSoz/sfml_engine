@@ -4,17 +4,17 @@
 void Engine::GameState::Init(sf::RenderWindow& w)
 {
 	Initialized = true;
-	window = &w;
 	isPause = false;
+	window = &w;
 	world = new World();
-	pause = new PauseMenu("Data/GUI/MyUI/MainMenu.txt", *window);
-	pause->makeMenu();
-	pause->activateOrDisable();
 	world->Init(*window);
 	if (additionalAction == actions::loading)
 		world->load(w);
 	else
 		world->start(*window);
+	pause = new PauseMenu("Data/GUI/MyUI/MainMenu.txt", *window);
+	pause->makeMenu();
+	pause->activateOrDisable();
 	Console::AppLog::addLog(Console::Log("Engine::GameState::Init()", Console::logType::info));
 }
 

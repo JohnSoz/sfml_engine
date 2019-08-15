@@ -32,7 +32,7 @@ namespace Engine
 		std::string name; //<Current object name /warning Must be unique
 		bool IsActive; //<The flag indicates whether the current object is alive /warning If the value is false, the object is removed from the game world
 
-		void setTexture(sf::Texture tex);
+		void setTexture(const sf::Texture& tex);
 		void setType(int t) { type = (ObjectType)t; }
 		int  getType() const { return type; }
 	public:
@@ -49,7 +49,7 @@ namespace Engine
 		std::string getName()           const { return name; }
 		const sf::Sprite& getSprite()   const { return sprite; }
 		const sf::Texture& getTexture() const { return texture; }
-		
+
 		friend bool operator==(const Object& obj, const Object& obj2);
 		friend class DebugWindow;
 		friend auto meta::registerMembers<Object>();

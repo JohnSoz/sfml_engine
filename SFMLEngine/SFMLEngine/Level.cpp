@@ -45,8 +45,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 	
 	while (el)
 	{
-		//w->setActive(true);
-		tilesets.emplace_back(Tileset(el));
+		tilesets.push_back(new Tileset(el));
 		el = el->NextSiblingElement("tileset");
 	}
 
@@ -313,9 +312,9 @@ void Engine::Level::ParseIsoLayer(TiXmlElement *layerElement)
 		rect.width = width * tileWidth;
 		rect.height = height * tileHeight;
 
-		auto subRects = iter->getSubRect();
-		int MaxID = iter->getMaxID();
-		int firstID = iter->firstTileID;
+		auto subRects = (*iter)->getSubRect();
+		int MaxID = (*iter)->getMaxID();
+		int firstID = (*iter)->firstTileID;
 
 		while (tileElement)
 		{
@@ -327,7 +326,7 @@ void Engine::Level::ParseIsoLayer(TiXmlElement *layerElement)
 				{
 					sf::Sprite sprite;
 					float isoX, isoY;
-					sprite.setTexture(iter->getTexture());
+					sprite.setTexture((*iter)->getTexture());
 					sprite.setTextureRect(subRects[subRectToUse]);
 					isoX = (x - y) * tileWidth / 2;
 					isoY = (x + y) * tileHeight / 2;
@@ -394,9 +393,9 @@ void Engine::Level::ParseLayer(TiXmlElement *layerElement)
 		rect.width = width * tileWidth;
 		rect.height = height * tileHeight;
 
-		auto subRects = iter->getSubRect();
-		int MaxID = iter->getMaxID();
-		int firstID = iter->firstTileID;
+		auto subRects = (*iter)->getSubRect();
+		int MaxID = (*iter)->getMaxID();
+		int firstID = (*iter)->firstTileID;
 
 		while (tileElement)
 		{
@@ -407,7 +406,7 @@ void Engine::Level::ParseLayer(TiXmlElement *layerElement)
 				if (subRectToUse >= 0)
 				{
 					sf::Sprite sprite;
-					sprite.setTexture(iter->getTexture());
+					sprite.setTexture((*iter)->getTexture());
 					sprite.setTextureRect(subRects[subRectToUse]);
 					sprite.setPosition(x * tileWidth * MapScale, y * tileHeight * MapScale);
 					sprite.setColor(sf::Color(255, 255, 255, layer.opacity));

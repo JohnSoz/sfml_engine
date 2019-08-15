@@ -88,10 +88,10 @@ tgui::Canvas::Ptr Engine::makeCanvas(std::string_view path, sf::Vector2f size)
 
 tgui::Picture::Ptr Engine::makePicture(std::string_view path, sf::Vector2f pos, sf::Vector2f size, float opacity)
 {
-	sf::Texture tex;
-	tex.loadFromFile(path.data());
-	auto picture = tgui::Picture::create(tex, true);
-	picture->setUserData(tex);
+	tgui::Texture t;
+	t.load(path.data());
+	auto picture = tgui::Picture::create(t, true);
+	picture->setUserData(t);
 	picture->setSize(size);
 	picture->setPosition(pos);
 	picture->setInheritedOpacity(opacity);

@@ -31,7 +31,7 @@ namespace Engine
 			else
 				pause->handleEvent(e);
 		}
-		void draw() override { world->draw(*window); pause->draw(); }
+		void draw() override { world->draw(*window); if (isPause) pause->draw(); }
 
 		void Init(sf::RenderWindow& w) override;
 		void Cleanup() override;

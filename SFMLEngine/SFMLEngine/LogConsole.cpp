@@ -21,7 +21,7 @@ void Console::AppLog::saveLog(std::string_view path)
 	}
 }
 
-void Console::AppLog::Draw(const char* title, bool* p_open, sol::state& state)
+void Console::AppLog::Draw(const char* title, bool* p_open)
 {
 	if (*p_open)
 	{
@@ -66,18 +66,7 @@ void Console::AppLog::Draw(const char* title, bool* p_open, sol::state& state)
 			ScrollToBottom = true;
 			if (buff_input[0] == '/')
 			{
-				Buffer.emplace_back(buff_input, script);
-				buff_input[0] = ' ';
-				string do_string = (string)buff_input;
-				state.do_string(do_string.c_str());
-				auto a = state["lua_result"];
-				if (a.valid())
-				{
-					std::string answer = a.get<std::string>();
-					if (last_result != answer)
-						Buffer.emplace_back(answer, script_result);
-					last_result = answer;
-				}
+			
 			}
 		}
 		ImGui::PopItemWidth();

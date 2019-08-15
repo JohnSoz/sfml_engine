@@ -20,7 +20,7 @@ Engine::Object::Object(sf::Image img, sf::Vector2f pos, ObjectType t, std::strin
 }
 
 
-void Engine::Object::setTexture(sf::Texture tex)
+void Engine::Object::setTexture(const sf::Texture& tex)
 {
 	texture = tex;
 	sprite.setTexture(texture);

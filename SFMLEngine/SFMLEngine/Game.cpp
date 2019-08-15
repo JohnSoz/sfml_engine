@@ -39,7 +39,7 @@ void Engine::Game::draw()
 {
 	window->clear();
 	stack.getCurrState().draw();
-	Console::AppLog::Draw("LogConsole", &LogConsole, lua.getLuaState());
+	Console::AppLog::Draw("LogConsole", &LogConsole);
 	ImGui::SFML::Render(*window);
 	window->display();
 }
@@ -62,8 +62,6 @@ Engine::Game::Game(sf::RenderWindow& w) :
 	window(&w), stack(w)
 {
 	EventManager::eventManager.subscribe<Events::Change_State_Event>(*this);
-	Lua::LuaEngine::registerAllClass<TestLua>();
-	Lua::LuaEngine::addNewScript("Data\\Script\\test.lua");
 	stack.addState(new MainState());
 	stack.addState(new GameState());
 	stack.addState(new LoadingState());
@@ -78,7 +76,6 @@ void Engine::Game::start()
 		handleEvent(event);
 		currentSlice += lastFt;
 		ImGui::SFML::Update(*window, deltaClock.restart());
-		//Lua::LuaEngine::getLuaState().safe_script_file("Data\\Script\\test.lua"); //[test]
 		stack.getCurrState().updateImGui();
 		for (; currentSlice >= ftSlice; currentSlice -= ftSlice)
 			stack.getCurrState().update(ftStep);

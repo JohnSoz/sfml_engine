@@ -1,7 +1,6 @@
 #pragma once
 #ifndef GUI_H
 #define GUI_H
-#include "LuaEngine.h" 
 #include "GroupArray.h"
 
 namespace Engine

@@ -33,8 +33,9 @@ namespace Engine
 		void makeMenu(Inventory& inventr)
 		{
 			inv = &inventr;
+			//sf::Context c; //<WTF?? For some reason I have to create opengl context in this place 
+			//               //Without it, any copying of the texture (outside the main thread) causes an error when calling glFlush() in sf::Texture(const Texture&)
 			Console::AppLog::addLog(Console::Log("Engine::InventoryMenu::makeMenu()", Console::logType::info));
-			//gui.getTarget()->setActive(true);
 			groupArray.addWidget(makePicture("Data/images/bgTest.png", { 0.f,0.f }, { 1920,1080 }, 0.94f), "BackGround");
 			groupArray.addWidget(makePicture("Data/images/invBG.png", { 300,300 }, { 1092,548 }), "InvBG");
 			int w = 0;
@@ -68,7 +69,6 @@ namespace Engine
 				grid->addWidget(button, h, w, tgui::Padding(2));
 				w++;
 			}
-
 			for (auto& w : grid->getWidgets())
 			{
 				w->connect("pressed", [&]()

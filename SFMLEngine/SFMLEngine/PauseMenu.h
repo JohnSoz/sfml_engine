@@ -3,6 +3,7 @@
 #include "Inventory.h"
 #include "LogConsole.h"
 #include <entityx/entityx.h>
+#include "ApplicationState.h"
 #include "EngineEvents.h"
 #include "GuiEditor.h"
 
@@ -23,9 +24,15 @@ namespace Engine
 		}
 		void makeMenu()
 		{
-			groupArray.addWidget(makeCanvas("Data/images/Debug.png"), "Canvas");
-			groupArray.get("Default")->get<tgui::Canvas>("Canvas")->setInheritedOpacity(0.5f);
+			groupArray.addWidget(makeCanvas("Data/images/bg.png"), "Canvas");
+			groupArray.get("Default")->get<tgui::Canvas>("Canvas")->setInheritedOpacity(0.6f);
 			groupArray.addWidget(makeTextBox(" *PauseMenu*", sf::Vector2f(270, 80), sf::Vector2f(960, 80)), "PauseBox");
+			groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 620), sf::Vector2f(220, 100),
+				[&]()
+				{
+					EventManager::eventManager.emit<Events::Change_State_Event>(appState::UI);
+				}
+			), "ExitButton");
 		}
 		void update() override { }
 		void draw() override {

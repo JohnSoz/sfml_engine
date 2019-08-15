@@ -94,7 +94,7 @@ namespace Engine
 		std::string orientation;
 
 	public:
-		std::vector<Tileset> tilesets;
+		std::vector<Tileset*> tilesets;
 		bool LoadFromFile(std::string filename, int MapScale = 1);
 		ObjectLevel GetObjectByName(std::string name);	
 		std::vector<ObjectLevel> GetObjects(std::string name);
