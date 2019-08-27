@@ -20,7 +20,7 @@ namespace Engine
 		~GameState() { if (Initialized) Cleanup(); }
 
 		void update(float time) override;
-		void updateImGui() override { if (!isPause) world->updateImGui(); }
+		void fixedUpdate() override { if (!isPause) world->fixedUpdate(); }
 		void handleEvent(sf::Event& e) override {
 			if (e.type == e.KeyPressed && (e.key.code == sf::Keyboard::F2)) {
 				pause->activateOrDisable();

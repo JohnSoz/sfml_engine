@@ -110,7 +110,7 @@ namespace Engine
 		for (auto& obj : objects)
 		{
 			bool check = (!name_object.empty()) ? name_object == obj.name : true;
-			if (obj.rect.contains(start.x + end.x, start.y + end.y) && check)
+			if (check && obj.rect.contains(start.x + end.x, start.y + end.y))
 			{
 				return Distance(start, { start.x,obj.rect.top });
 			}

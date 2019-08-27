@@ -1,6 +1,4 @@
 #pragma once
-#ifndef MATH
-#define MATH
 #include <iostream>
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
@@ -43,10 +41,27 @@ namespace Engine
 	{
 		return sqrt(v.x * v.x + v.y * v.y);
 	}
-
-	inline bool operator<(sf::Vector2f v1, sf::Vector2f v2)
+	template<class T, class T2>
+	bool operator<(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2)
 	{
 		return (v1.x < v2.x) && (v1.y < v2.y);
+	}
+	template<class T, class T2>
+	auto operator*(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) -> sf::Vector2<decltype(v1.x* v2.x)>
+	{
+		return { v1.x * v2.x, v1.y * v2.y };
+	}
+
+	template<class T, class T2>
+	sf::Vector2<T2> operator+(const sf::Vector2<T>& rect, T2 value)
+	{
+		return { rect.x + value, rect.y + value };
+	}
+
+	template<class T, class T2>
+	sf::Rect<T2> operator*(const sf::Rect<T>& rect, T2 value)
+	{
+		return { rect.left * value, rect.top * value,rect.width * value, rect.height * value };
 	}
 
 	inline sf::Vector2f operator-(sf::Vector2f v1, sf::Vector2f v2)
@@ -57,6 +72,47 @@ namespace Engine
 	inline float lenght(sf::Vector2f v1)
 	{
 		return sqrt(v1.x * v1.x + v1.y * v1.y);
+	}
+
+	template<class T>
+	sf::Vector2<T> rotateBy(const sf::Vector2<T>& vec, float degrees, const sf::Vector2<T>& center)
+	{
+		degrees *= 3.14159f / 180.f;
+		const float cs = cos(degrees);
+		const float sn = sin(degrees);
+
+		vec.x -= center.x;
+		vec.y -= center.y;
+
+		T nx = (T)(vec.x * cs - vec.y * sn);
+		T ny = (T)(vec.x * sn + vec.y * cs);
+
+		vec.x = nx;
+		vec.y = ny;
+
+		vec.x += center.x;
+		vec.y += center.y;
+		return vec;
+	}
+
+	template<class T>
+	float getAngle(const sf::Vector2<T>& vec)
+	{
+		if (vec.y == 0)
+			return vec.x < 0 ? 180 : 0;
+		else if (vec.x == 0)
+			return vec.y < 0 ? 270 : 90;
+
+		if (vec.y > 0)
+			if (vec.x > 0)
+				return atan(vec.y / vec.x) * 180.f / 3.14159f;
+			else
+				return 180.0 - atan(vec.y / -vec.x) * 180.f / 3.14159f;
+		else
+			if (vec.x > 0)
+				return 360.0 - atan(-vec.y / vec.x) * 180.f / 3.14159f;
+			else
+				return 180.0 + atan(-vec.y / -vec.x) * 180.f / 3.14159f;
 	}
 
 	inline float dot(sf::Vector2f v1)
@@ -152,7 +208,68 @@ namespace Engine
 		}
 		Quad() = default;
 	};
+	template<class T, class T2>
+	inline auto GetIntersectionDepth(const sf::Rect<T>& rectA, const sf::Rect<T2>& rectB)
+	{
+		using result_type = std::common_type_t<T, T2>;
+		float halfWidthA = rectA.width / 2.0f;
+		float halfHeightA = rectA.height / 2.0f;
+		float halfWidthB = rectB.width / 2.0f;
+		float halfHeightB = rectB.height / 2.0f;
 
+		// ÷ентр.
+		sf::Vector2<result_type>  centerA(rectA.left + halfWidthA, rectA.top + halfHeightA);
+		sf::Vector2<result_type>  centerB(rectB.left + halfWidthB, rectB.top + halfHeightB);
+
+		// ¬ычислить текущие и минимальные непересекающиес€ рассто€ни€ между центрами.
+		float distanceX = centerA.x - centerB.x;
+		float distanceY = centerA.y - centerB.y;
+		float minDistanceX = halfWidthA + halfWidthB;
+		float minDistanceY = halfHeightA + halfHeightB;
+
+		// ≈сли мы вообще не пересекаемс€,  (0, 0).
+		if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
+			return sf::Vector2<result_type>();
+
+		// ¬ычисление и возврат глубины пересечени€.
+		float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+		float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+		if (abs(depthX) > abs(depthY))
+			depthX = 0;
+		else
+			depthY = 0;
+		return sf::Vector2<result_type>(depthX, depthY);
+	}
+	template<class T, class T2>
+	inline auto GetIntersectionDepth2(const sf::Rect<T>& rectA, const sf::Rect<T2>& rectB)
+	{
+		using result_type = std::common_type_t<T, T2>;
+		float halfWidthA = rectA.width / 2.0f;
+		float halfHeightA = rectA.height / 2.0f;
+		float halfWidthB = rectB.width / 2.0f;
+		float halfHeightB = rectB.height / 2.0f;
+
+		sf::Vector2<result_type> centerA(rectA.left + halfWidthA, rectA.top - halfHeightA);
+		sf::Vector2<result_type> centerB(rectB.left + halfWidthB, rectB.top + halfHeightB);
+
+		float distanceX = centerA.x - centerB.x;
+		float distanceY = centerA.y - centerB.y;
+		float minDistanceX = halfWidthA + halfWidthB;
+		float minDistanceY = halfHeightA + halfHeightB;
+
+		if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
+			return sf::Vector2<result_type>();
+
+		float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
+		float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
+
+		if (abs(depthX) > abs(depthY))
+			depthX = 0;
+		else
+			depthY = 0;
+
+		return sf::Vector2<result_type>(depthX, depthY);
+	}
 	class Rectangle
 	{
 	public:
@@ -195,4 +312,3 @@ namespace Engine
 		float x, y, w, h;
 	};
 } // namespace Engine
-#endif

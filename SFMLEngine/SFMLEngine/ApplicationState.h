@@ -7,12 +7,10 @@ namespace Engine
 	enum appState
 	{
 		Play = 1 << 0,
-		Pause = 1 << 1,
-		UI = 1 << 2,
-		Exits = 1 << 3,
-		StartGame = 1 << 4,
-		Resume = 1 << 5,
-		Loading = 1 << 6
+		MainWindow = 1 << 1,
+		Exit = 1 << 2,
+		StartGame = 1 << 3,
+		Loading = 1 << 4
 	};
 
 	enum actions
@@ -34,6 +32,8 @@ namespace Engine
 		bool Initialized;
 		State() = delete;
 		State(appState id) : stateId(id) { Initialized = false; completed = false; }
+		State(const State&) = delete;
+		State(State&&) = default;
 		virtual ~State() = default;
 
 		appState getStateId()   const { return stateId; }
@@ -44,7 +44,7 @@ namespace Engine
 		void setNextState(appState next) { nextState = next; }
 
 		virtual void update(float time) = 0;
-		virtual void updateImGui() {}
+		virtual void fixedUpdate() {}
 		virtual void handleEvent(sf::Event& e) = 0;
 		virtual void draw() = 0;
 

@@ -9,8 +9,6 @@
 using namespace meta;
 namespace Engine
 {
-	sf::Vector2f operator + (const sf::Vector2f& rect, float scale);
-
 	class Actor : public Entity
 	{
 	protected:
@@ -20,7 +18,7 @@ namespace Engine
 		sf::Vector2f             originOffset;
 		DirectionX               direction;
 		DirectionY               directionY = DirectionY::Up;
-		sf::RenderWindow*        window;
+		sf::RenderWindow* window;
 
 		float scale = 0.5;
 		float time_actor;
@@ -40,7 +38,7 @@ namespace Engine
 		virtual void checkClashes(float time) = 0;
 		virtual void update(float time) = 0;
 
-		sf::Vector2f getOrigin() { return originOffset; }
+		sf::Vector2f getOrigin() { return originOffset * sf::Vector2f(scale, scale); }
 		float getScale() { return scale; }
 		void CollisionUpdate(Entity* entity) override;
 

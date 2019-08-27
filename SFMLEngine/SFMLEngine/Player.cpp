@@ -4,12 +4,12 @@
 #include "deserializer.h"
 using namespace Engine;
 
-Engine::Player::Player(sf::RenderWindow& w, Level& lvl) :
+Engine::Player::Player(sf::RenderWindow& w, Level& lvl, std::string_view pathToSave) :
 	Actor(lvl),
 	inv("Data/GUI/MyUI/MainMenu.txt", w),
 	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
 {
-	type = OPlayer;
+	setType(OPlayer);
 	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
 	isWalk = isCollision = isShoot = false;
 	onGround = true;
@@ -22,7 +22,7 @@ Engine::Player::Player(sf::RenderWindow& w, Level& lvl) :
 	maxSpeed = 0.2f;
 	onGround = true;
 	isInvAction = false;
-	load_obj<save_data>(data);
+	load_obj<save_data>(data, pathToSave);
 	*this = data;
 	setTexture(animManager.texture);
 	updateSprite();
@@ -33,7 +33,7 @@ Engine::Player::Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w,
 	inv("Data/GUI/MyUI/MainMenu.txt", w),
 	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
 {
-	type = OPlayer;
+	setType(OPlayer);
 	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
 	isWalk = isCollision = isShoot = false;
 	onGround = true;
@@ -51,7 +51,7 @@ Engine::Player::Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w,
 Player::~Player()
 {
 	data = *this;
-	save<save_data>(this->data);
+	save<save_data>(this->data, "Data/save.json");
 }
 
 void Player::isKeyPressed()
@@ -184,13 +184,14 @@ void Player::update(float time)
 		}
 		updateSprite();
 		sprite.setTextureRect(animManager.animUpdate(time));
-
+		
 		inventoryAction();
 		inventory.update();
 
-		localRectangle = sprite.getTextureRect();
+		localRectangle = sprite.getTextureRect();		
 		const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - localRectangle.height * scale };
-
+		collider.setPosition(pos);	
+		collider.setSize(sf::Vector2f(localRectangle.width, localRectangle.height));
 		globalRectangle = sf::FloatRect(pos.x, pos.y,
 			pos.x + localRectangle.width * scale,
 			pos.y + localRectangle.height * scale);
@@ -212,12 +213,12 @@ void Engine::Player::checkClashes(float time)
 	isCollision = false;
 	auto pos = sprite.getPosition();
 	auto globBounds = sprite.getGlobalBounds();
-	ray = { sprite.getPosition().x - originOffset.x * scale + 1, sprite.getPosition().y };
-	ray2 = { sprite.getPosition().x + originOffset.x * scale - 1, sprite.getPosition().y };
+	ray = { sprite.getPosition().x - getOrigin().x, sprite.getPosition().y + 2.2f };
+	ray2 = { sprite.getPosition().x + getOrigin().x, sprite.getPosition().y + 2.2f };
 
-	sf::Vector2f pos1 = { sprite.getPosition().x - originOffset.x * scale + 1, sprite.getPosition().y - 2 };
-	sf::Vector2f pos2 = { sprite.getPosition().x + originOffset.x * scale - 1, sprite.getPosition().y - 2 };
-	float dist = raycastLevelObject(pos1, { +1,  2.2 }, obj, "barrier");
+	sf::Vector2f pos1 = { sprite.getPosition().x - getOrigin().x , sprite.getPosition().y - 1.f };
+	sf::Vector2f pos2 = { sprite.getPosition().x + getOrigin().x , sprite.getPosition().y - 1.f };
+	float dist = raycastLevelObject(pos1, { +1, 2.2 }, obj, "barrier");
 	float dist2 = raycastLevelObject(pos2, { -1, 2.2 }, obj, "barrier");
 	//std::cout << "dist = " << (float)(dist) << "   ___   " << "dist2 = " << (float)(dist2) << endl;
 
@@ -227,7 +228,7 @@ void Engine::Player::checkClashes(float time)
 		onGround = true;
 
 	for (const auto& i : obj)
-	{	
+	{
 		auto playerRect = Rectangle::fromSfmlRect(sf::FloatRect(getRect().left, position.y, getRect().width, getRect().height));
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
 		if (i.name == "barrier")
@@ -253,9 +254,7 @@ void Engine::Player::checkClashes(float time)
 void Engine::Player::inventoryAction()
 {
 	if (isInvAction)
-	{
 		inventory.getCurrItem<Item>()->action(*this);
-	}
 	isInvAction = false;
 }
 
@@ -264,7 +263,7 @@ void Engine::Player::handleEvent(sf::Event& e)
 	if (inv.IsEnable())
 		inv.handleEvent(e);
 	hud.handleEvent(e);
-	if (e.type == sf::Event::KeyPressed)
+	if (e.type == sf::Event::KeyReleased)
 	{
 		if (e.key.code == sf::Keyboard::C)
 		{
@@ -283,7 +282,8 @@ save_data& Engine::save_data::operator=(const Player& p)
 
 Player& Engine::Player::operator=(const save_data& p)
 {
-	this->name = p.name;
+	this->setName(p.name);
+	this->setType(OPlayer);
 	this->position = p.position;
 	this->animManager.path = p.pathToAnimation;
 	this->animManager.loadAnimation_x(p.pathToAnimation, *window);

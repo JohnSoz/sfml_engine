@@ -3,7 +3,7 @@
 #include "EngineEvents.h"
 #include "ApplicationState.h"
 #include <entityx/entityx.h>
-
+#include "LogConsole.h"
 namespace Engine
 {
 	class Game : public entityx::Receiver<Game>

@@ -39,7 +39,7 @@ namespace Engine
 		bool  isJump;	
 	public:
 		
-		Player(sf::RenderWindow& w, Level& lvl);
+		Player(sf::RenderWindow& w, Level& lvl, std::string_view pathToSave = "Data/save.json");
 		Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl, std::string_view animation);
 		~Player();
 
@@ -47,6 +47,7 @@ namespace Engine
 		Player& operator=(const save_data& p);
 
 		void update(float time) override;
+		void fixedUpdate() override { debug::debugDraw<Player, Object, Actor, Entity>(this, "Debug For Class Player"); }
 		void handleEvent(sf::Event& e) override;
 		void CollisionUpdate(Entity* entity) override {}
 		void checkClashes(float time) override;

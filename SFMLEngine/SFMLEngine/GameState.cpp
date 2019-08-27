@@ -1,6 +1,5 @@
 #include "GameState.h"
-#include <mutex>
-
+#include "Player.h"
 void Engine::GameState::Init(sf::RenderWindow& w)
 {
 	Initialized = true;
@@ -9,9 +8,9 @@ void Engine::GameState::Init(sf::RenderWindow& w)
 	world = new World();
 	world->Init(*window);
 	if (additionalAction == actions::loading)
-		world->load(w);
+		world->pushEntity(new Engine::Player(*window, world->getLevel()));
 	else
-		world->start(*window);
+		world->pushEntity(new Player(sf::Vector2f(120, 120), "Test", *window, world->getLevel(), "Data\\Animation\\TestAnim.xml"));
 	pause = new PauseMenu("Data/GUI/MyUI/MainMenu.txt", *window);
 	pause->makeMenu();
 	pause->activateOrDisable();
@@ -24,7 +23,7 @@ void Engine::GameState::update(float time)
 		world->update(*window, time);
 	else
 		pause->update();
-	//EventManager::eventManager.emit<Events::Change_State_Event>(appState::UI);
+	//EventManager::eventManager.emit<Events::Change_State_Event>(appState::MainWindow);
 }
 
 void Engine::GameState::Cleanup()

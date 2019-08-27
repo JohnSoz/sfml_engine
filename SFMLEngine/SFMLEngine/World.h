@@ -21,9 +21,10 @@ namespace Engine
 
 		void handelEvent(sf::Event& e);
 		void UpdateObjects(float time);
+		void fixedUpdate();
 		void CollisionUpdate();	
 		void RenderObjects(sf::RenderWindow& WINDOW);
-		void refresh();
+		bool hasObject(std::string_view name);
 
 		template<class Obj>
 		Obj* GetObjects(std::string NAME);
@@ -48,7 +49,7 @@ namespace Engine
 		void handleEvent(sf::Event& event);
 		void draw(sf::RenderWindow& window);
 		void update(sf::RenderWindow& window, float time);
-		void updateImGui();
+		void fixedUpdate();
 		void load(sf::RenderWindow& window);
 		void receive(const Events::NewObject_Event& entity);
 		void start(sf::RenderWindow& window);

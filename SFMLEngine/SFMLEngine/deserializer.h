@@ -73,15 +73,15 @@ namespace Engine
 	}
 
 	template<class T>
-	void load_obj(T& obj)
+	void load_obj(T& obj, std::string_view path)
 	{
 		json j2;
 		std::ifstream i;
-		i.open("Data/save.json");
+		i.open(path.data());
 		i >> j2;
 		deserialize<T>(obj, j2);
 		i.close();
-		Console::AppLog::addLog("game is loaded(path:Data/save.json)", Console::info);
+		Console::AppLog::addLog("Game is loaded(path:Data/save.json)", Console::system);
 	}
 }
 

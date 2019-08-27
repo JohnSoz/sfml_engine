@@ -8,6 +8,8 @@ void Engine::Actor::updateSprite()
 	localRectangle = currAnim->rect;
 	originOffset = currAnim->origin;
 	scale = currAnim->scale;
+	collider.setScale(scale);
+	collider.setCenter(originOffset);
 	//sprite.setScale(sf::Vector2f(scale, scale));
 	sprite.setOrigin(originOffset);
 	sprite.setTextureRect(localRectangle);
@@ -16,15 +18,15 @@ void Engine::Actor::updateSprite()
 
 Engine::Actor::Actor(Level& lvl)
 {
+	setType(OActor);
 	obj = lvl.GetAllObjects();
-	type = OActor;
 	direction = Left;
 }
 
 Engine::Actor::Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation) : Entity(POSITION, NAME)
 {
-	type = OActor;
 	direction = Left;
+	setType(OActor);
 	//globalRectangle = sf::FloatRect(position.x, position.y, position.x + localRectangle.width, position.y + localRectangle.top);
 	obj = lvl.GetAllObjects();
 	window = &w;
@@ -44,9 +46,3 @@ void Engine::Actor::CollisionUpdate(Entity* entity)
 }
 
 void Engine::Actor::update(float time) {}
-
-sf::Vector2f Engine::operator+(const sf::Vector2f& rect, float scale)
-{
-	return sf::Vector2f(rect.x + scale, rect.y + scale);
-}
-

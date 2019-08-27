@@ -1,8 +1,5 @@
 #pragma once
-
 #include "GuiUtility.h"
-
-using namespace tgui;
 using namespace sf;
 
 namespace Engine

@@ -12,19 +12,20 @@ namespace Engine
 
 	class Player;
 
-	class Item : public Engine::Object
+	class Item : public Engine::BaseObject
 	{
 	protected:
 		ItemType type;
 		sf::Clock actionClock;
 		float weight;
-
+		sf::Texture texture;
+		sf::Sprite sprite;
 	public:
 		Item() = default;
-		Item(std::string name) : Object(name) { type = ItemType::item; weight = 0; }
+		Item(std::string name) : BaseObject(name) { type = ItemType::item; weight = 0; }
 		virtual ~Item() {}
 		virtual void action(Player& p) = 0;
-
+		const auto getTexture() const { return texture; }
 		float getWeight() const { return weight; }
 		ItemType getType() const { return type; }
 		std::string getType_s();
@@ -53,7 +54,7 @@ namespace Engine
 	private:
 		float HP;
 	public:
-		Heal(const std::string Name, const float hp) : HP(hp) { name = Name; type = ItemType::heal; weight = 0.2f; }
+		Heal(const std::string Name, const float hp) : HP(hp), Item(Name) { type = ItemType::heal; weight = 0.2f; }
 		Heal() = default;
 
 		int GetHP() const { return static_cast<int>(HP); }

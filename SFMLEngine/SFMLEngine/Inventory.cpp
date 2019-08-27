@@ -10,13 +10,12 @@ std::string Engine::Item::getType_s()
 	return itemType_s[type];
 }
 
-Engine::Gun::Gun(std::string_view Name, float dmg, float rate, float w) :
-	RateOfFire(rate), damage(dmg)
+Engine::Gun::Gun(std::string_view Name, float dmg, float rate, float w) : Item(Name.data()),
+RateOfFire(rate), damage(dmg)
 {
 	AmmoInGun = 0;
 	LoadSprite(Name.data());
 	weight = w;
-	name = Name;
 	type = ItemType::gun;
 }
 
@@ -27,12 +26,13 @@ void Engine::Gun::action(Player& p)
 		actionClock.restart();
 		Image i;
 		i.loadFromFile("Data/images/bullet.png");
+		auto pos2 = p.getSprite().getPosition();
 		auto pos = p.getPos();
-		pos.y -= 10;
-		pos.x += 5;
-		static int id;
+		pos.x -= p.getOrigin().x;
+		pos.y -= p.getOrigin().y / 2;
+		static int id; //add 'unique' identifier to the bullet name
 		++id;
-		Bullet* bullet = new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), p.getDirection(), getDamage(), name);
+		Bullet* bullet = new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), p.getDirection(), getDamage(), getName());
 		EventManager::eventManager.emit<Events::NewObject_Event>(*bullet);
 	}
 }
@@ -67,7 +67,6 @@ void Engine::Heal::action(Player& p)
 	{
 		p.increaseHealth(20);
 		actionClock.restart();
-		IsActive = false;
 	}
 }
 

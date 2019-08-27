@@ -70,6 +70,7 @@ void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions actio
 			(*state1)->Init(*window);
 	};		
 	std::thread(task).detach();
+
 	auto state2 = std::find_if(states.begin(), states.end(), [Id = appState::Loading](const State* state)
 	{
 		return Id == state->getStateId();

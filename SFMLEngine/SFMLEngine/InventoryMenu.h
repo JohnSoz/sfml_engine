@@ -125,11 +125,7 @@ namespace Engine
 			cont->add(grid);
 		}
 
-		void moveAll(sf::Vector2f offset)
-		{
-			for (auto& w : groupArray[0]->getWidgets())
-				w->setPosition(w->getPosition() + offset);
-		}
+		void moveAll(sf::Vector2f offset);
 
 		void draw() override
 		{

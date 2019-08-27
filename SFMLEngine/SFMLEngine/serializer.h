@@ -119,14 +119,14 @@ namespace Engine
 	}
 
 	template<class T>
-	void save(T& obj)
+	void save(T& obj, std::string_view path)
 	{
 		json j;
 		helper<T>(j, obj);
-		std::ofstream o("Data/save.json");
+		std::ofstream o(path.data());
 		o << std::setw(4) << j;
 		o.close();
-		Console::AppLog::addLog("game is saved(path:Data/save.json)", Console::info);
+		Console::AppLog::addLog("Game is saved(path:Data/save.json)", Console::system);
 	}
 }
 namespace sf

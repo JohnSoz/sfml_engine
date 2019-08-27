@@ -35,6 +35,23 @@ void Engine::BaseGui::activateOrDisable(std::string_view name /*= ""*/)
 	isEnable = item->isEnabled(); //?
 }
 
+void Engine::BaseGui::disableAllExcept(std::string_view name)
+{
+	auto item = *std::find_if(groupArray.begin(), groupArray.end(),
+		[name](std::pair<std::string, Group::Ptr>& item)
+		{return item.first == name; });
+	item.second->setVisible(true);
+	item.second->setEnabled(true);
+	for (auto& group : groupArray)
+	{
+		if (group.first != item.first)
+		{
+			group.second->setVisible(false);
+			group.second->setEnabled(false);
+		}
+	}
+}
+
 void Engine::BaseGui::save(std::string_view path)
 {
 	std::ofstream o;

@@ -30,7 +30,7 @@ namespace Engine
 			groupArray.addWidget(makeButton("Exit", sf::Vector2f(380, 620), sf::Vector2f(220, 100),
 				[&]()
 				{
-					EventManager::eventManager.emit<Events::Change_State_Event>(appState::UI);
+					EventManager::eventManager.emit<Events::Change_State_Event>(appState::MainWindow);
 				}
 			), "ExitButton");
 		}

@@ -14,7 +14,7 @@ namespace Engine
 		MusicPlayer* mus;
 	public:
 		MainState() :
-			State(appState::UI)
+			State(appState::MainWindow)
 		{
 			nextState = appState::Play;
 			mus = new MusicPlayer("Menu");

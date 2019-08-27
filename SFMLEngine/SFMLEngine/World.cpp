@@ -19,7 +19,7 @@ void Engine::ObjectHandler::handelEvent(sf::Event& e)
 {
 	for (auto& o : ObjectsArray)
 	{
-		if (o->type == OActor)
+		if (o->getType() == OActor)
 			static_cast<Actor*>(o)->handleEvent(e);
 	}
 }
@@ -30,7 +30,7 @@ Obj* Engine::ObjectHandler::GetObjects(std::string NAME)
 	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
 		[NAME](const Entity* e1)->bool
 		{
-			return (e1->name == NAME);
+			return (e1->getName() == NAME);
 		});
 	return static_cast<Obj*>(*retObj);
 }
@@ -49,7 +49,22 @@ void Engine::ObjectHandler::UpdateObjects(float time)
 	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
 	{
 		(*iter)->update(time);
-		if ((*iter)->IsActive == false)
+		if ((*iter)->isActive() == false)
+		{
+			delete (*iter);
+			iter = ObjectsArray.erase(iter);
+		}
+		else
+			++iter;
+	}
+}
+
+void Engine::ObjectHandler::fixedUpdate()
+{
+	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
+	{
+		(*iter)->fixedUpdate();
+		if ((*iter)->isActive() == false)
 		{
 			delete (*iter);
 			iter = ObjectsArray.erase(iter);
@@ -82,14 +97,14 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 		{
 			auto z = static_cast<Actor*>(o);
 			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getOrigin().x * z->getScale() + 1 ,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
+			vs[0].position = { z->getPos().x - z->getOrigin().x,z->getPos().y - 1.f };
 			vs[1].position = z->ray;
 			vs[0].color = sf::Color::Green;
 			vs[1].color = sf::Color::White;
 			WINDOW.draw(vs);
 
 			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getOrigin().x * z->getScale() - 1 ,z->getPos().y - z->getSprite().getLocalBounds().height / 4.f };
+			vs2[0].position = { z->getPos().x + z->getOrigin().x,z->getPos().y - 1.f };
 			vs2[1].position = z->ray2;
 			vs2[0].color = sf::Color::White;
 			vs2[1].color = sf::Color::Green;
@@ -98,40 +113,33 @@ void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
 			sf::CircleShape shape2(1);
 			shape2.setFillColor(sf::Color::Blue);
 			//shape2.setOrigin(1, 1);
-			shape2.setPosition(z->sprite.getPosition());
+			shape2.setPosition({ z->sprite.getPosition().x ,z->sprite.getPosition().y });
 			WINDOW.draw(shape2);
 		}
 	}
 }
 
-void Engine::ObjectHandler::refresh()
+bool Engine::ObjectHandler::hasObject(std::string_view name)
 {
-	Console::AppLog::addLog("Engine::ObjectHandler::refresh()", Console::info);
-	ObjectsArray.erase(std::remove_if(std::begin(ObjectsArray), std::end(ObjectsArray),
-		[](const Entity* entity)->bool
-		{
-			return !entity->isActive();
-		}), ObjectsArray.end());
+	auto obj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(), [name](const auto Obj) {return name == Obj->getName(); });
+	return (obj == ObjectsArray.end()) ? false : true;
 }
-
 
 void Engine::World::update(sf::RenderWindow& window, float time)
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
 	p->isKeyPressed();
 	cam.moveToPoint(p->getPos(), time, { 1.f ,1.f });
-
 	objHandler.UpdateObjects(time);
 	objHandler.CollisionUpdate();
 	window.setView(cam.getView());
 }
 
-void World::updateImGui()
+void World::fixedUpdate()
 {
 	if (ShowOverlay)
 		ImGUI::SimpleOverlay(&ShowOverlay);
-	Player* p = objHandler.GetObjects<Player>("Test");
-	debug::debugDraw<Player, Object, Actor, Entity>(p, "Debug For Class Player");
+	objHandler.fixedUpdate();
 }
 
 void Engine::World::load(sf::RenderWindow& window)

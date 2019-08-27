@@ -46,7 +46,7 @@ void Engine::Game::draw()
 
 void Engine::Game::changeState()
 {
-	if (newStateId == appState::Exits)
+	if (newStateId == appState::Exit)
 		window->close();
 	else
 	{
@@ -76,7 +76,7 @@ void Engine::Game::start()
 		handleEvent(event);
 		currentSlice += lastFt;
 		ImGui::SFML::Update(*window, deltaClock.restart());
-		stack.getCurrState().updateImGui();
+		stack.getCurrState().fixedUpdate();
 		for (; currentSlice >= ftSlice; currentSlice -= ftSlice)
 			stack.getCurrState().update(ftStep);
 		draw();

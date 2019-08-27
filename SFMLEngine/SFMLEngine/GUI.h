@@ -12,7 +12,7 @@ namespace Engine
 		GroupArray groupArray;
 		std::string name;
 		Gui gui;
-		bool isEnable; 
+		bool isEnable;
 	public:
 		BaseGui() = default;
 		BaseGui(std::string_view path) { load(path); };
@@ -24,6 +24,7 @@ namespace Engine
 		virtual void handleEvent(sf::Event& e) { gui.handleEvent(e); }
 
 		void activateOrDisable(std::string_view name = "");
+		void disableAllExcept(std::string_view name);
 		void save(std::string_view path);
 		void load(std::string_view path);
 

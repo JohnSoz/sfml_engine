@@ -2,6 +2,8 @@
 #include <MetaStuff/Meta.h>
 #include "imgui.h"
 #include "imgui-SFML.h"
+#include "staticVariable.h"
+#include "LogConsole.h"
 namespace Engine
 {
 	namespace debug
@@ -22,7 +24,7 @@ namespace Engine
 				return RECT_F;
 			else if (std::is_same<Type, sf::Sprite>::value)
 				return SPRITE;
-			else if (is_integral<Type>::value)
+			else if (std::is_integral<Type>::value)
 				return INT;
 			else if (std::is_floating_point<Type>::value)
 				return FLOAT;
