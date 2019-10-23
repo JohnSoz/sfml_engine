@@ -51,7 +51,7 @@ void Engine::Game::changeState()
 	else
 	{
 		if (changeWithLoading)
-			stack.changeStateWithLoadingScreen(newStateId, stateAction);
+			stack.asyncChangeState(newStateId, stateAction);
 		else
 			stack.changeStateTo(newStateId, stateAction);
 		needToChangeState = false;

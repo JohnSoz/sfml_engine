@@ -30,7 +30,7 @@ namespace Engine
 		sf::Vector2f ray2;
 
 		Actor(Level& lvl);
-		Actor(sf::Vector2f POSITION, std::string NAME, sf::RenderWindow& w, Level& lvl, std::string_view animation);
+		Actor(sf::Vector2f position, std::string name, sf::RenderWindow& window, Level& lvl, std::string_view animation);
 		~Actor() {}
 
 		virtual void handleEvent(sf::Event& e) = 0;

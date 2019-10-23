@@ -22,6 +22,7 @@ namespace Engine
 		~MainState() { if (Initialized) Cleanup(); }
 		void update(float time) override
 		{
+			mus->Update();
 			m->update();
 		}
 		void handleEvent(sf::Event& e) override

@@ -2,6 +2,7 @@
 #include "BaseObject.h"
 #include "ColliderSprite.h"
 #include "AnimationManager.h"
+#include "Level.h"
 namespace Engine
 {
 	class Pawn : public BaseObject, public ColliderSprite
@@ -9,16 +10,22 @@ namespace Engine
 	private:
 		AnimationManager animManager;
 		sf::RenderWindow* window;
-	public:
-		Pawn(std::string name, std::string_view pathToTexture, std::string_view animation, sf::RenderWindow& w) :
-			BaseObject(name), ColliderSprite(pathToTexture)
+		std::vector<ObjectLevel> levelObjects;
+		DirectionX               direction;
+		DirectionY               directionY;
+
+		void updateSprite()
 		{
-			window = &w;
-			animManager.loadAnimation_x(animation, *window);
+			auto currAnim = animManager.getCurrAnimation<AnimationXml>();
+			setRect(currAnim->rect);
+			setOrigin(currAnim->origin);
+			setScale({ currAnim->scale,currAnim->scale });
 		}
+	public:
+		Pawn(std::string name, std::string_view pathToTexture, std::string_view animation, sf::RenderWindow& window, Level& lvl, sf::Vector2f position);
 
 		virtual void fixedUpdate() = 0;
-		virtual void CollisionUpdate(Pawn* objarray) {}
+		virtual void collisionUpdate(Pawn* objarray) {}
 		virtual void handleEvent(sf::Event& e) = 0;
 		virtual void isKeyPressed() = 0;
 		virtual void update(float time) = 0;

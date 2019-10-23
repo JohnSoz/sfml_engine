@@ -2,50 +2,47 @@
 #include "Player.h"
 #include "serializer.h"
 #include "deserializer.h"
+#include <boost/math/constants/constants.hpp>
 using namespace Engine;
 
-Engine::Player::Player(sf::RenderWindow& w, Level& lvl, std::string_view pathToSave) :
-	Actor(lvl),
-	inv("Data/GUI/MyUI/MainMenu.txt", w),
-	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
+Engine::Player::Player(sf::RenderWindow& _window, Level& _lvl, std::string_view _pathToSave) :
+	Actor(_lvl),
+	inv("Data/GUI/MyUI/MainMenu.txt", _window),
+	hud("Data/GUI/MyUI/MainMenu.txt", _window, inventory)
 {
-	setType(OPlayer);
+	setType(ObjectType::OPlayer);
 	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
-	isWalk = isCollision = isShoot = false;
+	isWalk = isCollision = isShoot = isJump = isInvAction = false;
 	onGround = true;
 	inv.makeMenu(inventory);
 	hud.makeHud();
-	health = armor = 50;
-	speedX = speedY = 0;
-	energy = 0.003f;
-	friction = 0.005f;
-	maxSpeed = 0.2f;
-	onGround = true;
-	isInvAction = false;
-	load_obj<save_data>(data, pathToSave);
+	load_obj<save_data>(data, _pathToSave);
 	*this = data;
 	setTexture(animManager.texture);
 	updateSprite();
-}
-
-Engine::Player::Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl, std::string_view animation)
-	: Actor(POSITION, NAME, w, lvl, animation),
-	inv("Data/GUI/MyUI/MainMenu.txt", w),
-	hud("Data/GUI/MyUI/MainMenu.txt", w, inventory)
-{
-	setType(OPlayer);
-	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
-	isWalk = isCollision = isShoot = false;
-	onGround = true;
-	inv.makeMenu(inventory);
-	hud.makeHud();
 	health = armor = 50;
 	speedX = speedY = 0;
 	energy = 0.003f;
 	friction = 0.005f;
 	maxSpeed = 0.2f;
+}
+
+Engine::Player::Player(sf::Vector2f _position, std::string _name, RenderWindow& _window, Level& lvl, std::string_view _animation)
+	: Actor(_position, _name, _window, lvl, _animation),
+	inv("Data/GUI/MyUI/MainMenu.txt", _window),
+	hud("Data/GUI/MyUI/MainMenu.txt", _window, inventory)
+{
+	setType(ObjectType::OPlayer);
+	EventManager::eventManager.subscribe<Events::Event_Inventory_UI>(inv);
+	isWalk = isCollision = isShoot = isJump = isInvAction = false;
 	onGround = true;
-	isInvAction = false;
+	inv.makeMenu(inventory);
+	hud.makeHud();
+	health = armor = 50;
+	speedX = speedY = LastAngle = 0;
+	energy = 0.003f;
+	friction = 0.005f;
+	maxSpeed = 0.2f;
 }
 
 Player::~Player()
@@ -60,24 +57,24 @@ void Player::isKeyPressed()
 	{
 		isWalk = false;
 		isJump = true;
-		directionY = Up;
+		directionY = DirectionY::Up;
 		onGround = false;
 		velocity.y = -(energy * 150.f);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
 		isWalk = true;
-		if (direction != Left)
+		if (direction != DirectionX::Left)
 			velocity.x -= velocity.x * 0.85f;
-		direction = Left;
+		direction = DirectionX::Left;
 		velocity.x = (abs(velocity.x) < maxSpeed) ? velocity.x -= energy : velocity.x = -maxSpeed;
 	}
 	else if (Keyboard::isKeyPressed(Keyboard::D))
 	{
 		isWalk = true;
-		if (direction != Right)
+		if (direction != DirectionX::Right)
 			velocity.x -= velocity.x * 0.85f;
-		direction = Right;
+		direction = DirectionX::Right;
 		velocity.x = (velocity.x < maxSpeed) ? velocity.x += energy : velocity.x = maxSpeed;
 	}
 	else
@@ -101,7 +98,7 @@ void Player::RotateToMouse(float speed, RenderWindow& w)
 	const float v = posMouse.y - sprite.getPosition().y;
 
 	Radian = atan2f(v, a);
-	CurrAngle = (double)(atan2f(v, a)) * 180.f / PI;
+	CurrAngle = (float)(atan2f(v, a)) * 180.f / boost::math::constants::pi<float>();
 
 	if (CurrAngle > 180)
 		CurrAngle -= 360;
@@ -131,7 +128,7 @@ void Player::RotateToMouse(float speed, RenderWindow& w)
 		}
 	}
 
-	float lastradian = LastAngle * PI / 180;
+	float lastradian = LastAngle * boost::math::constants::pi<float>() / 180;
 }
 
 void Player::update(float time)
@@ -184,13 +181,13 @@ void Player::update(float time)
 		}
 		updateSprite();
 		sprite.setTextureRect(animManager.animUpdate(time));
-		
+
 		inventoryAction();
 		inventory.update();
 
-		localRectangle = sprite.getTextureRect();		
+		localRectangle = sprite.getTextureRect();
 		const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - localRectangle.height * scale };
-		collider.setPosition(pos);	
+		collider.setPosition(pos);
 		collider.setSize(sf::Vector2f(localRectangle.width, localRectangle.height));
 		globalRectangle = sf::FloatRect(pos.x, pos.y,
 			pos.x + localRectangle.width * scale,
@@ -283,7 +280,7 @@ save_data& Engine::save_data::operator=(const Player& p)
 Player& Engine::Player::operator=(const save_data& p)
 {
 	this->setName(p.name);
-	this->setType(OPlayer);
+	this->setType(ObjectType::OPlayer);
 	this->position = p.position;
 	this->animManager.path = p.pathToAnimation;
 	this->animManager.loadAnimation_x(p.pathToAnimation, *window);

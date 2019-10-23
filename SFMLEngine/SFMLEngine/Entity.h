@@ -21,17 +21,20 @@ namespace Engine
 	public:
 		Entity() = default;
 		Entity(const Entity&) = default;
-		Entity(sf::Vector2f POSITION, std::string NAME);
-		Entity(sf::Image& IMAGE, sf::Vector2f POSITION, std::string NAME);
-		Entity(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name);
+		Entity(sf::Vector2f position, std::string name);
+		Entity(sf::Image& image, sf::Vector2f position, std::string name);
+		Entity(sf::Image& image, sf::IntRect rect, sf::Vector2f position, std::string name);
 		virtual ~Entity() {}
 
 		virtual void update(float time) = 0;
 		virtual void fixedUpdate() {}
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void setLevel(Level& l) { obj = l.GetObjects("barrier"); }
-		void SetPos(int x, int y) { position.x = x; position.y = y; }
-
+		void SetPos(float x, float y) { position.x = x; position.y = y; }
+		operator sf::Drawable&()
+		{
+			return sprite;
+		}
 		sf::FloatRect getRect() const { return sprite.getGlobalBounds(); }//return collider.getQuad().first;
 		sf::Vector2f  getPos()  const { return position; }
 		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); } //return collider.getQuad();
@@ -60,8 +63,6 @@ namespace Engine
 		void fixedUpdate() override { debug::debugDraw<Object, Bullet>(this, getName()); }
 		friend auto meta::registerMembers<Bullet>();
 	};
-
-
 }
 namespace meta
 {

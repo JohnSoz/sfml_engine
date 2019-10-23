@@ -1,5 +1,4 @@
 #include "AudioPlayer.h"
-
 using namespace sf;
 using namespace std;
 
@@ -8,6 +7,7 @@ void Engine::MusicPlayer::GetMusic()
 	std::string path = "Data/Music/";
 	if (!folderName.empty())
 		path += folderName + "/";
+
 	for (auto& p : fs::directory_iterator(path))
 	{
 		auto fileName = p.path().filename().generic_string();

@@ -96,8 +96,8 @@ namespace Engine
 							if (ImGui::TreeNode("Object Sprite"))
 							{
 								auto spr = (Object*)ptr;
-								int size_x = spr->getSprite().getTextureRect().width;
-								int size_y = spr->getSprite().getTextureRect().height;
+								float size_x = spr->getSprite().getTextureRect().width;
+								float size_y = spr->getSprite().getTextureRect().height;
 								ImGui::Text("%.0fx%.0f", size_x, size_y);
 								ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), static_cast<sf::FloatRect>(spr->getSprite().getTextureRect()));
 								ImGui::TreePop();

@@ -4,11 +4,6 @@
 #include "BaseObject.h"
 namespace Engine
 {
-	/// Enumeration of the possible directions along the x-axis
-	enum DirectionX { Left = 1, Right };
-	/// Enumeration of the possible directions along the y-axis
-	enum DirectionY { Up = 1, onGround };
-
 	class Object : public BaseObject
 	{
 	protected:
@@ -21,8 +16,8 @@ namespace Engine
 		Object() = default;
 		~Object() = default;
 		Object(const Object&) = default;
-		Object(sf::Vector2f pos, std::string name);
-		Object(sf::Image img, sf::Vector2f pos, std::string name);
+		Object(sf::Vector2f position, std::string name);
+		Object(sf::Image image, sf::Vector2f position, std::string name);
 
 		const sf::Sprite&  getSprite()  const { return sprite; }
 		const sf::Texture& getTexture() const { return texture; }

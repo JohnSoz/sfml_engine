@@ -39,9 +39,7 @@ class DebuggingSystem
 	{
 		if (open)
 		{
-			if (ImGui::Begin("Debug Window", NULL))
-			{
-			}
+			ImGui::Begin("Debug Window", NULL);
 			ImGui::End();
 		}
 	}

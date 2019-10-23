@@ -132,5 +132,6 @@ void Engine::BaseGui::load(std::string_view path)
 				widget->setVisible(isVisible);
 				groupArray.addWidget(widget, item2.key(), item.key());
 			}
+		o.close();
 	}
 }

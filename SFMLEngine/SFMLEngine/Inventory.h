@@ -8,18 +8,24 @@
 
 namespace Engine
 {
-	enum ItemType { item = 0, gun, heal };
+	enum class ItemType { item = 0, gun, heal };
+	constexpr std::string_view ItemType_n[] =
+	{
+		 "item",
+		 "gun",
+		 "heal"
+	};
 
 	class Player;
-
 	class Item : public Engine::BaseObject
 	{
 	protected:
-		ItemType type;
-		sf::Clock actionClock;
-		float weight;
 		sf::Texture texture;
 		sf::Sprite sprite;
+		sf::Clock actionClock;
+
+		ItemType type;		
+		float weight;	
 	public:
 		Item() = default;
 		Item(std::string name) : BaseObject(name) { type = ItemType::item; weight = 0; }
@@ -34,9 +40,10 @@ namespace Engine
 	class Gun final : public Item
 	{
 	private:
+		sf::Clock actionClock;
+
 		float RateOfFire, damage;
 		int AmmoInGun;
-		sf::Clock actionClock;
 
 		void IniGun() {}
 		void LoadSprite(std::string_view name);
@@ -80,8 +87,8 @@ namespace Engine
 		void nextItem() { (curr_item != inv.end()) ? curr_item = inv.begin() : curr_item++; }
 
 		auto begin() { return inv.begin(); }
-		auto end() { return inv.end(); }
-		std::string getItemName(size_t num) const { return (num > inv.size() - 1) ? '\0' : inv[num]->getName(); }
+		auto end()   { return inv.end(); }
+		std::string getItemName(size_t num) const { return (num > inv.size() - 1) ? "-1" : inv[num]->getName(); }
 		float getWeight();
 		int getSize() { return inv.size(); }
 		int getIndexItem(std::string_view name);

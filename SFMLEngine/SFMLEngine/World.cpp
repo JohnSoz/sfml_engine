@@ -6,125 +6,6 @@
 #include "EngineEvents.h"
 using namespace Engine;
 
-Engine::ObjectHandler::~ObjectHandler()
-{
-	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); ++iter)
-	{
-		delete (*iter);
-	}
-	ObjectsArray.clear();
-}
-
-void Engine::ObjectHandler::handelEvent(sf::Event& e)
-{
-	for (auto& o : ObjectsArray)
-	{
-		if (o->getType() == OActor)
-			static_cast<Actor*>(o)->handleEvent(e);
-	}
-}
-
-template<class Obj>
-Obj* Engine::ObjectHandler::GetObjects(std::string NAME)
-{
-	auto retObj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(),
-		[NAME](const Entity* e1)->bool
-		{
-			return (e1->getName() == NAME);
-		});
-	return static_cast<Obj*>(*retObj);
-}
-
-Entity* Engine::ObjectHandler::PushObject(Entity* obj)
-{
-	string info = "Engine::ObjectHandler::PushObject(" + obj->getName() + ")";
-	Console::AppLog::addLog(info, Console::info);
-	ObjectsArray.push_back(obj);
-	iter = ObjectsArray.begin();
-	return *iter;
-}
-
-void Engine::ObjectHandler::UpdateObjects(float time)
-{
-	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
-	{
-		(*iter)->update(time);
-		if ((*iter)->isActive() == false)
-		{
-			delete (*iter);
-			iter = ObjectsArray.erase(iter);
-		}
-		else
-			++iter;
-	}
-}
-
-void Engine::ObjectHandler::fixedUpdate()
-{
-	for (iter = ObjectsArray.begin(); iter != ObjectsArray.end();)
-	{
-		(*iter)->fixedUpdate();
-		if ((*iter)->isActive() == false)
-		{
-			delete (*iter);
-			iter = ObjectsArray.erase(iter);
-		}
-		else
-			++iter;
-	}
-}
-
-void Engine::ObjectHandler::CollisionUpdate()
-{
-	/*for (iter = ObjectsArray.begin(); iter != ObjectsArray.end(); iter++)
-	{
-		for (auto iter2 = iter + 1; iter2 != ObjectsArray.end(); iter2++)
-		{
-			if ((*iter)->getRect().intersects((*iter2)->getRect()))
-			{
-				(*iter)->CollisionUpdate(*iter2);
-			}
-		}
-	}*/
-}
-
-void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
-{
-	for (auto& o : ObjectsArray)
-	{
-		WINDOW.draw(o->sprite);
-		if (o->getType() == OPlayer)
-		{
-			auto z = static_cast<Actor*>(o);
-			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getOrigin().x,z->getPos().y - 1.f };
-			vs[1].position = z->ray;
-			vs[0].color = sf::Color::Green;
-			vs[1].color = sf::Color::White;
-			WINDOW.draw(vs);
-
-			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getOrigin().x,z->getPos().y - 1.f };
-			vs2[1].position = z->ray2;
-			vs2[0].color = sf::Color::White;
-			vs2[1].color = sf::Color::Green;
-			WINDOW.draw(vs2);
-
-			sf::CircleShape shape2(1);
-			shape2.setFillColor(sf::Color::Blue);
-			//shape2.setOrigin(1, 1);
-			shape2.setPosition({ z->sprite.getPosition().x ,z->sprite.getPosition().y });
-			WINDOW.draw(shape2);
-		}
-	}
-}
-
-bool Engine::ObjectHandler::hasObject(std::string_view name)
-{
-	auto obj = std::find_if(ObjectsArray.begin(), ObjectsArray.end(), [name](const auto Obj) {return name == Obj->getName(); });
-	return (obj == ObjectsArray.end()) ? false : true;
-}
-
 void Engine::World::update(sf::RenderWindow& window, float time)
 {
 	Player* p = objHandler.GetObjects<Player>("Test");
@@ -157,7 +38,7 @@ Entity* Engine::World::pushEntity(Entity* e)
 void Engine::World::handleEvent(sf::Event& event)
 {
 	debug.handleEvent(event);
-	objHandler.GetObjects<Player>("Test")->handleEvent(event);
+	objHandler.handelEvent(event);
 }
 
 void Engine::World::draw(sf::RenderWindow& window)
@@ -181,13 +62,8 @@ void Engine::World::Init(sf::RenderWindow& window)
 Engine::World::World()
 {
 	ShowOverlay = true;
-	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event>(*this);
-}
-
-void Engine::World::receive(const Events::NewObject_Event& entity)
-{
-	entity.obj->setLevel(level);
-	pushEntity(entity.obj);
+	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event<Bullet>>(*this);
+	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event<Entity>>(*this);
 }
 
 void Engine::World::start(sf::RenderWindow& window)

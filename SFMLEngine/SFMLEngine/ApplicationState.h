@@ -20,28 +20,49 @@ namespace Engine
 		resume
 	};
 
+	/*
+	 class State
+	 {
+		int stateId
+		int nextState
+		int  additionalAction
+		...
+	 public:
+	  State(int state_ID)
+
+	  template<class stateT>
+	  stateT getStateId()
+
+	  template<class stateT>
+	  stateT getNextState()
+
+	  void setActions(int action)
+	  void setNextState(int next)
+	  ...
+	 };
+	*/
+
 	class State
 	{
 	protected:
-		appState stateId;
-		appState nextState;
-		actions  additionalAction;
+		int stateId;
+		int nextState;
+		int  additionalAction;
 		bool completed;
 		void updateStatus();
 	public:
 		bool Initialized;
 		State() = delete;
-		State(appState id) : stateId(id) { Initialized = false; completed = false; }
+		State(int id) : stateId(id) { Initialized = false; completed = false; }
 		State(const State&) = delete;
-		State(State&&) = default;
 		virtual ~State() = default;
 
-		appState getStateId()   const { return stateId; }
-		appState getNextState() const { return nextState; }
+		int getStateId()   const { return stateId; }
+		int getNextState() const { return nextState; }
 		bool     isCompleted()  const { return completed; }
 
-		void setActions(actions action) { additionalAction = action; }
-		void setNextState(appState next) { nextState = next; }
+		void setActions(int action) { additionalAction = action; }
+		void setNextState(int next) { nextState = next; }
 
 		virtual void update(float time) = 0;
 		virtual void fixedUpdate() {}
@@ -60,16 +81,16 @@ namespace Engine
 		sf::RenderWindow* window;
 		bool needToChangeState;
 	public:
-		StateStack(sf::RenderWindow& w) : window(&w) { needToChangeState = false; }
+		StateStack(sf::RenderWindow& w) : window(&w), currState(nullptr) { needToChangeState = false; }
 		~StateStack();
 
 		void addState(State* state);
-		bool hasState(appState id);
+		bool hasState(int id);
 		void changeState();
-		void changeStateWithLoadingScreen(appState Id, actions action);
-		void changeStateTo(appState Id, actions action);
+		void asyncChangeState(int Id, int action);
+		void changeStateTo(int Id, int action);
 
 		State& getCurrState() { return *currState; }
-		State& getState(appState state);
+		State& getState(int state);
 	};
 }

@@ -7,7 +7,7 @@
 #include <sfeMovie/Movie.hpp>
 #include <audiere.h>
 using namespace std;
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 namespace Engine
 {
 	class MusicPlayer

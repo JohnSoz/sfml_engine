@@ -3,11 +3,10 @@
 #include "Player.h"
 #include "EngineEvents.h"
 using namespace Engine;
-std::string itemType_s[3] = { "item","gun","heal" };
 
 std::string Engine::Item::getType_s()
 {
-	return itemType_s[type];
+	return ItemType_n[(int)type].data();
 }
 
 Engine::Gun::Gun(std::string_view Name, float dmg, float rate, float w) : Item(Name.data()),
@@ -33,7 +32,7 @@ void Engine::Gun::action(Player& p)
 		static int id; //add 'unique' identifier to the bullet name
 		++id;
 		Bullet* bullet = new Bullet(i, IntRect(0, 0, 16, 16), pos, "Bullet" + std::to_string(id), p.getDirection(), getDamage(), getName());
-		EventManager::eventManager.emit<Events::NewObject_Event>(*bullet);
+		EventManager::eventManager.emit<Events::NewObject_Event<Bullet>>(*bullet);
 	}
 }
 
@@ -66,6 +65,7 @@ void Engine::Heal::action(Player& p)
 	if (actionClock.getElapsedTime().asMilliseconds() > 500)
 	{
 		p.increaseHealth(20);
+		destroy();
 		actionClock.restart();
 	}
 }
@@ -85,9 +85,9 @@ void Engine::Inventory::delItem(std::string Name)
 		std::remove_if(inv.begin(), inv.end(), [Name](Item* item)
 			{
 				if (item->getName() == Name) { delete item;  return true; }
+				return false;
 			})
 	);
-	inv.shrink_to_fit();
 }
 
 void Engine::Inventory::update()
@@ -141,6 +141,7 @@ int Engine::Inventory::getIndexItem(std::string_view name)
 	for (size_t i = 0; i < inv.size(); ++i)
 		if (inv[i]->getName() == name)
 			return i;
+	return -1;
 }
 
 //std::vector<Gun*> Engine::Inventory::getGunItems()

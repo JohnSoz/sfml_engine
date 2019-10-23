@@ -5,6 +5,7 @@
 #include "AudioPlayer.h"
 #include "PauseMenu.h"
 using namespace std::chrono;
+
 namespace Engine
 {
 	class GameState : public State
@@ -14,7 +15,7 @@ namespace Engine
 		sf::RenderWindow* window;
 		PauseMenu* pause;
 		bool isPause;
-		//MusicPlayer* musicPlayer;
+
 	public:
 		GameState() : State(appState::Play) { }
 		~GameState() { if (Initialized) Cleanup(); }

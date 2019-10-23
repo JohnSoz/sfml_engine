@@ -21,11 +21,11 @@ namespace Engine
 			Main_Menu_Event() {}
 			Main_Menu_Event(int state) : state(state) {}
 		};
-
+		template<class T>
 		struct NewObject_Event
 		{
-			NewObject_Event(Entity& e) { obj = &e; }
-			Entity* obj;
+			NewObject_Event(T& e) { obj = &e; }
+			T* obj;
 		};
 
 		struct Change_State_Event

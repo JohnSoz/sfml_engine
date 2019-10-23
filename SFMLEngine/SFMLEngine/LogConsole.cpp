@@ -3,9 +3,9 @@
 #include <iostream>
 #include <fstream>
 using namespace Engine;
-vector<Console::Log> Console::AppLog::Buffer = {};
-std::string          Console::AppLog::items[7] = { "all", "error", "info", "fatal", "system" ,"script", "script_result" };
-bool                 Console::AppLog::ScrollToBottom = 0;
+
+vector<Console::Log>       Console::AppLog::Buffer = {};
+bool                       Console::AppLog::ScrollToBottom = 0;
 std::vector<std::string>   Console::AppLog::current_input = {};
 
 void Console::AppLog::saveLog(std::string_view path)
@@ -15,9 +15,7 @@ void Console::AppLog::saveLog(std::string_view path)
 	if (out.is_open())
 	{
 		for (auto log : Buffer)
-		{
 			out << log.text << std::endl;
-		}
 	}
 }
 
@@ -36,14 +34,14 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 		static bool find = false;
 		static int itemCount = 0;
 		ImGui::Checkbox("Find By Type", &find);
-		static std::string item_current = items[0];
+		static std::string item_current = logType_s[0].data();
 		ImGui::PushItemWidth(45);
 		if (ImGui::BeginCombo("", item_current.c_str(), ImGuiComboFlags_NoArrowButton))
 		{
-			for (auto& item : items)
+			for (auto& item : logType_s)
 			{
 				bool is_selected = (item_current == item);
-				if (ImGui::Selectable(item.c_str(), is_selected))
+				if (ImGui::Selectable(item.data(), is_selected))
 					item_current = item;
 				if (is_selected)
 					ImGui::SetItemDefaultFocus();
@@ -66,7 +64,7 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 			ScrollToBottom = true;
 			if (buff_input[0] == '/')
 			{
-			
+
 			}
 		}
 		ImGui::PopItemWidth();
@@ -137,9 +135,7 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 		else
 		{
 			for (auto i : Buffer)
-			{
 				ImGui::TextColored(i.color, i.text.c_str());
-			}
 		}
 		if (ScrollToBottom)
 			ImGui::SetScrollHere(1.f);

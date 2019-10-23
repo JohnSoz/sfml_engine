@@ -4,7 +4,12 @@
 namespace Engine
 {
 	/// Enumeration of possible types for objects
-	enum ObjectType { None = 0, BObject, OBject, OEntity, OActor, OPlayer };
+	enum class ObjectType { None = 0, BObject, OBject, OEntity, OActor, OPlayer };
+	/// Enumeration of the possible directions along the x-axis
+	enum class DirectionX { Left = 1, Right };
+	/// Enumeration of the possible directions along the y-axis
+	enum class DirectionY { Up = 1, onGround };
+
 	class BaseObject
 	{
 	private:
@@ -12,16 +17,17 @@ namespace Engine
 		std::string name;
 		bool IsActive;
 	protected:
-		void setType(int t) { type = (ObjectType)t; }
-		void setName(std::string n) { name = n; }
+		void setType(ObjectType _type) { type = _type; }
+		void setName(std::string _name) { name = _name; }
 	public:
-		BaseObject() { type = None; }
-		BaseObject(std::string_view name);
-		int  getType() const { return type; }
+		BaseObject() : type(ObjectType::None), IsActive(true) {}
+		BaseObject(std::string_view);
+
 		void destroy() { IsActive = false; }
-		bool isActive()                 const { return IsActive; }
-		void setActive(bool f) { IsActive = f; }
-		std::string getName()           const { return name; }
+
+		bool isActive()       const { return IsActive; }
+		ObjectType  getType() const { return type; }
+		std::string getName() const { return name; }
 
 		friend bool operator==(const BaseObject& obj, const BaseObject& obj2);
 		friend auto meta::registerMembers<BaseObject>();

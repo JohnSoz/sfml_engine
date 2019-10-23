@@ -14,7 +14,7 @@ Engine::StateStack::~StateStack()
 
 void Engine::StateStack::addState(State* state)
 {
-	Console::AppLog::addLog("A new state has been added to the state stack, new state id: " + std::to_string(state->getStateId()), Console::system);
+	Console::AppLog::addLog("A new state has been added to the state stack, new state id: " + std::to_string((int)state->getStateId()), Console::system);
 	bool isFirst = false;
 	if (states.empty())
 		isFirst = true;
@@ -26,7 +26,7 @@ void Engine::StateStack::addState(State* state)
 	}
 }
 
-bool Engine::StateStack::hasState(appState id)
+bool Engine::StateStack::hasState(int id)
 {
 	auto state = std::find_if(states.begin(), states.end(), [id](const State* state)
 		{
@@ -55,26 +55,30 @@ void Engine::StateStack::changeState()
 	}
 }
 
-void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions action)
+void Engine::StateStack::asyncChangeState(int Id, int action)
 {
 	auto state1 = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{
 			return Id == state->getStateId();
 		});
+
 	if (action != actions::none)
 		(*state1)->setActions(action);
+
 	auto task = [state1, this]()
 	{
 		sf::Context _;
 		if (!(*state1)->Initialized)
 			(*state1)->Init(*window);
 	};		
+
 	std::thread(task).detach();
 
 	auto state2 = std::find_if(states.begin(), states.end(), [Id = appState::Loading](const State* state)
 	{
 		return Id == state->getStateId();
 	});
+
 	if (state2 != states.end())
 	{
 		currState->Cleanup();	
@@ -85,7 +89,7 @@ void Engine::StateStack::changeStateWithLoadingScreen(appState Id, actions actio
 	}
 }
 
-void Engine::StateStack::changeStateTo(appState Id, actions action)
+void Engine::StateStack::changeStateTo(int Id, int action)
 {
 	auto state = std::find_if(states.begin(), states.end(), [Id](const State* state)
 		{
@@ -102,7 +106,7 @@ void Engine::StateStack::changeStateTo(appState Id, actions action)
 		Console::AppLog::addLog("change of state occurred with an error", Console::logType::error);
 }
 
-State& Engine::StateStack::getState(appState state)
+State& Engine::StateStack::getState(int state)
 {
 	return *(*std::find_if(states.begin(), states.end(), [state](const State* s) {return s->getStateId() == state; }));
 }

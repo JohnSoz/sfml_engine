@@ -11,10 +11,18 @@
 #include <Windows.h>
 #include <stdlib.h>
 #include "Math.h"
+#include "json.hpp"
+using json = nlohmann::json;
 
 namespace Engine
 {
-
+	enum _mapType
+	{
+		Json = 1 << 0,
+		Xml = 1 << 1,
+		orthogonal = 1 << 2,
+		isometric = 1 << 3
+	};
 	struct ObjectLevel
 	{
 		int GetPropertyInt(std::string name);
@@ -23,7 +31,7 @@ namespace Engine
 
 		std::string name;
 		std::string type;
-		sf::Rect<float> rect;
+		sf::FloatRect rect;
 		Quad quad;
 		std::map<std::string, std::string> properties;
 	};
@@ -96,7 +104,7 @@ namespace Engine
 	public:
 		std::vector<Tileset*> tilesets;
 		bool LoadFromFile(std::string filename, int MapScale = 1);
-		ObjectLevel GetObjectByName(std::string name);	
+		ObjectLevel GetObjectByName(std::string name);
 		std::vector<ObjectLevel> GetObjects(std::string name);
 		const std::vector<ObjectLevel>& GetAllObjects();
 		void DrawLevel(sf::RenderWindow& window);
@@ -111,9 +119,7 @@ namespace Engine
 		{
 			bool check = (!name_object.empty()) ? name_object == obj.name : true;
 			if (check && obj.rect.contains(start.x + end.x, start.y + end.y))
-			{
-				return Distance(start, { start.x,obj.rect.top });
-			}
+				return Distance(start, sf::Vector2f(start.x, obj.rect.top));
 		}
 		return 0;
 	}

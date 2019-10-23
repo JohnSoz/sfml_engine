@@ -11,7 +11,7 @@ namespace Engine
 		sf::FloatRect rect;
 		auto makeScaleQuad() const
 		{
-			auto pos = sf::Vector2f(rect.left, rect.top);
+			auto pos = getPosition() - getOrigin();
 			auto size = sf::Vector2f(getTextureRect().width, getTextureRect().height);
 			auto r1 = sf::FloatRect(pos.x, pos.y, pos.x + size.x * getScale().x, pos.y + size.y * getScale().y);
 			auto r2 = sf::FloatRect(r1.width, pos.y, pos.x, r1.height);
@@ -19,7 +19,7 @@ namespace Engine
 		}
 		void updateRect()
 		{
-			auto pos = getPosition();
+			auto pos = getPosition() - getOrigin();
 			auto size = sf::Vector2f(getTextureRect().width, getTextureRect().height);
 			rect.left = pos.x;
 			rect.top = pos.y;

@@ -36,11 +36,11 @@ namespace Engine
 		bool  isShoot;
 		bool  onGround;
 		bool  isInvAction;
-		bool  isJump;	
+		bool  isJump;
 	public:
-		
-		Player(sf::RenderWindow& w, Level& lvl, std::string_view pathToSave = "Data/save.json");
-		Player(sf::Vector2f POSITION, std::string NAME, RenderWindow& w, Level& lvl, std::string_view animation);
+
+		Player(sf::RenderWindow& window, Level& lvl, std::string_view pathToSave = "Data/save.json");
+		Player(sf::Vector2f position, std::string name, RenderWindow& window, Level& lvl, std::string_view animation);
 		~Player();
 
 		Player& operator=(const Player& p) = default;
@@ -57,10 +57,10 @@ namespace Engine
 		void RotateToMouse(float speed, RenderWindow& w);
 		void increaseHealth(int h) { health += h; }
 		void inventoryAction();
-		
+
 		DirectionX getDirection() const { return direction; }
 		const AnimationManager& getAnimManager() const { return animManager; }
-		
+
 		friend auto meta::registerMembers<Player>();
 	};
 } // namespace Engine
@@ -80,18 +80,18 @@ namespace meta
 	inline auto registerMembers<Engine::Player>()
 	{
 		return members(
-			member("onGround", &Engine::Player::onGround),
+			member("vel", &Engine::Player::velocity),
+			member("isWalk", &Engine::Player::isWalk),
 			member("isJump", &Engine::Player::isJump),
-			member("friction", &Engine::Player::friction),
 			member("energy", &Engine::Player::energy),
 			member("health", &Engine::Player::health),
 			member("offset", &Engine::Player::offset),
 			member("speedX", &Engine::Player::speedX),
-			member("maxSpeed", &Engine::Player::maxSpeed),
 			member("speedY", &Engine::Player::speedY),
-			member("vel", &Engine::Player::velocity),
-			member("isCollision", &Engine::Player::isCollision),
-			member("isWalk", &Engine::Player::isWalk)
+			member("onGround", &Engine::Player::onGround),
+			member("friction", &Engine::Player::friction),
+			member("maxSpeed", &Engine::Player::maxSpeed),
+			member("isCollision", &Engine::Player::isCollision)
 		);
 	}
 } // namespace meta

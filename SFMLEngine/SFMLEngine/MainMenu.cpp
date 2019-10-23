@@ -4,7 +4,7 @@
 #include "ApplicationState.h"
 #include "staticVariable.h"
 
-namespace fs = std::experimental::filesystem;
+namespace fs = std::filesystem;
 
 Engine::MainMenu::MainMenu(std::string pathToTheme, sf::RenderWindow& w)
 	: BaseGui(w, pathToTheme), gEditor(*this)
@@ -70,8 +70,7 @@ void Engine::MainMenu::makeMenu()
 	groupArray.addWidget(makeButton("Settings", sf::Vector2f(380, 490), sf::Vector2f(220, 100),
 		[&]()
 		{
-			activateOrDisable("Default");
-			activateOrDisable("Settings");
+			disableAllExcept("Settings");
 		}
 	), "SettingsButton");
 

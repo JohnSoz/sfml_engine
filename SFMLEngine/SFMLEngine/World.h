@@ -6,31 +6,9 @@
 #include "Actor.h"
 #include <entityx/entityx.h>
 #include "Camera.h" 
-
+#include "ObjectHandler.h"
 namespace Engine
 {
-	class ObjectHandler
-	{
-	private:
-		std::vector<Entity*>           ObjectsArray;
-		std::vector<Entity*>::iterator iter;
-	public:
-		DebuggingSystem debug;
-		ObjectHandler() = default;
-		~ObjectHandler();
-
-		void handelEvent(sf::Event& e);
-		void UpdateObjects(float time);
-		void fixedUpdate();
-		void CollisionUpdate();	
-		void RenderObjects(sf::RenderWindow& WINDOW);
-		bool hasObject(std::string_view name);
-
-		template<class Obj>
-		Obj* GetObjects(std::string NAME);
-		Entity* PushObject(Entity* obj); 
-	};
-
 	class World : public entityx::Receiver<World>
 	{
 	private:
@@ -51,7 +29,12 @@ namespace Engine
 		void update(sf::RenderWindow& window, float time);
 		void fixedUpdate();
 		void load(sf::RenderWindow& window);
-		void receive(const Events::NewObject_Event& entity);
+		template<class T>
+		void receive(const Events::NewObject_Event<T>& entity)
+		{
+			entity.obj->setLevel(level);
+			pushEntity(entity.obj);
+		}
 		void start(sf::RenderWindow& window);
 
 		Level& getLevel() { return level; }

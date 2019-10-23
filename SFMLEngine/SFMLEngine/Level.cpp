@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <windows.h>
 #include "LogConsole.h"
+#include <fstream>
 using namespace Engine;
 
 int ObjectLevel::GetPropertyInt(std::string name)
@@ -31,7 +32,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 		return false;
 	}
 
-	TiXmlElement *map;
+	TiXmlElement* map;
 	map = levelFile.FirstChildElement("map");
 
 	width = atoi(map->Attribute("width"));
@@ -40,16 +41,16 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 	tileHeight = atoi(map->Attribute("tileheight"));
 	orientation = map->Attribute("orientation");
 
-	TiXmlElement *el;
+	TiXmlElement* el;
 	el = map->FirstChildElement("tileset");
-	
+
 	while (el)
 	{
 		tilesets.push_back(new Tileset(el));
 		el = el->NextSiblingElement("tileset");
 	}
 
-	TiXmlElement *layerElement;
+	TiXmlElement* layerElement;
 	layerElement = map->FirstChildElement("layer");
 
 	if (orientation == "orthogonal")
@@ -57,7 +58,7 @@ bool Level::LoadFromFile(std::string filename, int ScaleMap)
 	else if (orientation == "isometric")
 		ParseIsoLayer(layerElement);
 
-	TiXmlElement *objectGroupElement;
+	TiXmlElement* objectGroupElement;
 
 	if (map->FirstChildElement("objectgroup") != NULL)
 	{
@@ -107,11 +108,11 @@ sf::IntRect Engine::Level::GetRect() const
 	return rect;
 }
 
-void Level::ParseObject(TiXmlElement *layerElement)
+void Level::ParseObject(TiXmlElement* layerElement)
 {
 	while (layerElement)
 	{
-		TiXmlElement *objectElement;
+		TiXmlElement* objectElement;
 		objectElement = layerElement->FirstChildElement("object");
 
 		while (objectElement)
@@ -129,7 +130,7 @@ void Level::ParseObject(TiXmlElement *layerElement)
 			int x = atoi(objectElement->Attribute("x"));
 			int y = atoi(objectElement->Attribute("y"));
 
-			int width, height;
+			int width = -1, height = -1;
 
 			if (objectElement->Attribute("width") != NULL)
 			{
@@ -138,7 +139,7 @@ void Level::ParseObject(TiXmlElement *layerElement)
 			}
 
 			ObjectLevel object;
-			object.name =objectName;
+			object.name = objectName;
 			object.type = objectType;
 
 			sf::Rect<float> objectRect;
@@ -148,11 +149,11 @@ void Level::ParseObject(TiXmlElement *layerElement)
 			objectRect.width = width * MapScale;
 			object.rect = objectRect;
 
-			TiXmlElement *properties;
+			TiXmlElement* properties;
 			properties = objectElement->FirstChildElement("properties");
 			if (properties != NULL)
 			{
-				TiXmlElement *prop;
+				TiXmlElement* prop;
 				prop = properties->FirstChildElement("property");
 				if (prop != NULL)
 				{
@@ -176,12 +177,12 @@ void Level::ParseObject(TiXmlElement *layerElement)
 	}
 }
 
-void Engine::Level::ParseIsoObject(TiXmlElement *layerElement)
+void Engine::Level::ParseIsoObject(TiXmlElement* layerElement)
 {
 	while (layerElement)
 	{
 
-		TiXmlElement *objectElement;
+		TiXmlElement* objectElement;
 		objectElement = layerElement->FirstChildElement("object");
 
 		while (objectElement)
@@ -253,11 +254,11 @@ void Engine::Level::ParseIsoObject(TiXmlElement *layerElement)
 			std::cout << "isoX = " << isoX << "  isoY = " << isoY << std::endl;
 			std::cout << "isoXW = " << isoW << "  isoXW = " << isoH << std::endl;
 
-			TiXmlElement *properties;
+			TiXmlElement* properties;
 			properties = objectElement->FirstChildElement("properties");
 			if (properties != NULL)
 			{
-				TiXmlElement *prop;
+				TiXmlElement* prop;
 				prop = properties->FirstChildElement("property");
 				if (prop != NULL)
 				{
@@ -279,7 +280,7 @@ void Engine::Level::ParseIsoObject(TiXmlElement *layerElement)
 	}
 }
 
-void Engine::Level::ParseIsoLayer(TiXmlElement *layerElement)
+void Engine::Level::ParseIsoLayer(TiXmlElement* layerElement)
 {
 	auto iter = tilesets.begin();
 	while (layerElement)
@@ -293,13 +294,13 @@ void Engine::Level::ParseIsoLayer(TiXmlElement *layerElement)
 		else
 			layer.opacity = 255;
 
-		TiXmlElement *layerDataElement;
+		TiXmlElement* layerDataElement;
 		layerDataElement = layerElement->FirstChildElement("data");
 
 		if (layerDataElement == nullptr)
 			Console::AppLog::addLog("Bad map. No layer information found.", Console::error);
 
-		TiXmlElement *tileElement;
+		TiXmlElement* tileElement;
 		tileElement = layerDataElement->FirstChildElement("tile");
 
 		if (tileElement == nullptr)
@@ -354,7 +355,7 @@ void Engine::Level::ParseIsoLayer(TiXmlElement *layerElement)
 	}
 }
 
-void Engine::Level::ParseLayer(TiXmlElement *layerElement)
+void Engine::Level::ParseLayer(TiXmlElement* layerElement)
 {
 	auto iter = tilesets.begin();
 	while (layerElement)
@@ -370,7 +371,7 @@ void Engine::Level::ParseLayer(TiXmlElement *layerElement)
 			layer.opacity = 255;
 		}
 
-		TiXmlElement *layerDataElement;
+		TiXmlElement* layerDataElement;
 		layerDataElement = layerElement->FirstChildElement("data");
 
 		if (layerDataElement == NULL)
@@ -378,7 +379,7 @@ void Engine::Level::ParseLayer(TiXmlElement *layerElement)
 			Console::AppLog::addLog("Bad map. No layer information found.", Console::error);
 		}
 
-		TiXmlElement *tileElement;
+		TiXmlElement* tileElement;
 		tileElement = layerDataElement->FirstChildElement("tile");
 
 		if (tileElement == NULL)
@@ -432,10 +433,10 @@ void Engine::Level::ParseLayer(TiXmlElement *layerElement)
 	}
 }
 
-void Level::DrawLevel(sf::RenderWindow &window)
+void Level::DrawLevel(sf::RenderWindow& window)
 {
-	for (auto &layer : layers)
-		for (const auto &tile : layer.tiles)
+	for (auto& layer : layers)
+		for (const auto& tile : layer.tiles)
 		{
 			window.draw(tile);
 			Sleep(10);
@@ -448,8 +449,8 @@ sf::Image Level::DrawLevel2()
 	sf::RenderTexture t;
 	t.create(1920, 1080);
 	t.clear();
-	for (auto &layer : layers)
-		for (const auto &tile : layer.tiles)
+	for (auto& layer : layers)
+		for (const auto& tile : layer.tiles)
 		{
 			t.draw(tile);
 		}
@@ -479,3 +480,4 @@ std::vector<sf::Rect<int>> Engine::Tileset::getSubRect()
 		}
 	return subRects;
 }
+
