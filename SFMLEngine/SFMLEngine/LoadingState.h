@@ -14,7 +14,7 @@ namespace Engine
 		LoadingState() :
 			State(appState::Loading)
 		{
-			LoadingTime = sf::seconds(4);
+			LoadingTime = sf::seconds(2);
 		}
 		~LoadingState() { if (Initialized) Cleanup(); }
 		void update(float time) override

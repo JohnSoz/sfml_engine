@@ -10,7 +10,7 @@ Engine::HUD::HUD(std::string pathToTheme, sf::RenderWindow& w, Inventory& i)
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/Bricks.otf");
 	gui.setFont(font);
-	gui.add(groupArray[0]);
+	gui.add(groupArray[0].second);
 }
 
 void Engine::HUD::makeHud()
@@ -21,7 +21,7 @@ void Engine::HUD::makeHud()
 
 void Engine::HUD::update()
 {
-	auto item = groupArray[0]->get<tgui::Picture>("Item");
+	auto item = groupArray[0].second->get<tgui::Picture>("Item");
 	item->getRenderer()->setTexture(inv->getCurrItem<Item>()->getTexture());
 	item->setSize((sf::Vector2f)inv->getCurrItem<Item>()->getTexture().getSize());
 }

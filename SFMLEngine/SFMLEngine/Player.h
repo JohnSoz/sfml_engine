@@ -26,7 +26,7 @@ namespace Engine
 		HUD           hud;
 		save_data     data;
 		InventoryMenu inv;
-
+		
 		float CurrAngle = sprite.getRotation(), LastAngle;
 		float health, armor;
 		float energy, friction, maxSpeed;
@@ -38,7 +38,6 @@ namespace Engine
 		bool  isInvAction;
 		bool  isJump;
 	public:
-
 		Player(sf::RenderWindow& window, Level& lvl, std::string_view pathToSave = "Data/save.json");
 		Player(sf::Vector2f position, std::string name, RenderWindow& window, Level& lvl, std::string_view animation);
 		~Player();
@@ -47,7 +46,7 @@ namespace Engine
 		Player& operator=(const save_data& p);
 
 		void update(float time) override;
-		void fixedUpdate() override { debug::debugDraw<Player, Object, Actor, Entity>(this, "Debug For Class Player"); }
+		void fixedUpdate() override;
 		void handleEvent(sf::Event& e) override;
 		void CollisionUpdate(Entity* entity) override {}
 		void checkClashes(float time) override;

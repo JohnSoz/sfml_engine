@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Math.h"
 #include <utility>
+#include <MetaStuff/Meta.h>
 namespace Engine
 {
 	class Collider
@@ -93,5 +94,20 @@ namespace Engine
 			else
 				return std::make_pair(rect, sf::FloatRect(rect.left + widht, rect.top, rect.left, rect.top + height));
 		}
+		friend auto meta::registerMembers<Collider>();
 	};
 } // namespace Engine
+namespace meta
+{
+	template <>
+	inline auto registerMembers<Engine::Collider>()
+	{
+		return members(
+			member("origin", &Engine::Collider::origin),
+			member("widht", &Engine::Collider::widht),
+			member("height", &Engine::Collider::height),
+			member("rect", &Engine::Collider::rect),
+			member("scale", &Engine::Collider::scale)
+		);
+	}
+}

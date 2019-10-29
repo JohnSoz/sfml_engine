@@ -194,6 +194,17 @@ namespace Engine
 		}
 	}
 
+	template<typename T>
+	inline auto _checkIntersects(sf::Vector2<T> pos1, sf::Vector2<T> pos2, sf::Vector2<T> pos3, sf::Vector2<T> pos4)
+	{
+		sf::Vector2<T> check;
+		check = lineLineIntersection(pos1, pos2, pos3, pos4);
+		if (thc(pos3, pos4, check) && thc(pos1, pos2, check))
+			return check;
+		else
+			return sf::Vector2<T>(-1, -1);
+	}
+
 	class Vector2D
 	{
 	public:

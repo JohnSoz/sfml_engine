@@ -34,6 +34,10 @@ namespace Engine
 		sf::FloatRect rect;
 		Quad quad;
 		std::map<std::string, std::string> properties;
+		operator sf::FloatRect() const
+		{
+			return rect;
+		}
 	};
 
 	struct Tileset

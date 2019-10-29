@@ -60,7 +60,7 @@ void AnimationManager::loadAnimation_x(std::string_view fileName, sf::RenderWind
 	using boost::lexical_cast;
 	using boost::bad_lexical_cast;
 	TiXmlDocument animFile(fileName.data());
-	
+
 	animFile.LoadFile();
 
 	TiXmlElement* head;
@@ -163,9 +163,9 @@ IntRect& AnimationJson::tick(float time)
 	if (int(frame) >= 1)
 		int z = 5;
 	IntRect x(widht * int(frame), top, widht, height);
-	return x; //err
+	return x;
 }
-
+#include "LogConsole.h"
 sf::IntRect& Engine::AnimationXml::tick(const float time)
 {
 	if (frames.size() > 0 && state != AEnd)

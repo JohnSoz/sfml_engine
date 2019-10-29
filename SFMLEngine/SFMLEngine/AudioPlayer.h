@@ -16,7 +16,7 @@ namespace Engine
 		audiere::AudioDevicePtr device;
 		std::vector<std::pair<std::string, audiere::OutputStreamPtr>>::iterator iter;
 		std::vector<std::pair<std::string, audiere::OutputStreamPtr>> muslist2;
-		float volume = 0.3;
+		float volume = 0.05;
 		std::string folderName;
 		void GetMusic();
 	public:

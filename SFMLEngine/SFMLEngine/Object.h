@@ -34,7 +34,9 @@ namespace meta
 	inline auto registerMembers<Engine::Object>()
 	{
 		return members(
-			member("pathToSprite", &Engine::Object::pathToSprite)
+			member("pathToSprite", &Engine::Object::pathToSprite),
+			member("position", &Engine::Object::position),
+			member("sprite", &Engine::Object::sprite)
 		);
 	}
 }

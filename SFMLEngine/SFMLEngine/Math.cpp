@@ -337,18 +337,18 @@ Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle
 }
 
 Vector2D Engine::Rectangle::GetIntersectionDepth2(const Rectangle& rectA, const Rectangle& rectB) //< что-то вроде костыля Нужно юзать когда origin спрайта = 
-                                                                                                                 // sprite.pos.x + sprite.rect.width/2, sprite.pos.y + sprite.rect.height
+																									  // sprite.pos.x + sprite.rect.width/2, sprite.pos.y + sprite.rect.height
 {
-	float halfWidthA  = rectA.w / 2.0f;
+	float halfWidthA = rectA.w / 2.0f;
 	float halfHeightA = rectA.h / 2.0f;
-	float halfWidthB  = rectB.w / 2.0f;
+	float halfWidthB = rectB.w / 2.0f;
 	float halfHeightB = rectB.h / 2.0f;
 
 	Vector2D centerA(rectA.x + halfWidthA, rectA.y - halfHeightA);
 	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
 
-	float distanceX    = centerA.x - centerB.x;
-	float distanceY    = centerA.y - centerB.y;
+	float distanceX = centerA.x - centerB.x;
+	float distanceY = centerA.y - centerB.y;
 	float minDistanceX = halfWidthA + halfWidthB;
 	float minDistanceY = halfHeightA + halfHeightB;
 

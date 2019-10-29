@@ -1,5 +1,5 @@
 #include "LoadingState.h"
-
+#include "LogConsole.h"
 void Engine::LoadingState::Init(sf::RenderWindow& w)
 {
 	c.restart();

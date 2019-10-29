@@ -30,13 +30,14 @@ namespace Engine
 		virtual void fixedUpdate() {}
 		virtual void CollisionUpdate(Entity* objarray) {}
 		void setLevel(Level& l) { obj = l.GetObjects("barrier"); }
-		void SetPos(float x, float y) { position.x = x; position.y = y; }
-		operator sf::Drawable&()
+		void setPos(float x, float y) { position.x = x; position.y = y; }
+		operator sf::Drawable& ()
 		{
 			return sprite;
 		}
 		sf::FloatRect getRect() const { return sprite.getGlobalBounds(); }//return collider.getQuad().first;
 		sf::Vector2f  getPos()  const { return position; }
+		sf::IntRect getLocalRect() { return localRectangle; }
 		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); } //return collider.getQuad();
 
 		friend class ObjectHandler;
@@ -71,7 +72,8 @@ namespace meta
 	{
 		return members(
 			member("localRectangle", &Engine::Entity::localRectangle),
-			member("intersec", &Engine::Entity::test),
+			member("collider", &Engine::Entity::collider),
+			member("test", &Engine::Entity::test),
 			member("globalRectangle", &Engine::Entity::globalRectangle),
 			member("debugRectangle", &Engine::Entity::debugRectangle)
 		);

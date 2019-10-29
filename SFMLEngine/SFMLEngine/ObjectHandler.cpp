@@ -73,33 +73,31 @@ void Engine::ObjectHandler::CollisionUpdate()
 	}*/
 }
 
-void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& WINDOW)
+void Engine::ObjectHandler::RenderObjects(sf::RenderWindow& w)
 {
 	for (auto o : ObjectsArray)
 	{
-		WINDOW.draw(*o);
+		w.draw(*o);
 		if (o->getType() == ObjectType::OPlayer)
 		{
 			auto z = static_cast<Actor*>(o);
-			VertexArray vs(Lines, 2);
-			vs[0].position = { z->getPos().x - z->getOrigin().x,z->getPos().y - 1.f };
-			vs[1].position = z->ray;
-			vs[0].color = sf::Color::Green;
-			vs[1].color = sf::Color::White;
-			WINDOW.draw(vs);
 
-			VertexArray vs2(Lines, 2);
-			vs2[0].position = { z->getPos().x + z->getOrigin().x,z->getPos().y - 1.f };
-			vs2[1].position = z->ray2;
-			vs2[0].color = sf::Color::White;
-			vs2[1].color = sf::Color::Green;
-			WINDOW.draw(vs2);
+			sf::Vector2f pos = { z->getPos().x - z->getLocalRect().width * z->getScale() / 2, z->getPos().y - z->getLocalRect().height * z->getScale() / 2 };
+			sf::Vector2f pos2 = { z->getRect().left, z->getRect().top };
 
-			sf::CircleShape shape2(1);
-			shape2.setFillColor(sf::Color::Blue);
-			//shape2.setOrigin(1, 1);
-			shape2.setPosition({ z->sprite.getPosition().x ,z->sprite.getPosition().y });
-			WINDOW.draw(shape2);
+			sf::CircleShape c(1.f);
+			c.setPosition(pos);
+			c.setFillColor(sf::Color::Green);
+			sf::CircleShape c2(1.f);
+			c2.setPosition(pos2);
+			c2.setFillColor(sf::Color::Red);
+
+			w.draw(c2);
+			w.draw(c);
+			//w.draw(z->govno);
+			w.draw(z->left);
+			w.draw(z->right);
+			w.draw(z->middle);
 		}
 	}
 }

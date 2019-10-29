@@ -16,19 +16,18 @@ namespace Engine
 	public:
 		Camera()
 		{
-			camera.reset(sf::FloatRect(0, 0, 1000, 563));//1000//563
+			camera.reset(sf::FloatRect(0, 0, 500, 281));
 			camera.setCenter(300, 600);
 			defaultCenter = camera.getCenter();
 		}
 		Camera(sf::Vector2f pos, sf::IntRect s)
 		{
-			camera.reset(sf::FloatRect(0, 0, 1000, 563));
+			camera.reset(sf::FloatRect(0, 0, 500, 281));
 			defaultCenter = camera.getCenter();
 		}
 		~Camera() {}
 
 		bool isMove() { return move; }
-		std::string test() { return "test"; }
 		sf::Vector2f getPositionOffset()
 		{
 			return VectorAbs(defaultCenter - camera.getCenter());

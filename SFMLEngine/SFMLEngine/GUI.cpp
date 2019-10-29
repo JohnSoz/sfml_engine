@@ -15,7 +15,7 @@ void Engine::BaseGui::activateOrDisable(std::string_view name /*= ""*/)
 {
 	Group::Ptr item;
 	if (name.empty())
-		item = groupArray[0];
+		item = groupArray[0].second;
 	else
 		item = std::find_if(groupArray.begin(), groupArray.end(),
 			[name](std::pair<std::string, Group::Ptr>& item)

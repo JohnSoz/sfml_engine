@@ -58,7 +58,6 @@ namespace Engine
 	{
 	public:
 		sf::IntRect rect;
-		//std::vector<sf::IntRect> frames; 
 		sf::Vector2f Center;
 		AnimationJson() { frame = 0; scale = 0;  speed = 0; }
 

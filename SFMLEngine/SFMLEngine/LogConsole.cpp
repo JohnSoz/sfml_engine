@@ -133,12 +133,10 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 			}
 		}
 		else
-		{
 			for (auto i : Buffer)
 				ImGui::TextColored(i.color, i.text.c_str());
-		}
-		if (ScrollToBottom)
-			ImGui::SetScrollHere(1.f);
+		//if (ScrollToBottom)
+		ImGui::SetScrollHere(1.f);
 		ScrollToBottom = false;
 		ImGui::EndChild();
 		ImGui::End();

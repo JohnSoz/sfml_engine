@@ -20,7 +20,7 @@ namespace Engine
 			sf::Font font;
 			font.loadFromFile("Data/Fonts/Bricks.otf");
 			gui.setFont(font);
-			gui.add(groupArray[0]);
+			gui.add(groupArray[0].second);
 		}
 		void makeMenu()
 		{

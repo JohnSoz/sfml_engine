@@ -5,15 +5,13 @@ using sf::Keyboard;
 void Engine::Actor::updateSprite()
 {
 	auto currAnim = animManager.getCurrAnimation<AnimationXml>();
-	localRectangle = currAnim->rect;
 	originOffset = currAnim->origin;
 	scale = currAnim->scale;
+	sprite.setOrigin(originOffset);
 	collider.setScale(scale);
 	collider.setCenter(originOffset);
+	//sprite.setTextureRect(currAnim->rect);
 	//sprite.setScale(sf::Vector2f(scale, scale));
-	sprite.setOrigin(originOffset);
-	sprite.setTextureRect(localRectangle);
-	sprite.setPosition(position);
 }
 
 Engine::Actor::Actor(Level& _lvl)

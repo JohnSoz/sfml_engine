@@ -7,6 +7,7 @@
 #include <entityx/entityx.h>
 #include "Camera.h" 
 #include "ObjectHandler.h"
+
 namespace Engine
 {
 	class World : public entityx::Receiver<World>

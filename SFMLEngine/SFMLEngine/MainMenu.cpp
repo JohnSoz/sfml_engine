@@ -13,7 +13,7 @@ Engine::MainMenu::MainMenu(std::string pathToTheme, sf::RenderWindow& w)
 	sf::Font font;
 	font.loadFromFile("Data/Fonts/Bricks.otf");
 	gui.setFont(font);
-	gui.add(groupArray[0]);
+	gui.add(groupArray[0].second);
 }
 
 void Engine::MainMenu::makeMenu()
@@ -31,10 +31,11 @@ void Engine::MainMenu::makeMenu()
 		[this]()
 		{
 			std::string p = "Data/Level/";
-			p += groupArray[0]->get<tgui::ListBox>("TestListBox2")->getSelectedItem();
+			p += groupArray[2].second->get<tgui::ListBox>("TestListBox2")->getSelectedItem();
 			Console::AppLog::addLog(p, Console::info);
+			//EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play, true, actions::loading);
 		}), "TestListBox2", "ResumeMenu");
-	tgui::ListBox::Ptr listBox = groupArray[2]->get<tgui::ListBox>("TestListBox2");
+	tgui::ListBox::Ptr listBox = groupArray[2].second->get<tgui::ListBox>("TestListBox2");
 	std::string path = "Data\\";
 	for (auto& p : fs::directory_iterator(path))
 	{
@@ -56,7 +57,6 @@ void Engine::MainMenu::makeMenu()
 		[&]()
 		{
 			disableAllExcept("ResumeMenu");
-			//EventManager::eventManager.emit<Events::Change_State_Event>(appState::Play, true, actions::loading);
 		}
 	), "LoadButton");
 

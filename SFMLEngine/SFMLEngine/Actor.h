@@ -5,7 +5,7 @@
 #include <MetaStuff/Meta.h>
 #include "JsonLoader.h"
 #include "InventoryMenu.h"
-
+#include "Ray.h"
 using namespace meta;
 namespace Engine
 {
@@ -28,7 +28,10 @@ namespace Engine
 		float Radian;
 		sf::Vector2f ray;
 		sf::Vector2f ray2;
-
+		Ray left;
+		Ray right;
+		Ray middle;
+		Ray govno;
 		Actor(Level& lvl);
 		Actor(sf::Vector2f position, std::string name, sf::RenderWindow& window, Level& lvl, std::string_view animation);
 		~Actor() {}

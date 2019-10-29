@@ -130,7 +130,6 @@ void Player::RotateToMouse(float speed, RenderWindow& w)
 
 	float lastradian = LastAngle * boost::math::constants::pi<float>() / 180;
 }
-
 void Player::update(float time)
 {
 	if (time)
@@ -159,10 +158,9 @@ void Player::update(float time)
 		if (!isWalk)
 			(velocity.x > 0) ? velocity.x -= friction : velocity.x = 0;
 
-		position += velocity * time;
+		position += velocity;
 		checkClashes(time);
 		sprite.setPosition(position);
-
 		if (isWalk && animManager.getCurrAnimation()->name != "Walk" && onGround)
 		{
 			animManager.setCurrAnimation(animManager.getAnimationByName("Walk"));
@@ -179,11 +177,7 @@ void Player::update(float time)
 		{
 			animManager.setCurrAnimation(animManager.getAnimationByName("Idle"));
 		}
-		updateSprite();
 		sprite.setTextureRect(animManager.animUpdate(time));
-
-		inventoryAction();
-		inventory.update();
 
 		localRectangle = sprite.getTextureRect();
 		const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - localRectangle.height * scale };
@@ -196,7 +190,17 @@ void Player::update(float time)
 		debugRectangle = sf::FloatRect(pos.x + localRectangle.width * scale,
 			pos.y, pos.x,
 			pos.y + localRectangle.height * scale);
+
+		inventoryAction();
+		inventory.update();
+		updateSprite(); //???
 	}
+}
+
+void Engine::Player::fixedUpdate()
+{
+	debug::debugDraw<Player, Object, Actor, Entity>(this, "Debug For Class Player");
+	debug::debugDraw<Collider>(&this->collider, "Debug For Class Collider");
 }
 
 void Engine::Player::draw()
@@ -208,41 +212,58 @@ void Engine::Player::draw()
 void Engine::Player::checkClashes(float time)
 {
 	isCollision = false;
-	auto pos = sprite.getPosition();
-	auto globBounds = sprite.getGlobalBounds();
-	ray = { sprite.getPosition().x - getOrigin().x, sprite.getPosition().y + 2.2f };
-	ray2 = { sprite.getPosition().x + getOrigin().x, sprite.getPosition().y + 2.2f };
-
-	sf::Vector2f pos1 = { sprite.getPosition().x - getOrigin().x , sprite.getPosition().y - 1.f };
-	sf::Vector2f pos2 = { sprite.getPosition().x + getOrigin().x , sprite.getPosition().y - 1.f };
-	float dist = raycastLevelObject(pos1, { +1, 2.2 }, obj, "barrier");
-	float dist2 = raycastLevelObject(pos2, { -1, 2.2 }, obj, "barrier");
-	//std::cout << "dist = " << (float)(dist) << "   ___   " << "dist2 = " << (float)(dist2) << endl;
-
-	if (dist < 1 && dist2 < 1)
-		onGround = false;
-	else
-		onGround = true;
+	const sf::Vector2f pos = { getRect().left, sprite.getPosition().y };
+	const sf::Vector2f pos1 = { pos.x, pos.y - 0.1f };
+	const sf::Vector2f pos2 = { pos.x + getRect().width, pos.y - 0.1f };
+	const sf::Vector2f pos3 = { pos.x + getRect().width / 2, pos.y - 0.1f };
+	left.setStart(pos1);
+	left.setDist(10);
+	left.setAngle(45);
+	right.setStart(pos2);
+	right.setDist(10);
+	right.setAngle(135);
+	middle.setStart(pos3);
+	middle.setDist(5);
+	middle.setAngle(90);
+	static float angle;
+	angle += (angle >= 360) ? 1 : -1;
+	//const sf::Vector2f pos4 = { getPos().x, getPos().y - localRectangle.height * scale / 2 };
+	//govno.setStart(pos4);
+	//govno.setDist(100);
+	//govno.setAngle(angle);
 
 	for (const auto& i : obj)
 	{
-		auto playerRect = Rectangle::fromSfmlRect(sf::FloatRect(getRect().left, position.y, getRect().width, getRect().height));
+		//auto playerRect = Rectangle::fromSfmlRect(sf::FloatRect(getRect().left, position.y, getRect().width, getRect().height));
+		//auto trueRect = sf::FloatRect(pos6.x, pos6.y, pos6.x + localRectangle.width * scale, pos6.y + localRectangle.height * scale);
+		const sf::Vector2f pos6 = { getPos().x - getLocalRect().width * getScale() / 2, getPos().y - getLocalRect().height * getScale() };
+		auto sf_PLayerRect = sf::FloatRect(pos6.x, pos6.y, localRectangle.width * scale, localRectangle.height * scale);
+		auto playerRect2 = Rectangle::fromSfmlRect(sf_PLayerRect);
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
+
 		if (i.name == "barrier")
 		{
-			if (sprite.getGlobalBounds().intersects(i.rect))
+			left.castTo(i);
+			right.castTo(i);
+			middle.castTo(i);
+			govno.castTo(i);
+			if (left.hitDist() > 1.f && right.hitDist() > 1.f && middle.hitDist() > 1.f)
+				onGround = false;
+			else
+				onGround = true;
+
+			if (sf_PLayerRect.intersects(i.rect))
 			{
 				isCollision = true;
-				auto copyOffset = Rectangle::GetIntersectionDepth2(playerRect, objectRect).GetSfmlVector();
+				auto copyOffset = Rectangle::GetIntersectionDepth(playerRect2, objectRect).GetSfmlVector();
 				test.left = copyOffset.x;
 				test.top = copyOffset.y;
-
 				if (copyOffset.y > 0)
-				{
 					velocity.y = 0;
-					onGround = false;
-				}
-				position = position + copyOffset;
+				if (copyOffset != sf::Vector2f(0, 0))
+					position = position + copyOffset;
+				else
+					isCollision = false;
 			}
 		}
 	}
