@@ -66,7 +66,7 @@ Engine::World::World()
 	Engine::EventManager::eventManager.subscribe<Events::NewObject_Event<Entity>>(*this);
 }
 
-void Engine::World::start(sf::RenderWindow& window)
+void Engine::World::start(sf::RenderWindow& window) ///depricated!!!!!!!!!!!!
 {
 	pushEntity(new Engine::Player(sf::Vector2f(120, 120), "Test", window, level, "Data\\Animation\\TestAnim.xml"));
 }

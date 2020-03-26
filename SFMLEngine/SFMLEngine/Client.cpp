@@ -5,12 +5,8 @@
 #include <mutex>
 using namespace Engine;
 
-Client::Client()
+Client::Client(Object* d) : d(d)
 {
-	IP = sf::IpAddress("18.185.27.153");
-	std::srand((int)time(nullptr));
-	Name = "Player#" + std::to_string(std::rand() % 100);
-	thread = std::move(connect(std::bind(&Client::onConnect, this)));
 }
 
 //TODO: Если приняли пакет, то вызываем обработчик пакета в отдельном потоке 
@@ -19,21 +15,43 @@ void Client::recivePacket()
 	std::mutex g_i_mutex;
 	sf::Packet p;
 	std::lock_guard<std::mutex> lock(g_i_mutex);
-	if (socket.receive(p) == sf::Socket::Done)	
+	uint8_t type;
+	while (socket.receive(p) == sf::Socket::Done)
 	{
-		std::string recive;
-		p >> recive;
-		Console::AppLog::addLog(recive, Console::info);
+		uint32_t id = -1;
+		p >> type;
+		if (type == PacketType::updateData)
+		{
+			p >> id;
+			float x;
+			float y;
+			p >> x >> y;
+			_users[id]->setPos(x, y);
+		}
+		if (type == PacketType::newConnection)
+		{
+			p >> id;
+			float x;
+			float y;
+			p >> x >> y;
+			_users.emplace(std::make_pair(id, std::make_unique<Object>(sf::Vector2f{ x, y }, std::to_string(id))));
+			sendPacket(PacketType::syncClient, id, d->getPos().x, d->getPos().y);
+		}
+		if (type == PacketType::syncClient)
+		{
+			float x, y;
+			p >> id >> x >> y;
+			sf::CircleShape c1(10.f);
+			c1.setPosition(x, y);
+			_users.emplace(std::make_pair(id, std::make_unique<Object>(sf::Vector2f{ x, y }, std::to_string(id))));
+		}
+		if (type == PacketType::disconnection)
+		{
+			p >> id;
+			_users.erase(id);
+		}
 	}
 }
-
-void Client::sendMsg_l(std::string msg)
-{
-	sf::Packet packet;
-	packet << PacketType::message << msg;
-	socket.send(packet);
-}
-
 
 Client::~Client()
 {
@@ -45,13 +63,14 @@ Client::~Client()
 	}
 }
 
-std::thread Engine::Client::connect(std::function<void()> callback)
+std::thread Engine::Client::_connect(std::function<void()> callback)
 {
 	sf::Packet packet;
 	status = socket.connect(IP, 300);
-	if (status != Socket::Error)
+	std::cout << status;
+	if (status != sf::Socket::Error)
 	{
-		packet << Name;
+		packet << d->getPos().x << d->getPos().y;
 		socket.send(packet);
 		std::packaged_task<void()> task(std::bind(callback));
 		auto future = task.get_future();
@@ -60,10 +79,9 @@ std::thread Engine::Client::connect(std::function<void()> callback)
 	}
 	else
 	{
-		Console::AppLog::addLog("Connect to 18.185.27.153:2000 failed", Console::error);
+		Console::AppLog::addLog("Connect to 18.185.27.153 nor success", Console::error);
 		return std::thread();
 	}
-
 }
 void Engine::Client::onRecivePacket(sf::Packet packet)
 {
@@ -84,6 +102,6 @@ void Engine::Client::disckonnect()
 {
 	Console::AppLog::addLog("Disconnect from 18.185.27.153:2000", Console::info);
 	status = sf::Socket::Disconnected;
-	sendPacket(3, sf::Socket::Disconnected);
+	sendPacket(PacketType::disconnection, sf::Socket::Disconnected);
 	socket.disconnect();
 }

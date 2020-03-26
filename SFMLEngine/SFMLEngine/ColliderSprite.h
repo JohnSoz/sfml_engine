@@ -61,10 +61,12 @@ namespace Engine
 				this_pos.x += getTextureRect().width;
 			else
 				other_pos.x += other.getTextureRect().width;
+
 			if (this_pos.y < other_pos.y)
 				this_pos.y = other_pos.y;
 			else
 				other_pos.y = this_pos.y;
+			
 			dist = Distance(this_pos, other_pos);
 			return dist;
 		}

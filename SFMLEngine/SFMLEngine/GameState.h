@@ -15,6 +15,7 @@ namespace Engine
 		sf::RenderWindow* window;
 		PauseMenu* pause;
 		bool isPause;
+		Client c;
 
 	public:
 		GameState() : State(appState::Play) { }

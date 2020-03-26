@@ -19,7 +19,13 @@ namespace Engine
 		Object(sf::Vector2f position, std::string name);
 		Object(sf::Image image, sf::Vector2f position, std::string name);
 
-		const sf::Sprite&  getSprite()  const { return sprite; }
+		void setPos(float x, float y)
+		{
+			position.x = x;
+			position.y = y;
+		}
+		sf::Vector2f getPos() const { return position; }
+		const sf::Sprite&  getSprite() const { return sprite; }
 		const sf::Texture& getTexture() const { return texture; }
 
 		friend class DebugWindow;
@@ -35,8 +41,8 @@ namespace meta
 	{
 		return members(
 			member("pathToSprite", &Engine::Object::pathToSprite),
-			member("position", &Engine::Object::position),
-			member("sprite", &Engine::Object::sprite)
+			member("position", &Engine::Object::position)
+			//member("sprite", &Engine::Object::sprite)
 		);
 	}
 }

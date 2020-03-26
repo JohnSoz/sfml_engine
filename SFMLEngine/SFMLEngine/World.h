@@ -7,7 +7,7 @@
 #include <entityx/entityx.h>
 #include "Camera.h" 
 #include "ObjectHandler.h"
-
+#include "Client.h"
 namespace Engine
 {
 	class World : public entityx::Receiver<World>
@@ -21,6 +21,7 @@ namespace Engine
 		Level             level;
 		DebuggingSystem   debug;
 		bool              ShowOverlay;
+		
 	public:
 		World();
 		~World() = default;

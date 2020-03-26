@@ -22,14 +22,14 @@ namespace Engine
 				return RECT_i;
 			else if (std::is_same<Type, sf::FloatRect>::value)
 				return RECT_F;
-			else if (std::is_same<Type, sf::Sprite>::value)
-				return SPRITE;
 			else if (std::is_integral<Type>::value)
 				return INT;
 			else if (std::is_floating_point<Type>::value)
 				return FLOAT;
 			else if (std::is_enum<Type>::value)
 				return INT;
+			/*else if (std::is_same<Type, sf::Sprite>::value)
+				return SPRITE;*/
 			else
 				Console::AppLog::addLog("UB", Console::logType::error);
 		}
@@ -93,17 +93,17 @@ namespace Engine
 									field = (std::string)member.getName() + ": " + meta::getMemberValue<std::string>(*ptr_type, member.getName());
 									ImGui::Text(field.c_str());
 									break;
-								case Engine::debug::SPRITE:
+								/*case Engine::debug::SPRITE:
 									if (ImGui::TreeNode("Object Sprite"))
 									{
-										auto spr = (Object*)ptr;
+										auto spr = (Object*)ptr_type;
 										float size_x = spr->getSprite().getTextureRect().width;
 										float size_y = spr->getSprite().getTextureRect().height;
 										ImGui::Text("%.0fx%.0f", size_x, size_y);
 										ImGui::Image(*spr->getSprite().getTexture(), sf::Vector2f(size_x, size_y), static_cast<sf::FloatRect>(spr->getSprite().getTextureRect()));
 										ImGui::TreePop();
 									}
-									break;
+									break;*/
 								case Engine::debug::ANIMATIONMANAGER:
 									break;
 								case Engine::debug::RECT_i:

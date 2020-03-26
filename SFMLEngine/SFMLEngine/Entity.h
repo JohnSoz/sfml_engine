@@ -1,20 +1,20 @@
 #pragma once
-#include "Object.h"
-#include "Level.h"
-#include <utility>
-#include "collider.h"
 #include "DebugInteface.h"
+#include "Level.h"
+#include "Object.h"
+#include "collider.h"
+#include <utility>
 
 namespace Engine
 {
 	class Entity : public Object
 	{
 	protected:
-		sf::IntRect      localRectangle;
-		sf::FloatRect    globalRectangle;
-		sf::FloatRect    debugRectangle;
-		sf::FloatRect    test;
-		Collider         collider;
+		sf::IntRect localRectangle;
+		sf::FloatRect globalRectangle;
+		sf::FloatRect debugRectangle;
+		sf::FloatRect test;
+		Collider collider;
 		std::vector<ObjectLevel> obj;
 		using Quad = std::pair<const sf::FloatRect*, const sf::FloatRect*>;
 
@@ -23,22 +23,23 @@ namespace Engine
 		Entity(const Entity&) = default;
 		Entity(sf::Vector2f position, std::string name);
 		Entity(sf::Image& image, sf::Vector2f position, std::string name);
-		Entity(sf::Image& image, sf::IntRect rect, sf::Vector2f position, std::string name);
+		Entity(sf::Image& image,
+			sf::IntRect rect,
+			sf::Vector2f position,
+			std::string name);
 		virtual ~Entity() {}
 
 		virtual void update(float time) = 0;
 		virtual void fixedUpdate() {}
-		virtual void CollisionUpdate(Entity* objarray) {}
+		virtual void CollisionUpdate(Entity* objarray) {} // deprecated?
 		void setLevel(Level& l) { obj = l.GetObjects("barrier"); }
-		void setPos(float x, float y) { position.x = x; position.y = y; }
-		operator sf::Drawable& ()
-		{
-			return sprite;
-		}
-		sf::FloatRect getRect() const { return sprite.getGlobalBounds(); }//return collider.getQuad().first;
-		sf::Vector2f  getPos()  const { return position; }
+
+
+		sf::FloatRect getRect() const { return sprite.getGlobalBounds(); } // return collider.getQuad().first;
 		sf::IntRect getLocalRect() { return localRectangle; }
-		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); } //return collider.getQuad();
+		Quad getDebugRect() const noexcept { return std::make_pair(&globalRectangle, &debugRectangle); } // return collider.getQuad();
+
+		operator sf::Drawable& () { return sprite; }
 
 		friend class ObjectHandler;
 		friend auto meta::registerMembers<Entity>();
@@ -53,38 +54,45 @@ namespace Engine
 		float scale = 0.2f;
 
 		void CheckClashes();
+
 	public:
 		std::string shootersName;
 		Bullet() = default;
-		Bullet(sf::Image& IMAGE, sf::IntRect r, sf::Vector2f pos, std::string name, DirectionX d, float Damage, std::string nameShooters);
+		Bullet(sf::Image& image,
+			sf::IntRect rect,
+			sf::Vector2f position,
+			std::string name,
+			DirectionX directionX,
+			float damage,
+			std::string nameShooters);
 		~Bullet() = default;
 
 		void CollisionUpdate(Entity* entity) override;
 		void update(float time) override;
-		void fixedUpdate() override { debug::debugDraw<Object, Bullet>(this, getName()); }
+		void fixedUpdate() override
+		{
+			debug::debugDraw<Object, Bullet>(this, getName());
+		}
 		friend auto meta::registerMembers<Bullet>();
 	};
-}
-namespace meta
-{
-	template <>
-	inline auto registerMembers<Engine::Entity>()
+} // namespace Engine
+namespace meta {
+	template<>
+	inline auto
+		registerMembers<Engine::Entity>()
 	{
-		return members(
-			member("localRectangle", &Engine::Entity::localRectangle),
-			member("collider", &Engine::Entity::collider),
+		return members(member("localRectangle", &Engine::Entity::localRectangle),
+			//member("collider", &Engine::Entity::collider),
 			member("test", &Engine::Entity::test),
 			member("globalRectangle", &Engine::Entity::globalRectangle),
-			member("debugRectangle", &Engine::Entity::debugRectangle)
-		);
+			member("debugRectangle", &Engine::Entity::debugRectangle));
 	}
-	template <>
-	inline auto registerMembers<Engine::Bullet>()
+	template<>
+	inline auto
+		registerMembers<Engine::Bullet>()
 	{
-		return members(
-			member("speed", &Engine::Bullet::speed),
+		return members(member("speed", &Engine::Bullet::speed),
 			member("direction", &Engine::Bullet::dir),
-			member("damage", &Engine::Bullet::damage)
-		);
+			member("damage", &Engine::Bullet::damage));
 	}
-}
+} // namespace meta

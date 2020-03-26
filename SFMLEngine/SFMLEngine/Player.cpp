@@ -59,7 +59,7 @@ void Player::isKeyPressed()
 		isJump = true;
 		directionY = DirectionY::Up;
 		onGround = false;
-		velocity.y = -(energy * 150.f);
+		velocity.y = -(energy * 160.f);
 	}
 	if (Keyboard::isKeyPressed(Keyboard::A))
 	{
@@ -161,8 +161,9 @@ void Player::update(float time)
 		position += velocity;
 		checkClashes(time);
 		sprite.setPosition(position);
-		if (isWalk && animManager.getCurrAnimation()->name != "Walk" && onGround)
+		if (animManager.getCurrAnimation()->name != "Walk" && isWalk && onGround && !isJump)
 		{
+			//animManager.setCurrAnimation(animManager.getAnimationByName("fall"));
 			animManager.setCurrAnimation(animManager.getAnimationByName("Walk"));
 		}
 		else if (!onGround && animManager.getCurrAnimation()->name != "Jump" && isJump)
@@ -181,8 +182,10 @@ void Player::update(float time)
 
 		localRectangle = sprite.getTextureRect();
 		const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - localRectangle.height * scale };
+
 		collider.setPosition(pos);
 		collider.setSize(sf::Vector2f(localRectangle.width, localRectangle.height));
+
 		globalRectangle = sf::FloatRect(pos.x, pos.y,
 			pos.x + localRectangle.width * scale,
 			pos.y + localRectangle.height * scale);
@@ -212,21 +215,25 @@ void Engine::Player::draw()
 void Engine::Player::checkClashes(float time)
 {
 	isCollision = false;
-	const sf::Vector2f pos = { getRect().left, sprite.getPosition().y };
-	const sf::Vector2f pos1 = { pos.x, pos.y - 0.1f };
-	const sf::Vector2f pos2 = { pos.x + getRect().width, pos.y - 0.1f };
-	const sf::Vector2f pos3 = { pos.x + getRect().width / 2, pos.y - 0.1f };
+	const sf::Vector2f pos = { position.x - originOffset.x * scale, position.y - localRectangle.height * scale };
+	//const sf::Vector2f _pos =  { sprite.getPosition().x - sprite.getLocalBounds().width / 2, sprite.getPosition().y };
+	// pos != _pos
+	const sf::Vector2f pos1 = { pos.x + 0.1f, pos.y + localRectangle.height * scale - 0.1f };
+	const sf::Vector2f pos2 = { pos.x + getRect().width - 0.1f, pos.y + localRectangle.height * scale - 0.1f };
+	const sf::Vector2f pos3 = { pos.x + getRect().width / 2, pos.y + localRectangle.height * scale - 0.1f };
+
 	left.setStart(pos1);
 	left.setDist(10);
-	left.setAngle(45);
+	left.setAngle(90);
 	right.setStart(pos2);
 	right.setDist(10);
-	right.setAngle(135);
+	right.setAngle(90);
 	middle.setStart(pos3);
 	middle.setDist(5);
 	middle.setAngle(90);
-	static float angle;
-	angle += (angle >= 360) ? 1 : -1;
+
+	//static float angle; //????????????????????????????????????
+	//angle += (angle >= 360) ? 1 : -1;
 	//const sf::Vector2f pos4 = { getPos().x, getPos().y - localRectangle.height * scale / 2 };
 	//govno.setStart(pos4);
 	//govno.setDist(100);
@@ -235,9 +242,8 @@ void Engine::Player::checkClashes(float time)
 	for (const auto& i : obj)
 	{
 		//auto playerRect = Rectangle::fromSfmlRect(sf::FloatRect(getRect().left, position.y, getRect().width, getRect().height));
-		//auto trueRect = sf::FloatRect(pos6.x, pos6.y, pos6.x + localRectangle.width * scale, pos6.y + localRectangle.height * scale);
 		const sf::Vector2f pos6 = { getPos().x - getLocalRect().width * getScale() / 2, getPos().y - getLocalRect().height * getScale() };
-		auto sf_PLayerRect = sf::FloatRect(pos6.x, pos6.y, localRectangle.width * scale, localRectangle.height * scale);
+		auto sf_PLayerRect = sf::FloatRect(pos6.x, pos6.y, localRectangle.width * scale, localRectangle.height * scale); //why not used sprite.getGlobalBounds() ?
 		auto playerRect2 = Rectangle::fromSfmlRect(sf_PLayerRect);
 		auto objectRect = Rectangle::fromSfmlRect(i.rect);
 
@@ -247,7 +253,7 @@ void Engine::Player::checkClashes(float time)
 			right.castTo(i);
 			middle.castTo(i);
 			govno.castTo(i);
-			if (left.hitDist() > 1.f && right.hitDist() > 1.f && middle.hitDist() > 1.f)
+			if ((left.hitDist() > 1.f && right.hitDist() > 1.f) || middle.hitDist() > 1.f)
 				onGround = false;
 			else
 				onGround = true;
@@ -284,9 +290,7 @@ void Engine::Player::handleEvent(sf::Event& e)
 	if (e.type == sf::Event::KeyReleased)
 	{
 		if (e.key.code == sf::Keyboard::C)
-		{
 			isInvAction = !isInvAction;
-		}
 	}
 }
 

@@ -6,6 +6,7 @@
 #include "GameState.h"
 #include "MenuState.h"
 #include "LoadingState.h"
+
 void Engine::Game::handleEvent(sf::Event& event)
 {
 	while (window->pollEvent(event))
@@ -93,7 +94,7 @@ void Engine::Game::start()
 
 void Engine::Game::receive(const Events::Change_State_Event& event)
 {
-	newStateId = (appState)event.id;
+	newStateId  = (appState)event.id;
 	stateAction = (actions)event.action;
 	changeWithLoading = event._flag;
 	needToChangeState = true;

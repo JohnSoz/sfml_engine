@@ -5,6 +5,8 @@
 #include <future>
 #include <thread>
 #include <mutex>
+#include <map>
+#include "Entity.h"
 using namespace sf;
 
 namespace Engine
@@ -15,39 +17,63 @@ namespace Engine
 		Disconnect
 	};*/
 
-	enum PacketType {
-		message = 1,
-		position,
-		status,
-		info
+	enum PacketType : uint8_t
+	{
+		newConnection = 0,
+		syncClient,
+		disconnection,
+		updateData
+	};
+
+	struct data
+	{
+		sf::Vector2f position;
+		std::string id;
 	};
 
 	class Client
 	{
 	private:
-		TcpSocket socket;
 		std::string Name;
 		sf::Socket::Status status;
-		IpAddress IP;
+		sf::IpAddress IP;
 		std::thread thread;
+		std::thread _connect(std::function<void()>);
 	public:
-		Client();
-		std::thread connect(std::function<void()>);
+		Object* d;
+		std::map<uint32_t, std::unique_ptr<Object>> _users;
+		Client() : d(nullptr) {}
+		Client(Object* d);
+
+		sf::TcpSocket socket;
+
+		void connect()
+		{
+			IP = sf::IpAddress::getLocalAddress();
+			std::srand((int)time(nullptr));
+			Name = "Player#" + std::to_string(std::rand() % 100);
+			thread = std::move(_connect(std::bind(&Client::onConnect, this)));
+		}
 		void recivePacket();
+
 		void onRecivePacket(sf::Packet packet);
+
 		void onConnect();
+
 		template<typename... Args>
-		void sendPacket(int type, Args... argc);
-		void sendMsg_l(std::string msg);
+		void sendPacket(uint8_t type, Args... argc);
+
 		void disckonnect();
+
 		~Client();
 	};
 
 	template<typename... Args>
-	void Engine::Client::sendPacket(int type, Args... argc)
+	void Client::sendPacket(uint8_t type, Args... argc)
 	{
 		sf::Packet packet;
-		((packet << type << argc), ...);
+		packet << type;
+		(packet << ... << std::forward<Args>(argc));
 		socket.send(packet);
 	}
 

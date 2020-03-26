@@ -1,6 +1,6 @@
 #pragma once
-#include "imgui.h"
-#include "imgui-SFML.h"
+#include <imgui.h>
+#include <imgui-SFML.h>
 #include <windows.h>
 #include <string>
 #include <iostream>
@@ -35,6 +35,9 @@ namespace Engine
 		{
 			Log(std::string s, logType t);
 			std::string text;
+			std::string pervText;
+			void count_update(int count);
+			int log_count;
 			ImVec4 color;
 			logType type;
 		};
@@ -62,18 +65,8 @@ namespace Engine
 				Buffer.clear();
 				Buffer.shrink_to_fit();
 			}
-
-			static void addLog(Log log) { Buffer.push_back(log); }
-			static void addLog(std::string s, logType t)
-			{
-				if (!Buffer.empty())
-				{
-					if (Buffer.back().text != s)
-						Buffer.emplace_back(s, t);
-				}
-				else
-					Buffer.emplace_back(s, t);
-			}
+			static void addLog(Log log);
+			static void addLog(std::string s, logType t);
 			static void saveLog(std::string_view path);
 			static void Draw(const char* title, bool* p_open);
 		};

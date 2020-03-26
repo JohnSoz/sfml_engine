@@ -8,7 +8,7 @@ namespace Engine
 	class Pawn : public BaseObject, public ColliderSprite
 	{
 	private:
-		AnimationManager animManager;
+		AnimationManager  animManager;
 		sf::RenderWindow* window;
 		std::vector<ObjectLevel> levelObjects;
 		DirectionX               direction;
@@ -19,7 +19,7 @@ namespace Engine
 			auto currAnim = animManager.getCurrAnimation<AnimationXml>();
 			setRect(currAnim->rect);
 			setOrigin(currAnim->origin);
-			setScale({ currAnim->scale,currAnim->scale });
+			setScale({ currAnim->scale, currAnim->scale });
 		}
 	public:
 		Pawn(std::string name, std::string_view pathToTexture, std::string_view animation, sf::RenderWindow& window, Level& lvl, sf::Vector2f position);

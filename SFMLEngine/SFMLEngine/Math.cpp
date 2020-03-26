@@ -306,27 +306,27 @@ Rectangle Rectangle::getIntersectionRect(const Rectangle& rect)
 //-----------------------------------------------------------------------------
 Vector2D Rectangle::GetIntersectionDepth(const Rectangle& rectA, const Rectangle& rectB)
 {
-	// Размеры.
+	// Размеры
 	float halfWidthA = rectA.w / 2.0f;
 	float halfHeightA = rectA.h / 2.0f;
 	float halfWidthB = rectB.w / 2.0f;
 	float halfHeightB = rectB.h / 2.0f;
 
-	// Центр.
+	// Центр
 	Vector2D centerA(rectA.x + halfWidthA, rectA.y + halfHeightA);
 	Vector2D centerB(rectB.x + halfWidthB, rectB.y + halfHeightB);
 
-	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами.
+	// Вычислить текущие и минимальные непересекающиеся расстояния между центрами
 	float distanceX = centerA.x - centerB.x;
 	float distanceY = centerA.y - centerB.y;
 	float minDistanceX = halfWidthA + halfWidthB;
 	float minDistanceY = halfHeightA + halfHeightB;
 
-	// Если мы вообще не пересекаемся,  (0, 0).
+	// Если мы вообще не пересекаемся,  (0, 0)
 	if (abs(distanceX) >= minDistanceX || abs(distanceY) >= minDistanceY)
 		return Vector2D::Zero();
 
-	// Вычисление и возврат глубины пересечения.
+	// Вычисление и возврат глубины пересечения
 	float depthX = distanceX > 0 ? minDistanceX - distanceX : -minDistanceX - distanceX;
 	float depthY = distanceY > 0 ? minDistanceY - distanceY : -minDistanceY - distanceY;
 	if (abs(depthX) > abs(depthY))

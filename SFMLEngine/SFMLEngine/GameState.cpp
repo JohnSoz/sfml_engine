@@ -11,6 +11,8 @@ void Engine::GameState::Init(sf::RenderWindow& w)
 		world->pushEntity(new Engine::Player(*window, world->getLevel()));
 	else
 		world->pushEntity(new Player(sf::Vector2f(120, 120), "Test", *window, world->getLevel(), "Data\\Animation\\TestAnim.xml"));
+	c.d = world->getObjHendler().GetObjects<Player>("Test");
+	c.connect();
 	pause = new PauseMenu("Data/GUI/MyUI/MainMenu.txt", *window);
 	pause->makeMenu();
 	pause->activateOrDisable();
@@ -20,7 +22,11 @@ void Engine::GameState::Init(sf::RenderWindow& w)
 void Engine::GameState::update(float time)
 {
 	if (!isPause)
+	{
 		world->update(*window, time);
+		auto p = world->getObjHendler().GetObjects<Player>("Test");
+		c.sendPacket(PacketType::updateData, p->getPos().x, p->getPos().y);
+	}
 	else
 		pause->update();
 	//EventManager::eventManager.emit<Events::Change_State_Event>(appState::MainWindow);

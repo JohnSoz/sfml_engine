@@ -8,6 +8,32 @@ vector<Console::Log>       Console::AppLog::Buffer = {};
 bool                       Console::AppLog::ScrollToBottom = 0;
 std::vector<std::string>   Console::AppLog::current_input = {};
 
+void Engine::Console::AppLog::addLog(Log log)
+{
+	if (!Buffer.empty())
+	{
+		if (Buffer.back().pervText != log.pervText)
+			Buffer.emplace_back(log);
+		else
+			Buffer.back().count_update(++Buffer.back().log_count);
+	}
+	else
+		Buffer.emplace_back(log);
+}
+
+void Engine::Console::AppLog::addLog(std::string s, logType t)
+{
+	if (!Buffer.empty())
+	{
+		if (Buffer.back().pervText != s)
+			Buffer.emplace_back(s, t);
+		else
+			Buffer.back().count_update(++Buffer.back().log_count);
+	}
+	else
+		Buffer.emplace_back(s, t);
+}
+
 void Console::AppLog::saveLog(std::string_view path)
 {
 	std::ofstream out;
@@ -62,10 +88,7 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 		if (input_change)
 		{
 			ScrollToBottom = true;
-			if (buff_input[0] == '/')
-			{
-
-			}
+			if (buff_input[0] == '/') {}
 		}
 		ImGui::PopItemWidth();
 		ImGui::Spacing();
@@ -141,12 +164,13 @@ void Console::AppLog::Draw(const char* title, bool* p_open)
 		ImGui::EndChild();
 		ImGui::End();
 	}
-
 }
+
 
 Console::Log::Log(std::string s, logType t)
 {
 	type = t;
+	log_count = 1;
 	double time = clock();
 	std::string ti = std::to_string(std::round(time / 10) / 100);
 	ti.erase(ti.find_first_of('.') + 3, ti.size());
@@ -155,30 +179,41 @@ Console::Log::Log(std::string s, logType t)
 	{
 	case logType::error:
 		color = ImVec4(1, 0.35, 0, 1);
-		l += " type:error]: ";
+		l += " type:error";
 		break;
 	case logType::info:
 		color = ImVec4(0, 1, 0.3, 1);
-		l += " type:info]: ";
+		l += " type:info";
 		break;
 	case logType::fatal:
 		color = ImVec4(1, 0, 0, 1);
-		l += " type:fatal]: ";
+		l += " type:fatal";
 		break;
 	case logType::system:
 		color = ImVec4(1, 0, 0.8, 1);
-		l += " type:system]: ";
+		l += " type:system";
 		break;
 	case logType::script:
 		color = ImVec4(0.1, 0.5, 0.1, 1);
-		l += " type:script]: ";
+		l += " type:script";
 		break;
 	case logType::script_result:
 		color = ImVec4(0.1, 0.5, 0.1, 1);
-		l += " type:script_result]: ";
+		l += " type:script_result";
 		break;
 	}
+	l += " (1)]: ";
 	l += s;
 	l += " \n";
 	text = l;
+	pervText = s;
+}
+
+void Engine::Console::Log::count_update(int count)
+{
+	auto b = text.find_first_of(')');
+	auto a = text.find_first_of('(');
+	auto offset = b - a - 1;
+	text.erase(a + 1, b - a - 1);
+	text.insert(a + 1, std::to_string(count));
 }

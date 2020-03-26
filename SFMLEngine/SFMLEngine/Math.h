@@ -8,7 +8,6 @@
 
 namespace Engine
 {
-	sf::Vector2f VectorAbs(sf::Vector2f vec);
 
 	template<class T, class T2>
 	bool operator<(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2)
@@ -17,21 +16,45 @@ namespace Engine
 	}
 
 	template<class T, class T2>
-	auto operator*(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) -> sf::Vector2<decltype(v1.x * v2.x)>
+	bool operator>(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2)
+	{
+		return (v1.x > v2.x) && (v1.y > v2.y);
+	}
+
+	template<class T, class T2>
+	auto operator*(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) -> sf::Vector2<std::common_type_t<T, T2>>
 	{
 		return { v1.x * v2.x, v1.y * v2.y };
 	}
 
 	template<class T, class T2>
-	auto operator+(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) -> sf::Vector2<decltype(v1.x * v2.x)>
+	auto operator*(const sf::Vector2<T>& v1, T2 value) -> sf::Vector2<std::common_type_t<T, T2>>
+	{
+		return { v1.x * value, v1.y * value };
+	}
+
+	template<class T, class T2>
+	auto operator+(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) ->  sf::Vector2<std::common_type_t<T, T2>>
 	{
 		return { v1.x + v2.x, v1.y + v2.y };
 	}
 
 	template<class T, class T2>
-	sf::Vector2<T2> operator+(const sf::Vector2<T>& rect, T2 value)
+	auto operator-(const sf::Vector2<T>& v1, const sf::Vector2<T2>& v2) ->  sf::Vector2<std::common_type_t<T, T2>>
 	{
-		return { rect.x + value, rect.y + value };
+		return v1 + v2 * -1;
+	}
+
+	template<class T, class T2>
+	sf::Vector2<T2> operator+(const sf::Vector2<T>& vec, T2 value)
+	{
+		return { vec.x + value, vec.y + value };
+	}
+
+	template<class T, class T2>
+	sf::Vector2<T2> operator-(const sf::Vector2<T>& vec, T2 value)
+	{
+		return vec + value * -1;
 	}
 
 	template<class T, class T2>
@@ -39,12 +62,7 @@ namespace Engine
 	{
 		return { rect.left * value, rect.top * value,rect.width * value, rect.height * value };
 	}
-
-	template<class T, class T2>
-	inline auto operator-(sf::Vector2<T> v1, sf::Vector2<T2> v2) -> sf::Vector2<decltype(v1.x - v2.x)>
-	{
-		return { v1.x - v2.x, v1.y - v2.y };
-	}
+	sf::Vector2f VectorAbs(sf::Vector2f vec);
 
 	template<class T>
 	sf::Vector2<T> rotateBy(const sf::Vector2<T>& vec, float degrees, const sf::Vector2<T>& center)
@@ -95,13 +113,13 @@ namespace Engine
 	template<class T>
 	T lenght(const sf::Vector2<T>& v1)
 	{
-		return sqrt(std::pow(v1.x, 2) + std::pow(v1.y, 2));
+		return sqrt(v1.x * v1.x + v1.y * v1.y);
 	}
 
 	template<class T>
 	inline sf::Vector2<T> perp(sf::Vector2<T> v1)
 	{
-		return { v1.y,-v1.x };
+		return { v1.y, -v1.x };
 	}
 
 	template<class T>
@@ -114,7 +132,9 @@ namespace Engine
 	template<class T, class T2>
 	inline std::common_type_t<T, T2> Distance(const sf::Vector2<T>& v2, const sf::Vector2<T2>& v1)
 	{
-		return sqrtf(pow((v2.x - v1.x), 2) + pow((v2.y - v1.y), 2));
+		auto delta1 = v2.x - v1.x;
+		auto delta2 = v2.y - v1.y;
+		return sqrtf(delta1 * delta1 + delta2 * delta2);
 	}
 
 	template<class T>
@@ -260,6 +280,7 @@ namespace Engine
 		}
 		Quad() = default;
 	};
+
 	template<class T, class T2>
 	inline auto GetIntersectionDepth(const sf::Rect<T>& rectA, const sf::Rect<T2>& rectB)
 	{
@@ -292,6 +313,7 @@ namespace Engine
 			depthY = 0;
 		return sf::Vector2<result_type>(depthX, depthY);
 	}
+
 	template<class T, class T2>
 	inline auto GetIntersectionDepth2(const sf::Rect<T>& rectA, const sf::Rect<T2>& rectB)
 	{
@@ -322,6 +344,7 @@ namespace Engine
 
 		return sf::Vector2<result_type>(depthX, depthY);
 	}
+
 	class Rectangle
 	{
 	public:
@@ -363,4 +386,5 @@ namespace Engine
 	private:
 		float x, y, w, h;
 	};
+
 } // namespace Engine

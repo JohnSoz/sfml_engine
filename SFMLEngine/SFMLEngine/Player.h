@@ -16,7 +16,7 @@ namespace Engine
 		save_data& operator=(const Player& p);
 	};
 
-	class Player : public Actor
+	class Player final : public Actor
 	{
 	private:
 		sf::Sprite    handSprite;
@@ -57,6 +57,11 @@ namespace Engine
 		void increaseHealth(int h) { health += h; }
 		void inventoryAction();
 
+
+		bool isMove()
+		{
+			return isWalk || isJump;
+		}
 		DirectionX getDirection() const { return direction; }
 		const AnimationManager& getAnimManager() const { return animManager; }
 

@@ -12,12 +12,12 @@ namespace Engine
 	class Actor : public Entity
 	{
 	protected:
-		AnimationManager         animManager;
-		sf::Clock                Pressclock;
-		sf::Clock                actionClock;
-		sf::Vector2f             originOffset;
-		DirectionX               direction;
-		DirectionY               directionY = DirectionY::Up;
+		AnimationManager  animManager;
+		sf::Clock         Pressclock;
+		sf::Clock         actionClock;
+		sf::Vector2f      originOffset;
+		DirectionX        direction;
+		DirectionY        directionY = DirectionY::Up;
 		sf::RenderWindow* window;
 
 		float scale = 0.5;
